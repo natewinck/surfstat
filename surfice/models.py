@@ -84,14 +84,14 @@ class Surfice(models.Model):
 #
 # CLASS VARIABLES
 # timestamp			timestamp of the original issue
-# service_id		which "surfice" is having the issue
+# surfice			which "surfice" is having the issue
 # name				Name of the user
 #
 class Ding(models.Model):
 	# Class variables
 	name		= models.CharField(max_length=512, unique=False)
 	timestamp	= models.DateField(auto_now=False, auto_now_add=True)
-	service_id	= models.IntegerField()
+	surfice	= models.ForeignKey(Surfice)
 	email		= models.EmailField()
 	description	= models.TextField()
 	
@@ -114,14 +114,14 @@ class Ding(models.Model):
 # CLASS VARIABLES
 # timestamp			timestamp of the event
 # status			Status object
-# service_id		id of the service
+# surfice			id of the service
 # description		description of the event
 # ---------------------------------------
 class Event(models.Model):
 	# Class variables
 	timestamp	= models.DateField(auto_now=512, auto_now_add=True)
 	status		= models.ForeignKey(Status)
-	service_id	= models.IntegerField()
+	surfice	= models.ForeignKey(Surfice)
 	description	= models.TextField()
 	
 	def __unicode__(self):
