@@ -1,0 +1,37 @@
+# YAML 1.2
+#
+# First, the surf class (group)
+- model: surfice.surf
+  pk: 1
+  fields:
+    name: Hawaii
+    description: The best Surf in the world
+
+# Three different default statuses: clean, choppy, totally axed
+- model: surfice.status
+  pk: 1
+  fields:
+    name: Clean
+    description: Everything is epic
+
+- model: surfice.status
+  pk: 2
+  fields:
+    name: Choppy
+    description: Things are a little mushy, but conditions will improve.
+
+- model: surfice.status
+  pk: 3
+  fields:
+    name: Totally Axed
+    description: It wiped-out, so we're applying a little wax.
+
+# Finally, a default surfice (service)
+- model: surfice.surfice
+  pk: 1
+  fields:
+    name: Jaws, Maui
+    surf: 1
+    description: Jaws (Pe’ahi in Hawaiian) is the biggest and baddest surf spot in all of Hawaii.
+    status: 1
+    timestamp: 2014-06-08 #!!timestamp

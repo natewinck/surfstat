@@ -57,20 +57,20 @@ class Surf(models.Model):
 class Surfice(models.Model):
 	# Class variables
 	name 		= models.CharField(max_length=512, unique=True)
-	group 		= models.ForeignKey(Surf)
+	surf 		= models.ForeignKey(Surf)
 	description = models.TextField()
 	timestamp	= models.DateField(auto_now=False, auto_now_add=True)
 	
 	# Status is part of the model
-	status = models.ForeignKey(Status) ##
+	status = models.ForeignKey(Status)
 	
 	def __unicode__(self):
 		return self.name
 	
-	def __init__(self):
-		self.name = "Default"
-		self.description = "Default description"
-		self.group = Surf()
+	#def __init__(self):
+	#	self.name = "Default"
+	#	self.description = "Default description"
+	#	self.group = Surf()
 	
 
 
