@@ -4,31 +4,6 @@ from django.db import models
 
 
 
-# -----------------------------------------
-# Status Class (could be in a separate app)
-#
-# Dictates the status of a generic object.  It [can optionally]
-# connect with the a generic status image class NO IT CAN'T
-# 
-# CLASS VARIABLES
-# name			Name of the status e.g. "Totally axed" or "choppy" or "clean"
-# description	Description of the status
-#
-# CLASS METHODS
-######void set_default()		Set this status as the default
-# -----------------------------------------
-class Status(models.Model):
-	# Class variables
-	name 		= models.CharField(max_length=512, unique=True)
-	description = models.TextField()
-	
-	def __unicode__(self):
-		return self.name
-
-
-
-
-
 # --------------
 # Surf Class
 # Group container for a set of Surfices
@@ -59,10 +34,9 @@ class Surfice(models.Model):
 	name 		= models.CharField(max_length=512, unique=True)
 	surf 		= models.ForeignKey(Surf)
 	description = models.TextField()
-	timestamp	= models.DateField(auto_now=False, auto_now_add=True)
 	
 	# Status is part of the model
-	status = models.ForeignKey(Status)
+	status = models.ForeignKey('Status')
 	
 	def __unicode__(self):
 		return self.name
@@ -71,6 +45,29 @@ class Surfice(models.Model):
 	#	self.name = "Default"
 	#	self.description = "Default description"
 	#	self.group = Surf()
+
+
+# -----------------------------------------
+# Status Class (could be in a separate app)
+#
+# Dictates the status of a generic object.  It [can optionally]
+# connect with the a generic status image class NO IT CAN'T
+# 
+# CLASS VARIABLES
+# name			Name of the status e.g. "Totally axed" or "choppy" or "clean"
+# description	Description of the status
+#
+# CLASS METHODS
+######void set_default()		Set this status as the default
+# -----------------------------------------
+class Status(models.Model):
+	# Class variables
+	name 		= models.CharField(max_length=512, unique=True)
+	description = models.TextField()
+	
+	def __unicode__(self):
+		return self.name
+
 	
 
 

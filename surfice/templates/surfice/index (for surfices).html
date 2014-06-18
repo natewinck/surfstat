@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Surfice</title>
+    </head>
+
+    <body>
+        <h1>Surfice says...hello world!</h1>
+
+        {% if surfices %}
+            <ul>
+                {% for surfice in surfices %}
+                <li>{{ surfice.name }} is {{ surfice.status }}<img src="https://fbcdn-sphotos-a-a.akamaihd.net/hphotos-ak-xpf1/t1.0-9/1979587_10152145744842772_6162412066709065229_n.jpg" /></li>
+                {% endfor %}
+            </ul>
+        {% else %}
+            <strong>There are no surfices present.</strong>
+        {% endif %}
+
+        <a href="/surfice/about/">About</a>
+    </body>
+</html>
