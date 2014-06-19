@@ -34,3 +34,11 @@
     surf: 1
     description: Jaws (Pe’ahi in Hawaiian) is the biggest and baddest surf spot in all of Hawaii.
     status: 1
+
+- model: surfice.surfice
+  pk: 2
+  fields:
+    name: Laniakea, Oahu
+    surf: 1
+    description: "Oahu’s North Shore is home to some of the world’s biggest waves, and Laniakea may be the best point break on the coastline. Strong currents and the nearly exposed reef bottom at low tide make the spot dicey at times. Laniakea is also renowned for the sea turtles that call it home, and the area draws about as many turtle watchers as surfers."
+    status: 1
