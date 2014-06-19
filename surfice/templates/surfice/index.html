@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Surfice</title>
+    </head>
+
+    <body>
+        <h1>Surfice says...hello world!</h1>
+
+        {% if surfs %}
+            <ul>
+                {% for surf in surfs %}
+                <li><a href="/surfice/surf/{{ surf.url }}">{{ surf.name }}</li>
+                {% endfor %}
+            </ul>
+        {% else %}
+            <strong>There are no surfs present.</strong>
+        {% endif %}
+
+    </body>
+</html>

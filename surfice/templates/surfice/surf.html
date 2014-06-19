@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Surfice</title>
+    </head>
+
+    <body>
+        <h1>{{ surf_name }}</h1>
+        {% if surf %}
+            {% if surfices %}
+            <ul>
+                {% for surfice in surfices %}
+                <li><a href="{{ surfice }}">{{ surfice }}</a></li>
+                {% endfor %}
+            </ul>
+            {% else %}
+                <strong>No surfices currently in surf.</strong>
+            {% endif %}
+        {% else %}
+            The specified surf {{ surf_name }} does not exist!
+        {% endif %}
+    </body>
+</html>
