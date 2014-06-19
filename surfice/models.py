@@ -1,6 +1,5 @@
 from django.db import models
-import time
-import datetime
+from datetime import date, timedelta
 
 # Create your models here.
 
@@ -199,6 +198,7 @@ class Event(models.Model):
 	#
 	# returns:
 	# 	array of events in reverse chronological order (newest first)
+	@staticmethod
 	def get_events(**kwargs):
 		
 		# Empty array of events
@@ -209,12 +209,12 @@ class Event(models.Model):
 			x = kwargs['days']
 			start = date.today() - timedelta(x)
 			# Equivalent in SQL to SELECT ... WHERE timestamp >= start
-			Event.objects.filter(timestamp__gte=start).order_by('-timestamp')
+			events = Event.objects.filter(timestamp__gte=start).order_by('-timestamp', '-id')
 			
 		# Get the past x number of events	
 		elif 'events' in kwargs:
 			x = kwargs['events']
-			Event.objects.order_by('-timestamp')[x]
+			events = Event.objects.all().order_by('-timestamp', '-id')[:x]
 		
 		# Get events up to the current date from the start date
 		# If end is set, get events between (inclusive) these dates			
@@ -225,20 +225,21 @@ class Event(models.Model):
 			# Else, just use the current date
 			if 'end' in kwargs:
 				end = kwargs['end']
-				Event.objects.filter(timestamp__gte=start, timestamp__lte=end).order_by('-timestamp')
+				events = Event.objects.filter(timestamp__gte=start, timestamp__lte=end).order_by('-timestamp', '-id')
 				
 			else:
-				end = timestamp.timestamp.now().isoformat()
-				Event.objects.filter(timestamp__gte=start).order_by('-timestamp')
+				end = date.today()
+				events = Event.objects.filter(timestamp__gte=start).order_by('-timestamp', '-id')
 
 		# Get events up to and including the end date
 		elif 'end' in kwargs:
 			end = kwargs['end']
-			Event.objects.filter(timestamp__lte=end).order_by('-timestamp')
+			events = Event.objects.filter(timestamp__lte=end).order_by('-timestamp', '-id')
 			
 		# If no argument is given, get all events 
 		else:
-			events = Event.objects.all().order_by('timestamp')
+			events = Event.objects.all().order_by('-timestamp', '-id')
+			
 		
 		return events
 

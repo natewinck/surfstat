@@ -57,6 +57,6 @@ def surf(request, surf_url):
 		# Also add the surf object from the database to the context dictionary
 		# We'll use this in the template to verify the category exists.
 		context_dict['surf'] = Surf.objects.get(name=surf_name)
-		
+	print Event.get_events(end='2014-06-19')	
 	# Go render the response and return it to the client
 	return render(request, 'surfice/surf.html', context_dict)
