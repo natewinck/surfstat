@@ -18,7 +18,6 @@ from datetime import date, timedelta
 # Surf			create_surf(name, description)
 # void			delete_surf(self)
 # -------------------------------------
-
 class Surf(models.Model):
 	# Class variables
 	name 		= models.CharField(max_length=512, unique=True)
@@ -90,7 +89,7 @@ class Surf(models.Model):
 	# The created surf
 	# -------------------------------------
 	@staticmethod
-	def create_surf(name, description='')
+	def create_surf(name, description=''):
 		# Create the Surf object
 		surf = Surf()
 		
@@ -135,6 +134,7 @@ class Surf(models.Model):
 # void				set_surf(self, surf)
 # void				set_description(self, description)
 # bool				set_name(self, name)
+# Surfice			create_surfice(name, surf, description)
 # void				delete_surfice(self)
 # 
 # -------------------------------------
@@ -222,6 +222,19 @@ class Surfice(models.Model):
 		
 		return surfices
 	
+	
+	# -------------------------------------
+	# get_status(self)
+	# 
+	# Get the status of this Surfice object
+	# 
+	# RETURNS
+	# A status object
+	# -------------------------------------
+	def get_status(self):
+		return self.status
+	
+	
 	# -------------------------------------
 	# set_status(self, status)
 	# 
@@ -242,8 +255,6 @@ class Surfice(models.Model):
 		
 		self.status = status
 		self.save()
-	
-	
 	
 	# -------------------------------------
 	# get_events(self, **kwargs)
