@@ -17,6 +17,15 @@ from datetime import date, timedelta
 # Surf			get_surf(name)
 # Surf			create_surf(name, description)
 # void			delete_surf(self)
+# bool			save_surf(self)
+# bool			is_saved(name)
+#
+# NEED TO DO
+def NEED_TO_DO():
+	pass
+# get_surfs
+# set_name
+# set_description
 # -------------------------------------
 class Surf(models.Model):
 	# Class variables
@@ -90,15 +99,20 @@ class Surf(models.Model):
 	# -------------------------------------
 	@staticmethod
 	def create_surf(name, description=''):
-		# Create the Surf object
-		surf = Surf()
+		surf = None
 		
-		# Set the surf attributes
-		surf.name = name
-		surf.description = description
-		
-		# Save the surf in the database
-		surf.save()
+		# Check to make sure another Surf object with the same name isn't
+		# already in the database
+		if not Surf.is_saved(name):
+			# Create the Surf object
+			surf = Surf()
+			
+			# Set the surf attributes
+			surf.name = name
+			surf.description = description
+			
+			# Save the surf in the database
+			surf.save()
 		
 		# Return the created surf
 		return surf
@@ -109,8 +123,54 @@ class Surf(models.Model):
 	# Deletes this surf from the database
 	# -------------------------------------
 	def delete_surf(self):
-		self.delete()
+		# Check to make sure the Surf object is in the database first
+		try:
+			if Surf.objects.filter(pk=self.id).count() != 0:
+				self.delete()
+		except Surf.DoesNotExist:
+			pass
 	
+	# -------------------------------------
+	# save_surf(self)
+	#
+	# Saves a NEW Surf object to the database. If a Surf with the same name
+	# already exists, nothing happens.
+	# 
+	# RETURNS
+	# True if saved
+	# False if not
+	# -------------------------------------
+	def save_surf(self):
+		# Check to see if Surf object is already in database. Don't do anything if so
+		if Surf.is_saved(self.name):
+			# Do nothing
+			flag = False
+		else:
+			self.save()
+			flag = True
+		
+		return flag
+	
+	# -------------------------------------
+	# @staticmethod is_saved(name)
+	# 
+	# Checks to see if Surf object is already in database.
+	# 
+	# INPUT
+	# name			Name of the Surf object
+	# 
+	# RETURNS
+	# True if Surf object is in database
+	# False if Surf object is not in database
+	# -------------------------------------
+	@staticmethod
+	def is_saved(name):
+		if Surf.objects.filter(name=name).count() == 0:
+			exists = False
+		else:
+			exists = True
+			
+		return exists
 
 
 # -------------------------------------
@@ -129,6 +189,7 @@ class Surf(models.Model):
 # String			__unicode__(self)
 # Surfice			get_surfice(name)
 # *Surfice			get_surfices(...)
+# Status			get_status(self)
 # void				set_status(self, status, description)
 # *Event			get_events(self, ...)
 # void				set_surf(self, surf)
@@ -136,6 +197,8 @@ class Surf(models.Model):
 # bool				set_name(self, name)
 # Surfice			create_surfice(name, surf, description)
 # void				delete_surfice(self)
+# bool				save_surfice(self)
+# bool				is_saved(name)
 # 
 # -------------------------------------
 class Surfice(models.Model):
@@ -200,20 +263,20 @@ class Surfice(models.Model):
 			# If both surf and name are set, find all objects with that Surf
 			# and contain the name
 			if surf != None and name != None:
-				surfices = Surfices.objects.filter(surf=surf.id, name__contains=name)
+				surfices = Surfice.objects.filter(surf=surf.id, name__contains=name)
 			
 			# If surf is set, find all Surfice objects with that Surf
 			elif surf != None:
 				# CHECK TO SEE IF THIS IS REAL SURF OBJECT
-				surfices = Surfices.objects.filter(surf=surf.id)
+				surfices = Surfice.objects.filter(surf=surf)
 				
 			# If name is set, find all Surfices that contain that name
 			elif name != None:
-				surfices = Surfices.objects.filter(name__contains=name)
+				surfices = Surfice.objects.filter(name__contains=name)
 			
 			# If nothing is set, find all Surfices
 			else:
-				surfices = Surfices.objects.all()
+				surfices = Surfice.objects.all()
 		
 		except Surfice.DoesNotExist:
 			# If no Surfices are found, set it to an empty array
@@ -270,8 +333,9 @@ class Surfice(models.Model):
 	# -------------------------------------
 	def get_events(self, **kwargs):
 		# NEED TO WRITE
-		#Event.objects.filter(
-		return []
+		events = []
+		events = Event.objects.filter(surfice=self.id) #NOT SURE IF THIS WORKS OR NOT
+		return events
 	
 	# -------------------------------------
 	# set_surf(self, surf)
@@ -343,12 +407,12 @@ class Surfice(models.Model):
 	# The created Surfice object
 	# -------------------------------------
 	@staticmethod
-	def create_surfice(name, surf, description=''):
+	def create_surfice(name, surf, status, description=''):
 		surfice = None
 		
 		# Check to make sure a Surfice object with the same name
 		# isn't already in the database.
-		if Surfice.objects.filter(name='name').count() == 0:
+		if Surfice.objects.filter(name=name).count() == 0:
 			# Create the Surfice object
 			surfice = Surfice()
 			
@@ -356,6 +420,7 @@ class Surfice(models.Model):
 			surfice.name = name
 			surfice.surf = surf # I NEED TO CHECK IF THE SURF EXISTS FIRST
 			surfice.description = description
+			surfice.status = status
 			
 			# Save the Status object to the database
 			surfice.save()
@@ -370,6 +435,49 @@ class Surfice(models.Model):
 	# -------------------------------------
 	def delete_surfice(self):
 		self.delete()
+	
+	
+	# -------------------------------------
+	# save_surfice(self)
+	#
+	# Saves a NEW Surfice object to the database. If a Surfice with the same name
+	# already exists, nothing happens.
+	#
+	# RETURNS
+	# True if it saved
+	# False if it didn't
+	# -------------------------------------
+	def save_surfice(self):
+		# Check to see if Surfice object is already in database. Don't do anything if so
+		if Surfice.is_saved(self.name):
+			# Do nothing
+			flag = False
+		else:
+			self.save()
+			flag = True
+		
+		return flag
+	
+	# -------------------------------------
+	# @staticmethod is_saved(name)
+	# 
+	# Checks to see if Surfice object is already in database.
+	# 
+	# INPUT
+	# name			Name of the Surfice object
+	# 
+	# RETURNS
+	# True if Surfice object is in database
+	# False if Surfice object is not in database
+	# -------------------------------------
+	@staticmethod
+	def is_saved(name):
+		if Surfice.objects.filter(name=name).count() == 0:
+			exists = False
+		else:
+			exists = True
+			
+		return exists
 
 # -----------------------------------------
 # Status Class (could be in a separate app)
@@ -409,7 +517,12 @@ class Status(models.Model):
 	# -------------------------------------
 	@staticmethod
 	def get_status(name=''):
-		return Status.objects.get(name=name)
+		try:
+			status = Status.objects.get(name=name)
+		except:
+			status = None
+			pass
+		return status
 	
 	# -------------------------------------
 	# @staticmethod create_status(name, description)
@@ -429,7 +542,7 @@ class Status(models.Model):
 		
 		# Check to make sure a Status object with the same name
 		# isn't already in the database.
-		if Status.objects.filter(name='name').count() == 0:
+		if Status.objects.filter(name=name).count() == 0:
 			# Create the Status object
 			status = Status()
 			
@@ -449,6 +562,27 @@ class Status(models.Model):
 	# -------------------------------------
 	def delete_status(self):
 		self.delete()
+	
+	# -------------------------------------
+	# @staticmethod is_saved(name)
+	# 
+	# Checks to see if Surf object is already in database.
+	# 
+	# INPUT
+	# name			Name of the Status object
+	# 
+	# RETURNS
+	# True if Status object is in database
+	# False if Status object is not in database
+	# -------------------------------------
+	@staticmethod
+	def is_saved(name):
+		if Status.objects.filter(name=name).count() == 0:
+			exists = False
+		else:
+			exists = True
+			
+		return exists
 	
 
 
