@@ -6,9 +6,164 @@ from surfice.models import Surf, Surfice, Status, Ding, Event
 
 # Create your views here.
 
+def printv(obj, title=""): # Print your variables!
+	if title != "":
+		print ("\n" + title + "\n"
+		   		 "==============================")
+	print ''.join("%s: %s\n" % item for item in vars(obj).items())
+	
+def debug():
+	#print Event.get_events(end='2014-06-19')
+	
+	# Clear database of debug data first
+	try: Surf.get_surf('Manual Surf').delete_surf()
+	except: pass
+	try: Surf.get_surf('Auto Surf').delete_surf()
+	except: pass
+	try: Surf.get_surf('Auto Surf Without Description').delete_surf()
+	except: pass
+	try: Status.get_status('Status Without Description').delete_status()
+	except: pass
+	try: Status.get_status('Status With Description').delete_status()
+	except: pass
+	try: Status.get_status('Status2').delete_status()
+	except: pass
+	try: Surfice.get_surfice('Manual Surfice').delete_surfice()
+	except: pass
+	try: Surfice.get_surfice('Surfice').delete_surfice()
+	except: pass
+	try: Surfice.get_surfice('Surfice1').delete_surfice()
+	except: pass
+	try: Surfice.get_surfice('Surfice2').delete_surfice()
+	except: pass
+	
+	
+	# First test Surfs
+	# First manually
+	surf_manual = Surf()
+ 	surf_manual.name = "Manual Surf"
+ 	surf_manual.description = "A description of the manual surf"
+ 	surf_manual.save_surf()
+	
+	printv(surf_manual, "MANUAL SURF")
+	
+	# Now automatic Surf
+	surf_auto_nodescr = Surf.create_surf("Auto Surf Without Description")
+	surf_auto = Surf.create_surf("Auto Surf", "A Description for the Auto")
+	printv(surf_auto_nodescr, "AUTO SURF W/O DESCRIPTION")
+	printv(surf_auto, "AUTO SURF")
+	
+	# Now try to overwrite a Surf (it shouldn't work)
+	surf_overwrite = Surf.create_surf("Auto Surf")
+	print "The following overwrite should not work:"
+	try: printv(surf_overwrite, "SURF OVERWRITE")
+	except: pass
+	
+	# Get a Surf by name
+	surf_by_name = Surf.get_surf("Auto Surf")
+	printv(surf_by_name, "GET AUTO SURF BY NAME")
+	
+	# Now delete the manual Surf
+	surf_manual.delete_surf()
+	print "MANUAL SURF STILL SAVED AFTER DELETION? (Should be False)\n============================"
+	print Surf.is_saved(surf_manual.name) # Test to see if it worked
+	
+	
+	print "\n\n\n\n"
+	
+	
+	# Second, create a new Status
+	status_nodescr = Status.create_status("Status Without Description")
+	status = Status.create_status("Status With Description", "A description")
+	
+	printv(status_nodescr, "STATUS W/O DESCRIPTION")
+	printv(status, "STATUS WITH DESCRIPTION")
+	
+	# Get a status by name
+	status_by_name = Status.get_status("Status Without Description")
+	
+	printv(status_by_name, "GET STATUS W/O DESCRIPTION BY NAME")
+	
+	# Delete the status without a description
+	status_by_name.delete_status()
+	
+	print "NO DESCRIPTION STILL SAVED? (should be False)\n======================="
+	print Status.is_saved("Status Without Description")
+	
+	status2 = Status.create_status("Status2", "A 2nd description")
+
+
+
+
+
+
+	# Now test Surfices
+	# First manually
+	surfice_manual = Surfice()
+	surfice_manual.name = "Manual Surfice"
+	surfice_manual.surf = surf_auto
+	surfice_manual.description = "Manual Description"
+	surfice_manual.status = status # I'm afraid this won't work at all
+	surfice_manual.save_surfice()
+	
+	printv(surfice_manual, "MANUAL SURFICE")
+	
+	# Now Delete the manual one
+	surfice_manual.delete_surfice()
+	
+	print "Is the Manual Surfice still saved (It should be False)\n========================"
+	print Surfice.is_saved(surfice_manual.name)
+	
+	
+	# Now Automatically
+	surfice = Surfice.create_surfice("Surfice", surf_auto, status, "A Surfice description")
+	surfice2 = Surfice.create_surfice("Surfice2", surf_auto, status, "A 2nd Surfice description")
+	printv(surfice, "SURFICE")
+	printv(surfice2, "SURFICE2")
+	
+	# Try to overwrite it
+	surfice_overwrite = Surfice.create_surfice("Surfice", surf_auto, status)
+	print surfice_overwrite
+	
+	# Get surfices
+	print Surfice.get_surfices(surf=surf_auto) # All the surfices under surf_auto
+	print Surfice.get_surfices(name="Surf") # All that contain "Surf"
+	print Surfice.get_surfices() # All surfices
+	
+	
+	surfice.set_surf(surf_auto_nodescr)
+	surfice.set_description("I have a description now!")
+	surfice.set_name("Surfice1")
+	surfice.set_status(status2) # Just changes the status without making an event
+	surfice.set_status(status, "What happened now?")
+	surfice.set_status(status2, "Okay now we're back at status2")
+	printv(surfice, "SURFICE1 UPDATED")
+	
+	
+# 	
+	# Delete everything
+	try: surf_auto.delete_surf()
+	except: pass
+	try: surf_auto_nodescr.delete_surf()
+	except: pass
+	
+	try: status_nodescr = delete_status()
+	except: pass
+	
+	try: status.delete_status()
+	except: pass
+	try: status2.delete_status()
+	except: pass
+	
+	try: surfice.delete_surfice()
+	except: pass
+	try: surfice2.delete_surfice()
+	except: pass
+	
+
 # Test with Django tango
 def index(request):
-	
+	debug()
 	# Query the database for a list of ALL surfices currently stored.
 	# Order them by status in descending order
 	# Retrieve the top 5 only (the "-" in front of it) - or all if less than 5
@@ -48,7 +203,7 @@ def surf(request, surf_url):
 	# We start by containing the name of the surf passed by the user
 	context_dict = {'surf_name': surf_name}
 	
-	surfices = Surf.get_surfices(surf_name=surf_name)
+	surfices = Surf.get_surf(surf_name).get_surfices()
 	
 	if surfices:
 		# Add our results list to the template context under name 'surfices'.
@@ -57,6 +212,6 @@ def surf(request, surf_url):
 		# Also add the surf object from the database to the context dictionary
 		# We'll use this in the template to verify the category exists.
 		context_dict['surf'] = Surf.objects.get(name=surf_name)
-	print Event.get_events(end='2014-06-19')	
+		
 	# Go render the response and return it to the client
 	return render(request, 'surfice/surf.html', context_dict)
