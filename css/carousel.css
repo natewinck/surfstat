@@ -108,26 +108,43 @@ body {
 }
 /* Status--------------------------------------- */
 
-#status h2 {
+#status .service-hover {
+    display: none;
+    text-align: center;
+}
+
+#status .service-active {
     display: block;
     text-align: center;
 }
 #status .service {
     height: 200px;
-    width: 200px;
+    width: 250px;
+    padding-top: 75px;
+    padding-right: 10px;
+    padding-bottom: 10px;
+    padding-left: 10px;
+    margin: 20px;
     background: lightgreen;
-    float: left;
+    display: inline-block;
+    vertical-align: top;
+    position: relative;
 }
 #row1 {
    
 }
 
-#status {
-    width: 100%;
-    margin-left: 4%;
-    margin-right: 4%;
-    margin-top: 2%;
+.NATHANIELLOOKHERE {
+    margin:0 auto;
+    text-align: center;
+    width: 90%;
+    
 }
+
+#status {
+    width: 100%
+}
+
 
 .position-relative {
     position: relative;
@@ -195,7 +212,7 @@ body {
 
 @media (min-width: 992px) {
   .featurette-heading {
-    margin-top: 120px;
+    margin-top: 40px;
   }
   .featurette-heading.text-center {
     margin-top: 0px;
