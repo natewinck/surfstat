@@ -178,4 +178,29 @@ $(".surfice").hover(
 );
 */
 
+
+
+/* ON/OFF TOGGLE
+------------------------------ 
+*  Creates an on/off toggle switch out of checkbox inputs with .onoff-toggle
+*  
+*  INPUT
+* .onoff-toggle
+*
+------------------------------ */
+$(".onoff-toggle").bootstrapSwitch();
+
+
+$(".dropdown-menu.dropdown-select li").click(function(event) {
+    var $target = $( event.currentTarget );
+
+    $target.closest( '.input-group-btn' )
+        .find( '[data-bind="label"]' ).text( $target.text() )
+        .end()
+        .children( '.dropdown-toggle' ).dropdown( 'toggle' );
+
+    return false;
+ 
+});
+    
 });
