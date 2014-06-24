@@ -106,7 +106,21 @@ body {
   line-height: 1;
   letter-spacing: -1px;
 }
+
 /* Status--------------------------------------- */
+
+.heading {
+    color: inherit;
+    background-color: #fff;
+}
+.heading h1 {
+    font-size: 63px;
+}
+.heading p {
+    margin-bottom: 15px;
+    font-size: 21px;
+    font-weight: 200;
+}
 
 .surfices {
     margin:0 auto;
@@ -132,16 +146,20 @@ body {
     padding-bottom: 10px;
     padding-left: 10px;
     margin: 20px;
-    
-    background: lightgreen;
-    
     display: inline-block;
     vertical-align: top;
     position: relative;
-    
     cursor: pointer;
-    
     text-overflow: ellipsis;
+}
+#status .surfice-success {
+    background-color:#2ecc71;
+}
+#status .surfice-danger {
+    background-color:#e74c3c;
+}
+#status .surfice-warning {
+    background-color: #f1c40f;
 }
 
 #status .surfice h2 {
@@ -158,7 +176,7 @@ body {
 
 #status .surfice:hover > :first-child {
     opacity: 0.5;
-    text-shadow: 2px 2px 5px black;
+    text-shadow: 0px 0px 5px black;
     color: transparent;
 }
 
@@ -188,6 +206,21 @@ body {
     position: absolute;
 }
 
+.center-all {
+    left: 50%;
+/*    top: 50%;*/
+    transform: translate(-50%,-50%);
+    -webkit-transform: translate(-50%,-50%);
+    position: absolute;
+}
+.center-all-button {
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%,-50%);
+    -webkit-transform: translate(-50%,-50%);
+    position: absolute;
+}   
+
 /* EVENTS
 ------------------------------- */
 .events h2 {
@@ -206,7 +239,6 @@ body {
     border-bottom: none;
 }
 
-
 /* CHARTS
 ------------------------------- */
 
@@ -223,7 +255,8 @@ body {
 -------------------------------------------------- */
 
 @media (min-width: 500px) {
-
+        
+    
   /* Remove the edge padding needed for mobile */
   .marketing {
     padding-right: 0;
