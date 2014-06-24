@@ -1,6 +1,19 @@
 $(function() {
 
-// SMOOTH SCROLLING
+    
+    
+/* SMOOTH SCROLLING
+------------------------------
+*  Any time a link is clicked that goes to an #anchor,
+*  scroll to it instead of jumping to it.
+*  Also prevents a # from appearing in the URL
+* 
+*  INPUT
+*  a[href*=#*]      Any <a> with an href that starts with # (but not only #)
+*  
+*  EVENT
+*  click
+------------------------------ */
 $("a[href*=#]:not([href=#])").click(function() {
     if (location.pathname.replace(/^\//,'') == this.pathname.replace(/^\//,'') && location.hostname == this.hostname) {
         var target = $(this.hash);
@@ -15,16 +28,19 @@ $("a[href*=#]:not([href=#])").click(function() {
 });
 
 
+
 /* CHARTS
 ------------------------------ 
 *  Sets up all charts on a page with the .chart selector.
-*  Data is grabbed from the data attribute (FOR NOW)
+*  Data is grabbed from the chartData[] associative array
+*  that corresponds with the canvas's data-id attribute.
+*  
 *  When the chart either comes in view or is unhidden,
 *  the chart fades in after a short delay.
 *  
 *  INPUT
-*  cavnas.chart
-*  canvas.chart[data]
+*  canvas.chart
+*  chartData[]        Global variable defined before this section
 *  
 *  EVENT
 *  inview
@@ -41,12 +57,15 @@ $("canvas.chart").on("inview", function() {
     $this.animate({ opacity: 1 }, 1000);
 });
 
-
+// showLineChart($this)
+//
+// Shows the line chart based on its data-id
 function showLineChart($this) {
+    // Get the canvas context
     var ctx = $this[0].getContext("2d");
+    
+    // Get the chart data that corresponds to the data-id
     var data = chartData[$this.attr("data-id")];
-    //var data = $this.attr("data");
-    //data = $.parseJSON(data);
     
     
     // If colors are not set for the datasets, give them default color schemes
@@ -78,27 +97,6 @@ function showLineChart($this) {
         }     
     }
     
-    
-    var data2 = {
-        labels : ["January","February","March","April","May","June","July"],
-        datasets : [
-            {
-                fillColor : "rgba(220,220,220,0.5)",
-                strokeColor : "rgba(220,220,220,1)",
-                pointColor : "rgba(220,220,220,1)",
-                pointStrokeColor : "#fff",
-                data : [65,59,90,81,56,55,40]
-            },
-            {
-                fillColor : "rgba(73,23,109,0.5)",
-                strokeColor : "rgba(52,12,75,1)",
-                pointColor : "rgba(52,12,75,1)",
-                pointStrokeColor : "#fff",
-                data : [28,48,40,19,96,27,40]
-            }
-        ]
-    }
-    
     // Options for the animated charts
     var options = {
         ///Boolean - Whether grid lines are shown across the chart
@@ -111,9 +109,9 @@ function showLineChart($this) {
         onAnimationComplete : null
     }
     
+    // Draw the chart
     var chart = new Chart(ctx).Line(data, options);
 }
-
 
 
 
@@ -152,7 +150,7 @@ $('.nav a[data-toggle]').click(function (e) {
 *  hover (mouseover and mouseout)
 *
 ------------------------------ */
-
+/*
 $(".surfice").hover(
     // Mouseover the Surfice element
     function() {
@@ -178,6 +176,6 @@ $(".surfice").hover(
         $(this).children().first().stop().fadeIn(200);
     }
 );
-
+*/
 
 });

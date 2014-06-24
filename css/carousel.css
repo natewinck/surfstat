@@ -108,8 +108,15 @@ body {
 }
 /* Status--------------------------------------- */
 
+.surfices {
+    margin:0 auto;
+    text-align: center;
+    width: 90%;
+    
+}
+
 #status .surfice-hover {
-    display: none;
+    opacity: 0;
     text-align: center;
 }
 
@@ -119,26 +126,49 @@ body {
 }
 #status .surfice {
     height: 200px;
-    width: 250px;
+    width: 200px;
     padding-top: 75px;
     padding-right: 10px;
     padding-bottom: 10px;
     padding-left: 10px;
     margin: 20px;
+    
     background: lightgreen;
+    
     display: inline-block;
     vertical-align: top;
     position: relative;
-}
-#row1 {
-   
+    
+    cursor: pointer;
+    
+    text-overflow: ellipsis;
 }
 
-.NATHANIELLOOKHERE {
-    margin:0 auto;
-    text-align: center;
-    width: 90%;
-    
+#status .surfice h2 {
+    padding: 10px;
+    width: 180px;
+    font-size: 36px;
+
+}
+
+#status .surfice > * {
+    -webkit-transition: opacity 200ms linear; /* For Safari 3.1 to 6.0 */
+    transition: opacity 200ms linear;
+}
+
+#status .surfice:hover > :first-child {
+    opacity: 0.5;
+    text-shadow: 2px 2px 5px black;
+    color: transparent;
+}
+
+#status .surfice:hover > :last-child  {
+    display: block;
+    opacity: 1;
+}
+
+#status .surfice a {
+    font-size: 18px;
 }
 
 #status {
@@ -152,17 +182,41 @@ body {
 
 .center-all {
     left: 50%;
-    top: 50%;
+/*    top: 50%;*/
     transform: translate(-50%,-50%);
     -webkit-transform: translate(-50%,-50%);
-    position:absolute;
+    position: absolute;
 }
+
+/* EVENTS
+------------------------------- */
+.events h2 {
+    margin-bottom: 20px;
+}
+
+.events .row:after {
+    border-bottom: solid 1px #eee;
+    width: 50%;
+    margin: 0px auto 6px auto;
+    padding-top: 6px;
+    
+}
+
+.events .row:last-child:after {
+    border-bottom: none;
+}
+
 
 /* CHARTS
 ------------------------------- */
 
 .chart {
     opacity: 0;
+    width: 100% !important;
+}
+
+.chart-nav {
+    margin-left: 30px;
 }
 
 /* RESPONSIVE CSS
@@ -208,6 +262,11 @@ body {
       .featurette-heading-grid {
     font-size: 50px;
   }
+
+  .chart {
+        width: 500px !important;
+   }
+
 }
 
 @media (min-width: 992px) {
@@ -220,6 +279,11 @@ body {
     .featurette-heading-grid {
     margin-top: 0px;
   }
+    /* Center the object when small */
+  .center-all {
+    top: 50%;
+  }
+    
 
     
 
@@ -227,7 +291,7 @@ body {
     
 }
 
-/* BOOSTRAP EXTENSIONS
+/* BOOTSTRAP EXTENSIONS
 ---------------------------------------------- */
 /* custom inclusion of right, left and below tabs */
 
