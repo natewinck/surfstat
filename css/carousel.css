@@ -251,6 +251,28 @@ body {
     margin-left: 30px;
 }
 
+
+/* ADMIN OPTIONS
+---------------------------------------------- */
+.surfices-list  {
+    height: 250px;
+    overflow: scroll;
+}
+
+.divider-accordian {
+  margin: 30px 0; /* Space out the Bootstrap <hr> more */
+}
+.button-accordian {
+    margin-top: 5px;
+}
+.admin .jumbotron-admin {
+    color: white;
+    text-shadow: 0.1em 0.1em #333;
+    background-image: url(../images/wave.jpg) !important;
+    background-repeat: no-repeat;
+    
+}
+
 /* RESPONSIVE CSS
 -------------------------------------------------- */
 
@@ -318,11 +340,11 @@ body {
   }
     
 
-    
 
 
     
 }
+
 
 /* BOOTSTRAP EXTENSIONS
 ---------------------------------------------- */
