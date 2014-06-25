@@ -37,13 +37,13 @@
             <span class="icon-bar"></span>
             <span class="icon-bar"></span>
           </button>
-          <a class="navbar-brand" href="#">Asbury University Status</a>
+          <a class="navbar-brand" href="bootstrap.html">Asbury University Status</a>
         </div>
         <div class="navbar-collapse collapse">
           <ul class="nav navbar-nav">
-            <li class="active"><a href="#">Home</a></li>
-            <li><a href="#about">About</a></li>
-            <li><a href="#contact">Contact</a></li>
+            <li class="active"><a href="admin.html">Admin Home</a></li>
+            <li><a href="surfs.html">Surfs</a></li>
+            <li><a href="#contact">Surfices</a></li>
             <li class="dropdown">
               <a href="#" class="dropdown-toggle" data-toggle="dropdown">Dropdown <b class="caret"></b></a>
               <ul class="dropdown-menu">
@@ -69,7 +69,7 @@
             <div class="input-group input-group-lg">
               <input type="text" class="form-control" placeholder="Feed me an update...">
               <div class="input-group-btn">
-                <button type="button" class="btn btn-straight btn-default dropdown-toggle form-control" data-toggle="dropdown" tabindex="-1"><span data-bind="label">Status</span>
+                <button type="button" class="btn btn-straight btn-default dropdown-toggle form-control" data-toggle="dropdown" tabindex="-1"><span data-bind="label">Surfice</span>
                   <span class="caret"></span>
                   <span class="sr-only">Toggle Dropdown</span>
                 </button>
@@ -106,16 +106,86 @@
     </div>
       <!-- START THE FEATURETTES -->
 
-      <hr class="featurette-divider">
+<hr class="featurette-divider">
     
-    <div class="row featurette bg">
+    
+<div class="col-xs-12">
+    <div class="row">
         <div class="col-xs-6">
-            <h2 class="featurette-heading">Surf through your Surfices</h2>
-            <p>The latest update was to the Webmail surfice with a status of Up.  To make any changes, just select a new status from each surfice's dropdown menu.</p>
+            <h2 class="featurette-heading">Here are all your Surfs</h2> 
+            <p>Update ALL the Surfics at once by updating a Surf! Just select a new status from each surf's dropdown menu. Here at Asbury ITS, we work with the utmost efficiency.</p>
+        </div>    
+        <div class="col-xs-6">
+            <table class="table panel panel-default table-hover">
+                <tr>
+                    <td><a href="#">Webmail</a></td>
+                    <td>
+                        <div class="dropdown pull-right">
+                            <button type="button" class="btn btn-default btn-xs dropdown-toggle" data-toggle="dropdown" tabindex="-1">Current Status
+                                <span class="caret"></span>
+                            </button>
+                            <ul class="dropdown-menu" role="menu" aria-labelledby="dLabel">
+                                <li><a href="#">Up</a></li>
+                                <li><a href="#">Down</a></li>
+                                <li><a href="#">Other</a></li>
+                            </ul>
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td><a href="#">Discovery</a></td>
+                    <td class="pull">
+                        <div class="dropdown pull-right">
+                            <button type="button" class="btn btn-default btn-xs dropdown-toggle" data-toggle="dropdown" tabindex="-1">Current Status
+                                <span class="caret"></span>
+                            </button>
+                            <ul class="dropdown-menu" role="menu" aria-labelledby="dLabel">
+                                <li><a href="#">Up</a></li>
+                                <li><a href="#">Down</a></li>
+                                <li><a href="#">Other</a></li>
+                            </ul>
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td><a href="#">Online Surfices</a></td>
+                    <td class="pull">
+                        <div class="dropdown pull-right">
+                            <button type="button" class="btn btn-default btn-xs dropdown-toggle" data-toggle="dropdown" tabindex="-1">Current Status
+                                <span class="caret"></span>
+                            </button>
+                            <ul class="dropdown-menu" role="menu" aria-labelledby="dLabel">
+                                <li><a href="#">Up</a></li>
+                                <li><a href="#">Down</a></li>
+                                <li><a href="#">Other</a></li>
+                            </ul>
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td><a href="#">Password</a></td>
+                    <td class="pull">
+                        <div class="dropdown pull-right">
+                            <button type="button" class="btn btn-default btn-xs dropdown-toggle" data-toggle="dropdown" tabindex="-1">Current Status
+                                <span class="caret"></span>
+                            </button>
+                            <ul class="dropdown-menu" role="menu" aria-labelledby="dLabel">
+                                <li><a href="#">Up</a></li>
+                                <li><a href="#">Down</a></li>
+                                <li><a href="#">Other</a></li>
+                            </ul>
+                        </div>
+                    </td>
+                </tr>
+            </table>
         </div>
+    </div>
+    
+<hr class="featurette-divider">
 
+<div class="col-xs-12">
+    <div class="row">
         <div class="col-xs-6 events">
-            <div class="row">
                 <table class="table panel panel-default table-hover">
                     <tr>
                         <td><a href="#">Webmail</a></td>
@@ -133,7 +203,22 @@
                         </td>
                     </tr>
                     <tr>
-                        <td><a href="#">Online</a></td>
+                        <td><a href="#">Discovery</a></td>
+                        <td class="pull">
+                            <div class="dropdown pull-right">
+                                <button type="button" class="btn btn-default btn-xs dropdown-toggle" data-toggle="dropdown" tabindex="-1">Down
+                                    <span class="caret"></span>
+                                </button>
+                                <ul class="dropdown-menu" role="menu" aria-labelledby="dLabel">
+                                    <li><a href="#">something</a></li>
+                                    <li><a href="#">something</a></li>
+                                    <li><a href="#">something</a></li>
+                                </ul>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><a href="#">Online Surfices</a></td>
                         <td class="pull">
                             <div class="dropdown pull-right">
                                 <button type="button" class="btn btn-default btn-xs dropdown-toggle" data-toggle="dropdown" tabindex="-1">Down
@@ -252,118 +337,38 @@
                             </div>
                         </td>
                     </tr>
-                    <tr>
-                        <td><a href="#">Online</a></td>
-                        <td class="pull">
-                            <div class="dropdown pull-right">
-                                <button type="button" class="btn btn-default btn-xs dropdown-toggle" data-toggle="dropdown" tabindex="-1">Down
-                                    <span class="caret"></span>
-                                </button>
-                                <ul class="dropdown-menu" role="menu" aria-labelledby="dLabel">
-                                    <li><a href="#">something</a></li>
-                                    <li><a href="#">something</a></li>
-                                    <li><a href="#">something</a></li>
-                                </ul>
-                            </div>
-                        </td>
-                    </tr>
-                    
-                    
                 </table>
             </div>
-            
-        </div>
-    </div>
-
-    <hr class="featurette-divider">
+            <div class="col-xs-6">
+            <h2 class="featurette-heading" style="text-align:right">Surf through your Surfices</h2>
+            <p style="text-align:right">The latest update was to the Webmail surfice with a status of Up.  To make any changes, just select a new status from each surfice's dropdown menu.</p>
+            </div>  
+</div>
     
+<hr class="featurette-divider">
     
-    <div class="row featurette">
-        <div class="col-xs-12">
+<div class="col-xs-12">
             <h2 class="featurette-heading text-center">What's happening lately?</h2>
-            <table class="table panel panel-default table-hover">
-                <tr>
-                    <td><a href="#">Webmail</a></td>
-                    <td>
-                        <div class="dropdown pull-right">
-                            <button type="button" class="btn btn-default btn-xs dropdown-toggle" data-toggle="dropdown" tabindex="-1">Current Status
-                                <span class="caret"></span>
-                            </button>
-                            <ul class="dropdown-menu" role="menu" aria-labelledby="dLabel">
-                                <li><a href="#">something</a></li>
-                                <li><a href="#">something</a></li>
-                                <li><a href="#">something</a></li>
-                            </ul>
-                        </div>
-                    </td>
-                </tr>
-                <tr>
-                    <td><a href="#">Online</a></td>
-                    <td class="pull">
-                        <div class="dropdown pull-right">
-                            <button type="button" class="btn btn-default btn-xs dropdown-toggle" data-toggle="dropdown" tabindex="-1">Down
-                                <span class="caret"></span>
-                            </button>
-                            <ul class="dropdown-menu" role="menu" aria-labelledby="dLabel">
-                                <li><a href="#">something</a></li>
-                                <li><a href="#">something</a></li>
-                                <li><a href="#">something</a></li>
-                            </ul>
-                        </div>
-                    </td>
-                </tr>
-
-
-            </table>
-        </div>
+            <div class="row">
+                <div class="col-xs-3 col-xs-offset-2">June 20</div>
+                <div class="col-xs-7">All surfices related to webmail have now been restored.</div>
+            </div>
+            <div class="row">
+                <div class="col-xs-3 col-xs-offset-2">June 19</div>
+                <div class="col-xs-7">Letters A-Q have been restored. We are still working with support to get R-Z up.</div>
+            </div>
+            <div class="row">
+                <div class="col-xs-3 col-xs-offset-2">June 17</div>
+                <div class="col-xs-7">Webmail is now down. Please check back regularly to get updates.</div>
+            </div>
+    <div class="row featurette bg">
+        
     </div>
-    
-    <hr class="featurette-divider">
-    
-    
-    <div class="row featurette">
-        <div class="col-xs-12">
-            <h2 class="featurette-heading text-center">Here are all your Surfs</h2>
-            <table class="table panel panel-default table-hover">
-                <tr>
-                    <td><a href="#">Webmail</a></td>
-                    <td>
-                        <div class="dropdown pull-right">
-                            <button type="button" class="btn btn-default btn-xs dropdown-toggle" data-toggle="dropdown" tabindex="-1">Current Status
-                                <span class="caret"></span>
-                            </button>
-                            <ul class="dropdown-menu" role="menu" aria-labelledby="dLabel">
-                                <li><a href="#">something</a></li>
-                                <li><a href="#">something</a></li>
-                                <li><a href="#">something</a></li>
-                            </ul>
-                        </div>
-                    </td>
-                </tr>
-                <tr>
-                    <td><a href="#">Online</a></td>
-                    <td class="pull">
-                        <div class="dropdown pull-right">
-                            <button type="button" class="btn btn-default btn-xs dropdown-toggle" data-toggle="dropdown" tabindex="-1">Down
-                                <span class="caret"></span>
-                            </button>
-                            <ul class="dropdown-menu" role="menu" aria-labelledby="dLabel">
-                                <li><a href="#">something</a></li>
-                                <li><a href="#">something</a></li>
-                                <li><a href="#">something</a></li>
-                            </ul>
-                        </div>
-                    </td>
-                </tr>
 
-
-            </table>
-        </div>
-    </div>
-    
     <hr class="featurette-divider">
-    
       <div class="row featurette">
+          <h2 class="featurette-heading" style="margin-top:-30px; margin-bottom:15px;">Charts on Charts on Charts</h2>
+          <div class="row">
         <div class="col-md-12 tabs-below">
             
             <div class="tab-content">
