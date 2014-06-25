@@ -10,6 +10,9 @@ urlpatterns = patterns('',
     # url(r'^blog/', include('blog.urls')),
 
     url(r'^admin/', include(admin.site.urls)),
+    
+    # Root redirects to index
+    
     # Root redirects to surfice app
     url('', include('surfice.urls')),
     # Include surfice app

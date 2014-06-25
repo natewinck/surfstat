@@ -1,3 +1,5 @@
+DEBUG = False
+
 #import logging
 from django.shortcuts import render
 from django.http import HttpResponse
@@ -159,11 +161,20 @@ def debug():
 	except: pass
 	try: surfice2.delete_surfice()
 	except: pass
-	
+
+
+def ding(request):
+	#Not checking yet because this is a test
+	#if 'q' in request.POST:
+    #    message = 'You searched for: %r' % request.POST['q']
+    d = request.POST
+	Ding.create_ding(d['surfice'], d['status'], d['email'], d['description'])
+	#index(request)
 
 # Test with Django tango
 def index(request):
-	debug()
+	if DEBUG: debug()
+	
 	# Query the database for a list of ALL surfices currently stored.
 	# Order them by status in descending order
 	# Retrieve the top 5 only (the "-" in front of it) - or all if less than 5
@@ -172,14 +183,38 @@ def index(request):
 	#surfice_list = Surfice.objects.order_by('-status')[:5]
 	#context_dict = {'surfices': surfice_list}
 	
+	# Query the database for a list of ALL surfices currently stored.
+	surfice_list = Surfice.get_surfices()
+	
+	# Place the list in our context_dict dictionary which
+	# will be passed to the template engine
+	context_dict = {'surfices': surfice_list}
+	
+	# Query the database for a list of all the events
+	# Place them in context_dict
+	event_list = Event.get_events()
+	context_dict['events'] = event_list
+	
+	
+	
+	
+	
+	# GET ISSUE STATUS COLOR HERE -------------------------------------
+	# SET A DEFAULT STATUS AS AN ISSUE ----------------------------------
+	
+	
+	
+	
+	
+	
 	# Query for surfs = add the list to our context dictionary.
-	surf_list = Surf.objects.order_by('-name')[:5]
-	context_dict = {'surfs': surf_list}
+	#surf_list = Surf.objects.order_by('-name')[:5]
+	#context_dict = {'surfs': surf_list}
 	
 	# We loop through each category returned, and create a URL attribute.
 	# This attribute stores an encoded URL
-	for surf in surf_list:
-		surf.url = surf.name.replace(' ', '_')
+	#for surf in surf_list:
+	#	surf.url = surf.name.replace(' ', '_')
 	
 	# The context is already figured out by the render() shortcut so...
 	# Render the response and send it back!

@@ -602,15 +602,50 @@ class Status(models.Model):
 # -----------------------------------------
 class Ding(models.Model):
 	# Class variables
-	name		= models.CharField(max_length=512, unique=False)
-	timestamp	= models.DateField(auto_now=False, auto_now_add=True)
+	timestamp	= models.DateTimeField(auto_now=False, auto_now_add=True)
 	surfice		= models.ForeignKey(Surfice)
+	status		= models.ForeignKey(Status)
 	email		= models.EmailField()
 	description	= models.TextField()
 	
 	def __unicode__(self):
 		return self.name
-
+	
+	# -------------------------------------
+	# @staticmethod create_ding(surfice, status, email, description)
+	# 
+	# Creates an event for the set surfice. The surfice's status is also updated
+	#
+	# INPUT
+	# surfice					The surfice object that has a ding
+	# status					The reported status of the surfice
+	# description (optional)	Description of the event
+	# email						The email address of the person who submitted the ding
+	#
+	# RETURNS
+	# The created ding
+	# -------------------------------------
+	@staticmethod
+	def create_ding(surfice, status, email, description=''):
+		# Create the Ding object
+		ding = Ding()
+		
+		# Assign the attributes to the Ding object SHOULD CHECK THESE FIRST!
+		ding.surfice = surfice
+		ding.status = status
+		ding.email = email
+		ding.description = description
+		
+		# Save the Ding object to the database
+		ding.save()
+		
+		return ding
+	
+	
+	# Flesh this out...just temporary
+	@staticmethod
+	def get_dings():
+		return Ding.objects.all()
 
 
 
@@ -628,7 +663,7 @@ class Ding(models.Model):
 # ---------------------------------------
 class Event(models.Model):
 	# Class variables
-	timestamp	= models.DateField(auto_now=512, auto_now_add=True)
+	timestamp	= models.DateTimeField(auto_now=512, auto_now_add=True)
 	status		= models.ForeignKey(Status)
 	surfice		= models.ForeignKey(Surfice)
 	description	= models.TextField()
