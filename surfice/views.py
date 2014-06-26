@@ -6,8 +6,6 @@ from django.http import HttpResponse
 #from django.template import Context, Template
 from surfice.models import Surf, Surfice, Status, Ding, Event
 
-from django.template import RequestContext
-
 # Create your views here.
 
 def printv(obj, title=""): # Print your variables!
@@ -249,6 +247,28 @@ def index(request):
 	return render(request, 'surfice/index.html', context_dict)
 	
 	#return HttpResponse("Rango says hello world!")
+
+
+def admin(request):
+	context_dict = {}
+	
+	# Query for surfs and add them to context_dict
+	surf_list = Surf.get_surfs()
+	context_dict['surfs'] = surf_list
+	
+	# Query for Surfices and add them to context_dict
+	surfice_list = Surfice.get_surfices()
+	context_dict['surfices'] = surfice_list
+	
+	# Query for Events and add them to context_dict
+	event_list = Event.get_events()
+	context_dict['events'] = event_list
+	
+	# Query for Statuses and add them to context_dict
+	status_list = Status.get_statuses()
+	context_dict['statuses'] = status_list
+	
+	return render(request, 'surfice/admin.html', context_dict)
 
 
 def surf(request, surf_url):

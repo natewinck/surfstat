@@ -188,7 +188,7 @@ $(".surfice").hover(
 * .onoff-toggle
 *
 ------------------------------ */
-$(".onoff-toggle").bootstrapSwitch();
+//$(".onoff-toggle").bootstrapSwitch();
 
 
 
@@ -202,9 +202,9 @@ $(".onoff-toggle").bootstrapSwitch();
 * .dropdown-menu.dropdown-select li        The li elements in the group button options
 *
 ------------------------------ */
-$(".dropdown-menu.dropdown-select li").click(function(event) {
+$(".dropdown-select .dropdown-menu li").click(function(event) {
     var $target = $( event.currentTarget );
-    var $group = $target.closest( '.input-group-btn' )
+    var $group = $target.closest( '.dropdown-select' )
     $group
         .find( '[data-bind="label"]' ).text( $target.text() )
         .end()
@@ -215,5 +215,16 @@ $(".dropdown-menu.dropdown-select li").click(function(event) {
     return false;
  
 });
+    
+
+/* AUTOSUBMIT DROPDOWN
+------------------------------ */
+$("form .dropdown-select.autosubmit .dropdown-menu li a").click(function(e) {
+    console.log("HI");
+    e.preventDefault();
+    
+    $(this).parents("form").submit();
+});
+    
     
 });

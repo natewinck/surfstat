@@ -84,6 +84,27 @@ class Surf(models.Model):
 			surf = None
 			pass
 		return surf
+	
+	# --------------------------
+	# @staticmethod get_surfs() ###########
+	#
+	# Get a Surf object by name from the database
+	#
+	# INPUT
+	# name			The name of the Surf object
+	#
+	# RETURNS
+	# A Surf object
+	# null if no object by name
+	# ---------------------------
+	@staticmethod
+	def get_surfs():
+		try:
+			surfs = Surf.objects.all()
+		except Surf.DoesNotExist:
+			surfs = []
+			pass
+		return surfs
 		
 	# -------------------------------------
 	# @staticmethod create_surf(name, description)
