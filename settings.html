@@ -8,6 +8,9 @@
     <meta name="author" content="">
     <link rel="shortcut icon" href="assets/ico/favicon.ico">
 
+    <!-- x-editable (bootstrap version) -->
+    <link href="http://cdnjs.cloudflare.com/ajax/libs/x-editable/1.4.6/bootstrap-editable/css/bootstrap-editable.css" rel="stylesheet"/>
+
     <title>Status Admin</title>
 
     <!-- Bootstrap core CSS -->
@@ -73,142 +76,23 @@
         <p>Surfice (n): the building block to the surfs that make up the ITS infrastructure</p>
     </div>
     </div>
+    
+    
 </div>
- <div class="container">     
-    <div class="col-xs-offset-2 col-xs-8">
-        <div class="row">
-            <h3>Create a Status</h3>
-        </div>
-        <div class="row">
-            <div class="col-xs-6">
-                <p>New Status Name</p>
-                <input type="text" class="form-control" placeholder="Status Name">
-            </div>
-            <div class="col-xs-6">
-                <p>New Status Description</p>
-                <textarea class="form-control" rows="3" placeholder="Add Status Description"></textarea>
-            </div>
-        </div>
-        <div class="row">
-            <div class="col-xs-6">
-                <p>Assign Status Color</p>    
-                <input type="text" class="form-control color" placeholder="Status Name">
-            </div>
-        </div>
-        <div class="row">
-            <button type="button" class="btn btn-success pull-right button-accordian">Add</button>
-        </div>
-        <div class="row">
-            <h3>Current Statuses</h3>
-            <p>Click to edit status</p>
-        </div>
-        <div class="row">
-            <div class="panel-group" id="accordion">
-                    <div class="panel panel-default">
-<!--Start Panel 1 of Accordian-->
-                         <div class="panel-heading">
-                                <h4 class="panel-title">
-                                    <a data-toggle="collapse" data-parent="#accordion" data-target="#collapseOne">Up</a>
-                                </h4>
-                        </div>
-                        <div id="collapseOne" class="panel-collapse collapse">
-                            <div class="panel-body">
-                                <div class="col-xs-12">
-                                    <h3>Edit Your Status</h3>
-                                </div>
-                                    <div class="row">
-                                        <div class="col-xs-6">
-                                            <p>Update Status Name</p>
-                                            <input type="text" class="form-control" placeholder="Status Name">
-                                        </div>
-                                        <div class="col-xs-6">
-                                            <p>Update Status Description</p>
-                                            <textarea class="form-control" rows="3" placeholder="Update Description here.."></textarea>
-                                        </div>
-                                    </div>
-                                    <div class="row">
-                                        <div class="col-xs-4">
-                                        <p>Define Status Color</p>
-                                       <input type="text" class="form-control color" placeholder="Text input">
-                                        </div>
-                                    </div>
-                                <div class="row">
-                                        <div class="col-xs-offset-6 col-xs-3">
-                                            <button type="button" class="btn btn-danger button-accordian pull-right">Delete Status</button>
-                                        </div>
-                                        <div class="col-xs-3">
-                                        <button type="button" class="btn btn-success button-accordian pull-right">Submit Changes</button>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-            <div class="panel-group" id="accordion">
-                    <div class="panel panel-default">
-<!--Start Panel 1 of Accordian-->
-                        <div class="panel-heading">
-                                <h4 class="panel-title">
-                                    <a data-toggle="collapse" data-parent="#accordion" data-target="#collapseTwo">Up</a>
-                                </h4>
-                        </div>
-                        <div id="collapseTwo" class="panel-collapse collapse">
-                            <div class="panel-body">
-                                <div class="col-xs-12">
-                                    <h3>Edit Your Status</h3>
-                                </div>
-                                    <div class="row">
-                                        <div class="col-xs-6">
-                                            <p>Update Status Name</p>
-                                            <input type="text" class="form-control" placeholder="Status Name">
-                                        </div>
-                                        <div class="col-xs-6">
-                                            <p>Update Status Description</p>
-                                            <textarea class="form-control" rows="3" placeholder="Update Description here.."></textarea>
-                                        </div>
-                                    </div>
-                                    <div class="row">
-                                        <div class="col-xs-4">
-                                        <p>Define Status Color</p>
-                                       <input type="text" class="form-control color" placeholder="Text input">
-                                        </div>
-                                    </div>
-                                    <div class="row">
-                                        <div class="col-xs-offset-6 col-xs-3">
-                                            <button type="button" class="btn btn-danger button-accordian pull-right">Delete Status</button>
-                                        </div>
-                                        <div class="col-xs-3">
-                                        <button type="button" class="btn btn-success button-accordian pull-right">Submit Changes</button>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                                    </div>
-                                </div>
-                            </div>
-            
-            
-            
-            
-            
-                        </div>
-                    </div>
-     
-        
-
-<!--
-      <div class="row featurette">
+    <div class="container">
+     <div class="row featurette">
         <div class="col-md-7">
             <table class="table table-striped">
                 <tr>
-                    <th>Surfice</th>
-                    <th>Short Description</th>
-                    <th>Status</th>
+                    <th>Group</th>
+                    <th>Update Permissions</th>
+                    <th>Add Permissions</th>
                 </tr>
                 <tr>
-                    <td>Webmail</td>
-                    <td>It went down</td>
-                    <td>Broken</td>
+                    <td><a href="#" id="username" data-type="text" data-pk="1" data-url="/post" data-title="Enter username">HelpDesk Students</a></td>
+                    <td><a href="#" id="firstname" data-type="text" data-pk="1" data-url="/post" data-title="Enter username">Yes</a></td>
+                    <td><a href="#" id="lastname" data-type="text" data-pk="1" data-url="/post" data-title="Enter username">Yes</a></td>
+                    <td><a href="#" id="password" data-type="password" name="password" input-type="password" data-pk="1" data-url="/post" data-title="Enter username">password</a></td>
                 </tr>
                 <tr>
                     <td>Webmail</td>
@@ -227,6 +111,14 @@
                 </tr>
             </table>
         </div>
+    </div>
+      <div>
+        <span>Status:</span>
+        <a href="#" id="status"></a>
+      </div>
+
+<!--
+      
         <div class="col-md-5">
           <h2 class="featurette-heading">Bring me up to speed. <span class="text-muted">What's happening lately?</span></h2>
           <p class="lead">Donec ullamcorper nulla non metus auctor fringilla. Vestibulum id ligula porta felis euismod semper. Praesent commodo cursus magna, vel scelerisque nisl consectetur. Fusce dapibus, tellus ac cursus commodo.</p>
@@ -272,6 +164,8 @@
     <script src="js/jquery.inview.min.js"></script>
     <script src="js/Chart.min.js"></script>
     <script src="jscolor/jscolor.js"></script>
+    <script src="http://cdnjs.cloudflare.com/ajax/libs/x-editable/1.4.6/bootstrap-editable/js/bootstrap-editable.min.js"></script>
+       <script src="js/main.js"></script>
     <script>
         
         // Dynamically filled onload
@@ -317,6 +211,8 @@
         
         
     </script>
+      <script src="bootstrap-editable/js/bootstrap-editable.js"></script>
+      <script src="js/main.js"></script>
     <script src="js/effects.js"></script>
 
 </body>
