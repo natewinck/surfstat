@@ -9,7 +9,7 @@ urlpatterns = patterns('',
     # url(r'^$', 'surfstat.views.home', name='home'),
     # url(r'^blog/', include('blog.urls')),
 
-    url(r'^admin/', include(admin.site.urls)),
+    url(r'^db/', include(admin.site.urls)),
     
     # Root redirects to index
     

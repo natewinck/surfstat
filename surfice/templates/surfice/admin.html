@@ -12,6 +12,7 @@
     
     {% load static %}
     {% load humanize %}
+    {% load slugify %}
     
     <!-- Bootstrap core CSS -->
     <link href="{% static 'surfice/css/bootstrap.min.css' %}" rel="stylesheet">
@@ -67,10 +68,12 @@
 
    
 <div class="container">
-    <div class="row jumbotron">
+    <form class="row jumbotron" type="ajax" action="ajax/set-status" method="post">
+    {# To prevent cross-site forgery, include the following required tag #}
+    {% csrf_token %}
         <div class="col-xs-12">
             <div class="input-group input-group-lg">
-              <input type="text" class="form-control" placeholder="Feed me an update...">
+              <input type="text" name="description" class="form-control" placeholder="Feed me an update...">
               <div class="input-group-btn dropdown-select">
                   <input type="hidden" name="surfice">
                 <button type="button" class="btn btn-straight btn-default dropdown-toggle form-control" data-toggle="dropdown" tabindex="-1"><span data-bind="label">Surfice</span>
@@ -104,7 +107,7 @@
           </div>
             
         </div>
-    </div>
+    </form>
       <!-- START THE FEATURETTES -->
 
 <hr class="featurette-divider">
@@ -121,18 +124,24 @@
                 {% for surf in surfs %}
                 <tr>
                     
-                    <td><a href="#">{{ surf.name }}</a></td>
+                    <td><a href="surfs/{{ surf.name|slugify }}">{{ surf.name }}</a></td>
                     <td>
-                        <div class="dropdown pull-right">
-                            <button type="button" class="btn btn-default btn-xs dropdown-toggle" data-toggle="dropdown" tabindex="-1">Change Status
-                                <span class="caret"></span>
-                            </button>
-                            <ul class="dropdown-menu" role="menu" aria-labelledby="dLabel">
-                                {% for status in statuses %}
-                                <li><a href="#">{{ status.name }}</a></li>
-                                {% endfor %}
-                            </ul>
-                        </div>
+                        <form type="ajax" action="ajax/set-surf-status" method="post">
+                            {# To prevent cross-site forgery, include the following required tag #}
+                            {% csrf_token %}
+                            <input type="hidden" name="surf" value="{{ surf.id }}">
+                            <div class="dropdown dropdown-select autosubmit pull-right">
+                                <input type="hidden" name="status">
+                                <button type="button" class="btn btn-default btn-xs dropdown-toggle" data-toggle="dropdown" tabindex="-1"><span data-bind="label">Change Status</span>
+                                    <span class="caret"></span>
+                                </button>
+                                <ul class="dropdown-menu" role="menu" aria-labelledby="dLabel">
+                                    {% for status in statuses %}
+                                    <li value="{{ status.id }}"><a href="#">{{ status.name }}</a></li>
+                                    {% endfor %}
+                                </ul>
+                            </div>
+                        </form>
                     </td>
                 </tr>
                 {% endfor %}
@@ -148,12 +157,13 @@
                 <table class="table panel panel-default table-hover">
                     {% for surfice in surfices %}
                     <tr>
-                        <td><a href="#">{{ surfice.name }}</a></td>
+                        <td><a href="surfices/{{ surfice.name|slugify }}">{{ surfice.name }}</a></td>
                         <td>
                             
-                            <form type="ajax" action="ajax/">
+                            <form type="ajax" method="post" action="ajax/set-status">
                                 {# To prevent cross-site forgery, include the following required tag #}
                                 {% csrf_token %}
+                                <input type="hidden" name="surfice" value="{{ surfice.id }}">
                                 <div class="dropdown pull-right dropdown-select autosubmit">
                                     <input type="hidden" name="status">
                                     <button type="button" class="btn btn-default btn-xs dropdown-toggle" data-toggle="dropdown" tabindex="-1"><span data-bind="label">{{ surfice.status.name }}</span>
@@ -161,7 +171,7 @@
                                     </button>
                                     <ul class="dropdown-menu" role="menu" aria-labelledby="dLabel">
                                         {% for status in statuses %}
-                                        <li><a href="#">{{ status.name }}</a></li>
+                                        <li value="{{ status.id }}"><a href="#">{{ status.name }}</a></li>
                                         {% endfor %}
                                     </ul>
                                 </div>

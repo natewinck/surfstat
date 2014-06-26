@@ -67,43 +67,65 @@ class Surf(models.Model):
 	# --------------------------
 	# @staticmethod get_surf(name)
 	#
-	# Get a Surf object by name from the database
+	# Get a Surf object by name OR id from the database
 	#
 	# INPUT
 	# name			The name of the Surf object
+	# id			The id of the Surf object
 	#
 	# RETURNS
 	# A Surf object
 	# null if no object by name
 	# ---------------------------
 	@staticmethod
-	def get_surf(name):
-		try:
-			surf = Surf.objects.get(name=name)
-		except Surf.DoesNotExist:
-			surf = None
-			pass
+	def get_surf(name='', id=''):
+		surf = None
+		
+		if name != '':
+			try:
+				surf = Surf.objects.get(name=name)
+			except Surf.DoesNotExist:
+				pass
+
+		elif id != '':
+			try:
+				surf = Surf.objects.get(id=id)
+			except Surf.DoesNotExist:
+				pass
+
+
 		return surf
 	
 	# --------------------------
 	# @staticmethod get_surfs() ###########
 	#
-	# Get a Surf object by name from the database
+	# Get Surf objects that contain a name.  If no name is given, all Surfs are returned
 	#
 	# INPUT
-	# name			The name of the Surf object
+	# name			The name of Surf to search for
 	#
 	# RETURNS
-	# A Surf object
-	# null if no object by name
+	# An array of Surf objects
+	# Empty array if none found
 	# ---------------------------
 	@staticmethod
-	def get_surfs():
-		try:
-			surfs = Surf.objects.all()
-		except Surf.DoesNotExist:
-			surfs = []
-			pass
+	def get_surfs(name=None):
+		surfs = []
+		
+		# If name paramater is set, find all Surfs that contain that name
+		if name != None:
+			try:
+				surfs = Surf.objects.filter(name__icontains=name)
+			except Surf.DoesNotExist:
+				pass
+
+		# If no params are passed, get all the Surfs in the database
+		else:
+			try:
+				surfs = Surf.objects.all()
+			except Surf.DoesNotExist:
+				pass
+		
 		return surfs
 		
 	# -------------------------------------
@@ -243,7 +265,7 @@ class Surfice(models.Model):
 	# -------------------------------------
 	# get_surfice(name)
 	# 
-	# Gets the surfice with the define name
+	# Gets the surfice with the defined name
 	# 
 	# INPUT
 	# name			The name of the surfice
@@ -291,7 +313,7 @@ class Surfice(models.Model):
 			# If both surf and name are set, find all objects with that Surf
 			# and contain the name
 			if surf != None and name != None:
-				surfices = Surfice.objects.filter(surf=surf.id, name__contains=name)
+				surfices = Surfice.objects.filter(surf=surf.id, name__icontains=name)
 			
 			# If surf is set, find all Surfice objects with that Surf
 			elif surf != None:
@@ -300,7 +322,7 @@ class Surfice(models.Model):
 				
 			# If name is set, find all Surfices that contain that name
 			elif name != None:
-				surfices = Surfice.objects.filter(name__contains=name)
+				surfices = Surfice.objects.filter(name__icontains=name)
 			
 			# If nothing is set, find all Surfices
 			else:
@@ -368,18 +390,21 @@ class Surfice(models.Model):
 	# -------------------------------------
 	# set_surf(self, surf)
 	# 
-	# Sets the surf of the surfice and saves it to the database
+	# Sets the surf of the surfice and saves it to the database.
+	# Only runs if Surf object exists in database. If it doesn't,
+	# nothing happens
 	# 
 	# INPUT
 	# surf			The surf object that this surfice will be set to
 	#
 	# -------------------------------------
 	def set_surf(self, surf):
-		# CHECK IF surf IS SURF OBJECT
-		self.surf = surf
+		# Check to make sure Surf is actually in the database
+		if Surf.is_saved(surf.name):
+			self.surf = surf
 		
-		# Save surfice object to database
-		self.save()
+			# Save surfice object to database
+			self.save()
 	
 	# -------------------------------------
 	# set_description(self, description)
@@ -535,26 +560,37 @@ class Status(models.Model):
 	# -------------------------------------
 	# @staticmethod get_status(name)
 	# 
-	# Gets a status object by name.
+	# Gets a status object by name or id. If no parameter is
+	# passed, nothing is returned
 	#
 	# INPUT
-	# name			The name of the status
+	# name (optional)		The name of the status
+	# id (optional)			The id of the status
 	#
 	# RETURNS
-	# The status object
+	# A status object if found
+	# If nothing is found, nothing is returned
 	# -------------------------------------
 	@staticmethod
-	def get_status(name='', id=''):
+	def get_status(name=None, id=None):
+		# Default value to return is nothing
 		status = None
 		
-		if name != '':
+		# If name is set, get the status that has that name
+		if name != None:
 			try:
 				status = Status.objects.get(name=name)
+
+			# If nothing is found, do nothing
 			except:
 				pass
-		elif id != '':
+
+		# If id is set, get the status with that id
+		elif id != None:
 			try:
 				status = Status.objects.get(id=id)
+			
+			# If nothing is found, do nothing
 			except:
 				pass
 		
@@ -567,16 +603,32 @@ class Status(models.Model):
 	# 
 	# Gets a list of all the statuses
 	#
+	# INPUT
+	# name (optional)		Find statuses that contain this name
+	#
 	# RETURNS
-	# The an array of statuses
+	# An array of statuses (empty if nothing found)
 	# -------------------------------------
 	@staticmethod
-	def get_statuses():
-		try:
-			statuses = Status.objects.all()
-		except:
-			statuses = []
-			pass
+	def get_statuses(name=None):
+		
+		# If no statuses are found, return an empty array
+		statuses = []
+		
+		# If name is set, find all statuses that contain that name (case insensitive)
+		if name != None:
+			try:
+				statuses = Status.objects.filter(name__icontains=name)
+			except:
+				pass
+		
+		# If no params are passed, get all the statuses in the database
+		else:
+			try:
+				statuses = Status.objects.all()
+			except:
+				pass
+		
 		return statuses
 	
 	
@@ -700,9 +752,48 @@ class Ding(models.Model):
 		return ding
 	
 	
-	# Flesh this out...just temporary
+	# -------------------------------------
+	# @staticmethod get_dings(**kwargs)
+	# 
+	# Get Dings in reverse chronological order (newest first)
+	# from the database based on the arguments.
+	# All arguments are optional, and only one at time can be used
+	# (other than the start, end variables)
+	# If no argument is passed, all Dings are returned
+	# 
+	#
+	# INPUT
+	# surfice					The surfice object that has a ding
+	# status					The reported status of the surfice
+	# description (optional)	Description of the event
+	# email						The email address of the person who submitted the ding
+	#
+	# RETURNS
+	# The created ding
+	#
+	# Gets events in reverse chronological order (newest first) based on the arguments
+	# All arguments are optional, and only one at a time can be used
+	# (other than the start, end variables)
+	#
+	# INPUT
+	# days			int in number of days back from the current day to pull dings
+	# events		int number of dings to pull regardless of date
+	# start			timestamp (YYYY-MM-DD) of the start date of dings
+	# end			timestamp (YYYY-MM-DD) of the end date. Gets dings
+	#				from before and including this date
+	# start, end		if both are set, all dings between (inclusive)
+	#					will be returned
+	# surfice		Dings related to a Surfice object
+	# email			The email address of the person who submitted the ding
+	# status		The reported status stored in the Ding
+	# [none]		If no argument is passed, all stored Dings will be returned
+	#
+	# RETURNS
+	# Array of Dings in reverse chronological order (newest first)
+	# -------------------------------------
 	@staticmethod
-	def get_dings():
+	def get_dings(email=None, status=None, surfice=None, date=None):
+		#if email
 		return Ding.objects.all()
 
 
@@ -778,6 +869,7 @@ class Event(models.Model):
 	# start, end		if both are set, all events between (inclusive)
 	#					will be returned
 	# [none]	If no argument is passed, all stored events will be returned
+	# NEED TO ADD GET ALL EVENTS THAT HAPPENED WITH A SPECIFIC SURFICE OR SURF
 	#
 	# RETURNS
 	# Array of events in reverse chronological order (newest first)

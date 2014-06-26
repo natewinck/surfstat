@@ -196,10 +196,19 @@ $(".surfice").hover(
 ------------------------------ 
 *  Takes a bootstrap group button selector and turns it into
 *  the equivalent of <select>.  It will also change a hidden input
-*  and change the value to the value defined on the li elements
+*  and change the value to the value defined on the li elements.
+*  
+*  Takes any group of bootstrap buttons with the .dropdown-select class.
+*  It then takes the text of the selected li element and puts it in the
+*  element with the data-bind='label' attribute.
+*  Next, it toggles the select so the dropdown disappears
+*  Finally the input[type='hidden'] element within the .dropdown-select element
+*  receives li[value] attribute
+*  
+*  If the dropdown also has .autosubmit class, the form is submitted
 *  
 *  INPUT
-* .dropdown-menu.dropdown-select li        The li elements in the group button options
+* .dropdown-select .dropdown-menu li        The li elements in the group button options
 *
 ------------------------------ */
 $(".dropdown-select .dropdown-menu li").click(function(event) {
@@ -212,6 +221,11 @@ $(".dropdown-select .dropdown-menu li").click(function(event) {
     
     $group.find( 'input[type="hidden"]' ).val( $target.attr("value") )
     
+    // If the dropdown autosubmits the form, submit it now!
+    if ($group.hasClass("autosubmit")) {
+        $(this).parents("form").submit();
+    }
+    
     return false;
  
 });
@@ -219,12 +233,12 @@ $(".dropdown-select .dropdown-menu li").click(function(event) {
 
 /* AUTOSUBMIT DROPDOWN
 ------------------------------ */
-$("form .dropdown-select.autosubmit .dropdown-menu li a").click(function(e) {
-    console.log("HI");
-    e.preventDefault();
-    
-    $(this).parents("form").submit();
-});
+//$("form .dropdown-select.autosubmit .dropdown-menu li a").click(function(e) {
+//    console.log("HI");
+//    e.preventDefault();
+//    
+//    $(this).parents("form").submit();
+//});
     
     
 });
