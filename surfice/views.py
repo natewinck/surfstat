@@ -6,6 +6,8 @@ from django.http import HttpResponse
 #from django.template import Context, Template
 from surfice.models import Surf, Surfice, Status, Ding, Event
 
+from django.template import RequestContext
+
 # Create your views here.
 
 def printv(obj, title=""): # Print your variables!
@@ -167,13 +169,34 @@ def ding(request):
 	#Not checking yet because this is a test
 	#if 'q' in request.POST:
     #    message = 'You searched for: %r' % request.POST['q']
+    print(printv(request.POST))
     d = request.POST
-	Ding.create_ding(d['surfice'], d['status'], d['email'], d['description'])
+    return HttpResponse(d['email'])
+    #return render(request, 'surfice/index.html', {})
+	#Ding.create_ding(d['surfice'], d['status'], d['email'], d['description'])
 	#index(request)
 
 # Test with Django tango
 def index(request):
 	if DEBUG: debug()
+	
+	if request.method == 'POST':
+		d = request.POST
+		if d.get('email') and '@' not in d['email']:
+			pass
+		else:
+			print "AH"
+			print Surfice.get_surfice(id=d['surfice'])
+			print Status.get_status(id=d['status'])
+			print d['email']
+			print d['description']
+			ding = Ding.create_ding(
+				Surfice.get_surfice(id=d['surfice']),
+				Status.get_status(id=d['status']),
+				d['email'],
+				d['description']
+			)
+			print ding
 	
 	# Query the database for a list of ALL surfices currently stored.
 	# Order them by status in descending order
@@ -195,6 +218,11 @@ def index(request):
 	event_list = Event.get_events()
 	context_dict['events'] = event_list
 	
+	
+	# Get a list of available statuses for reporting dings
+	# Place them in context_dict
+	status_list = Status.get_statuses()
+	context_dict['statuses'] = status_list
 	
 	
 	

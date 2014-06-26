@@ -6,7 +6,6 @@ from django.contrib.staticfiles.urls import staticfiles_urlpatterns
 
 urlpatterns = patterns('',
 	url(r'^$', views.index, name='index'),
-	(r'^ding/$', views.ding),
 	#url(r'^about/$', views.about, name='about'),
 	# surf_url is passed to the surf method in views.py
 	# regex to look for any sequence of alphanumeric characters

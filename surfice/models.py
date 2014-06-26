@@ -231,13 +231,20 @@ class Surfice(models.Model):
 	# A surfice object
 	# -------------------------------------
 	@staticmethod
-	def get_surfice(name):
-		try:
-			surfice = Surfice.objects.get(name=name)
+	def get_surfice(name='', id=''):
+		surfice = None
+		if name != '':
+			try:
+				surfice = Surfice.objects.get(name=name)
 			
-		except Surfice.DoesNotExist:
-			surfice = None
-			pass
+			except Surfice.DoesNotExist:
+				pass
+		elif id != '':
+			try:
+				surfice = Surfice.objects.get(id=id)
+			
+			except Surfice.DoesNotExist:
+				pass
 		return surfice
 	
 	# -------------------------------------
@@ -516,13 +523,42 @@ class Status(models.Model):
 	# The status object
 	# -------------------------------------
 	@staticmethod
-	def get_status(name=''):
-		try:
-			status = Status.objects.get(name=name)
-		except:
-			status = None
-			pass
+	def get_status(name='', id=''):
+		status = None
+		
+		if name != '':
+			try:
+				status = Status.objects.get(name=name)
+			except:
+				pass
+		elif id != '':
+			try:
+				status = Status.objects.get(id=id)
+			except:
+				pass
+		
 		return status
+	
+	
+	
+	# -------------------------------------
+	# @staticmethod get_statuses()
+	# 
+	# Gets a list of all the statuses
+	#
+	# RETURNS
+	# The an array of statuses
+	# -------------------------------------
+	@staticmethod
+	def get_statuses():
+		try:
+			statuses = Status.objects.all()
+		except:
+			statuses = []
+			pass
+		return statuses
+	
+	
 	
 	# -------------------------------------
 	# @staticmethod create_status(name, description)
@@ -598,6 +634,7 @@ class Status(models.Model):
 # timestamp			timestamp of the original issue
 # surfice			which "surfice" is having the issue
 # name				Name of the user
+# status			Status object that the user is reporting
 # NEED TO ADD RESOLVED FIELD
 # -----------------------------------------
 class Ding(models.Model):
@@ -609,7 +646,7 @@ class Ding(models.Model):
 	description	= models.TextField()
 	
 	def __unicode__(self):
-		return self.name
+		return self.status.name
 	
 	# -------------------------------------
 	# @staticmethod create_ding(surfice, status, email, description)

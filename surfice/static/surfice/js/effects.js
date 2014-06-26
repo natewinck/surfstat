@@ -191,14 +191,27 @@ $(".surfice").hover(
 $(".onoff-toggle").bootstrapSwitch();
 
 
+
+/* DROPDOWN SELECT
+------------------------------ 
+*  Takes a bootstrap group button selector and turns it into
+*  the equivalent of <select>.  It will also change a hidden input
+*  and change the value to the value defined on the li elements
+*  
+*  INPUT
+* .dropdown-menu.dropdown-select li        The li elements in the group button options
+*
+------------------------------ */
 $(".dropdown-menu.dropdown-select li").click(function(event) {
     var $target = $( event.currentTarget );
-
-    $target.closest( '.input-group-btn' )
+    var $group = $target.closest( '.input-group-btn' )
+    $group
         .find( '[data-bind="label"]' ).text( $target.text() )
         .end()
         .children( '.dropdown-toggle' ).dropdown( 'toggle' );
-
+    
+    $group.find( 'input[type="hidden"]' ).val( $target.attr("value") )
+    
     return false;
  
 });

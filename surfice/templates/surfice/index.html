@@ -85,7 +85,7 @@
                     {# Color still needs to into the the boxes #}
                     {% for surfice in surfices %}
                     <div class="surfice surfice-success">
-                        <h2 class="center-all featurette-heading-grid surfice-active">{{ surfice.name }}</h2><a class="btn btn-lg btn-info center-all-button featurette-heading-grid surfice-hover" role="button" data-toggle="modal" data-target="#ding">Report an Issue</a>
+                        <h2 class="center-all featurette-heading-grid surfice-active">{{ surfice.name }}</h2><a class="btn btn-lg btn-info center-all-button featurette-heading-grid surfice-hover" role="button" data-toggle="modal" data-target="#ding-{{ surfice.id }}">Report an Issue</a>
                     </div>
                     {% endfor %}
                     
@@ -103,20 +103,24 @@
                     
                     
                     <!-- DING MODAL DIALOG BOX -->
-                    <div class="modal fade" id="ding" tabindex="-1" role="dialog" aria-labelledby="Ding Label" aria-hidden="true">
+                    {% for surfice in surfices %}
+                    <div class="modal fade" id="ding-{{ surfice.id }}" tabindex="-1" role="dialog" aria-labelledby="Ding Label" aria-hidden="true">
                       <div class="modal-dialog">
                         <div class="modal-content">
                           <div class="modal-header">
                             <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-                            <h4 class="modal-title" id="myModalLabel">What's up with [NAME HERE]?</h4>
+                            <h4 class="modal-title" id="myModalLabel">What's up with {{ surfice.name }}?</h4>
                           </div>
                           <div class="modal-body">
                             
-                            <form class="form-horizontal text-left" role="form">
+                            <form id="ding-form" class="form-horizontal text-left" role="form" action="" method="post">
+                                {# To prevent cross-site forgery, include the following required tag #}
+                                {% csrf_token %}
+                                <input type="hidden" name="surfice" value="{{ surfice.id }}">
                               <div class="form-group"> 
                                 <label class="col-sm-2 control-label" for="exampleInputEmail1">Email</label>
                                 <div class="col-sm-6">
-                                    <input type="email" class="form-control" id="exampleInputEmail1" placeholder="Enter email">
+                                    <input type="email" class="form-control" name="email" placeholder="Enter email">
                                 </div>
                               </div>
                                 
@@ -127,15 +131,15 @@
                                     <label class="col-sm-2 control-label">Status</label>
                                     <div class="col-sm-10">
                                         <div class="input-group">
-                                            <input type="text" class="form-control" placeholder="(Optional) Feed me more detail...">
+                                            <input type="text" name="description" class="form-control" placeholder="(Optional) Feed me more detail...">
                                             <div class="input-group-btn">
-                                                <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown"><span data-bind="label">Default Bad Status</span> <span class="caret"></span></button>
+                                                <input type="hidden" name="status" value="{{ statuses.0.id }}">
+                                                <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown"><span data-bind="label">{{ statuses.0.name }}</span> <span class="caret"></span></button>
                                                 <ul class="dropdown-menu dropdown-select pull-right">
-                                                  <li><a href="#">Action</a></li>
-                                                  <li><a href="#">Another action</a></li>
-                                                  <li><a href="#">Something else here</a></li>
-                                                  <li class="divider"></li>
-                                                  <li><a href="#">Separated link</a></li>
+                                                  {% for status in statuses %}
+                                                  <li value="{{ status.id }}"><a href="#">{{ status.name }}</a></li>
+                                                  {% endfor %}
+                                                    
                                                 </ul>
                                             </div><!-- /btn-group -->
                                         </div><!-- /input-group -->
@@ -147,11 +151,12 @@
                           </div>
                           <div class="modal-footer">
                             <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                            <button type="button" class="btn btn-primary">Report Issue</button>
+                            <button type="button" class="btn btn-primary" onclick="$('#ding-form').submit();">Report Issue</button>
                           </div>
                         </div>
                       </div>
                     </div>
+                    {% endfor %}
                     <!-- / END MODAL DIALOG BOX -->
                     
                     
