@@ -245,8 +245,30 @@ body {
 }
 
 .admin .jumbotron {
-    background: none;
+    background-image: url(../images/wave1.jpg);
+    background-position: bottom;
+    background-repeat: repeat-x;
 }
+.surfices-list  {
+    height: 250px;
+    overflow: scroll;
+}
+
+.divider-accordian {
+  margin: 30px 0; /* Space out the Bootstrap <hr> more */
+}
+.button-accordian {
+    margin-top: 5px;
+}
+.admin .jumbotron-admin {
+    color: white;
+    text-shadow: 0.1em 0.1em #333;
+    
+}
+.h3-admin {
+    padding-left: 2%;
+}
+
 
 
 /* RESPONSIVE CSS

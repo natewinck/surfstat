@@ -8,7 +8,7 @@
     <meta name="author" content="">
     <link rel="shortcut icon" href="assets/ico/favicon.ico">
 
-    <title>Surf Admin</title>
+    <title>Status Admin</title>
 
     <!-- Bootstrap core CSS -->
     <link href="css/bootstrap.min.css" rel="stylesheet">
@@ -43,9 +43,9 @@
         <div class="navbar-collapse collapse">
           <ul class="nav navbar-nav">
             <li><a href="admin.html">Admin Home</a></li>
-            <li class="active"><a href="surfs.html">Surfs</a></li>
+            <li><a href="surfs.html">Surfs</a></li>
             <li><a href="surfices.html">Surfices</a></li>
-              <li><a href="status.html">Statuses</a></li>
+              <li class="active"><a href="status.html">Statuses</a></li>
             <li class="dropdown">
               <a href="#" class="dropdown-toggle" data-toggle="dropdown">Dropdown <b class="caret"></b></a>
               <ul class="dropdown-menu">
@@ -68,108 +68,40 @@
       <!-- START THE FEATURETTES -->
 <div class="container">
       <div class="jumbotron jumbotron-admin">
-        <h1>Update your Surfs</h1>
+        <h1>Update your Surfices</h1>
     <div class="container">
-        <p>Surf (n): the mass or line of foam formed by waves breaking on a seashore or reef</p>
+        <p>Surfice (n): the building block to the surfs that make up the ITS infrastructure</p>
     </div>
     </div>
 </div>
-      
-<!--Start Accordian Container-->
-      <div class="container">
-            <div class="col-xs-12">
-                <h2>Click on a Surf to see Details</h2>
-                <div class="col-xs-offset-1  col-xs-10">  
-<!--Start Accordian-->   
-                    <div class="panel-group" id="accordion">
-                            <div class="panel panel-default">
+ <div class="container">     
+    <div class="col-xs-offset-2 col-xs-8">
+        <div class="row">
+            <h3>Create a Status</h3>
+            <input type="text" class="form-control" placeholder="Status Name">
+        </div>
+        <div class="row">
+            <h3>Current Statuses</h3>
+            <p>Click to edit status</p>
+        </div>
+        <div class="row">
+            <div class="panel-group" id="accordion">
+                    <div class="panel panel-default">
 <!--Start Panel 1 of Accordian-->
-                                <div class="panel-heading">
-                                    <h4 class="panel-title">
-                                        <a data-toggle="collapse" data-parent="#accordion" data-target="#collapseOne">Webmail</a>
-                                    </h4>
+                         <div class="panel-heading">
+                                <h4 class="panel-title">
+                                    <a data-toggle="collapse" data-parent="#accordion" data-target="#collapseOne">Up</a>
+                                </h4>
+                        </div>
+                        <div id="collapseOne" class="panel-collapse collapse">
+                            <div class="panel-body">
+                                <div class="col-xs-12">
+                                    <h3>Edit Your Status</h3>
                                 </div>
-                                <div id="collapseOne" class="panel-collapse collapse">
-                                <div class="panel-body">
-                                    <div class="col-xs-12">
-<!--Row: Current Information on the Surf-->
-                                        <div class="col-xs-6">
-                                            <h4>Status</h4>
-                                            <span class="glyphicon glyphicon-ok"></span>
-                                            </div>
-                                        <div class="col-xs-6">
-                                            <h4>Description</h4>
-                                            <p>The current description of the surf goes here.</p>
-                                        </div>
-<!-- Row: Current Surfices-->
-                                        <div class="row">
-                                            <div class="col-xs-offset-2 col-xs-8">
-                                                <h4 style="padding-top:10px">Current Surfices</h4>
-                                                <p>Click to remove a Surfice from this Surf</p>
-<!-- List of Surfices included in the Surf -->
-                                                <div class="form-group has-success has-feedback">
-  
-                                                   
-</div>
-                                        <ul class="list-group surfices-list">
-                                            <li class="list-group-item">Webmail <span class="glyphicon glyphicon-remove pull-right"></span></li>
-                                            <li class="list-group-item">XBOX Live<span class="glyphicon glyphicon-remove pull-right"></span></li>
-                                            <li class="list-group-item">Discovery<span class="glyphicon glyphicon-remove pull-right"></span></li>
-                                            <li class="list-group-item">Online Services<span class="glyphicon glyphicon-remove pull-right"></span></li>    
-                                            <li class="list-group-item">Blackboard<span class="glyphicon glyphicon-remove pull-right"></span></li>
-                                            <li class="list-group-item">Render Farm<span class="glyphicon glyphicon-remove pull-right"></span></li>
-                                            <li class="list-group-item">Boris<span class="glyphicon glyphicon-remove pull-right"></span></li>
-                                            <li class="list-group-item">ITS<span class="glyphicon glyphicon-remove pull-right"></span></li>
-                                        </ul>
-                                            </div>
-                                        </div>
-                                        <div class="row">
-                                            <div class="col-xs-offset-2 col-xs-8">
-                                                <h3>Add a Surfice</h3>
-                                                <p>Use the dropdown to add an existing Surfice to the Surf</p>
-                                                    <select class="form-control">
-                                                        <option>Webmail</option>
-                                                        <option>Amantha</option>
-                                                        <option>Surfboard</option>
-                                                    </select>
-                                                <button type="button" class="btn btn-success button-accordian pull-right">Submit</button>
-                                            </div>
-                                        </div>
-                                    <div class="col-xs-12">
-                                            <hr class="divider-accordian">
-                                    </div>
-                                    <div class="row">
-                                    <h3 style="padding-left:2%">Update Your Surf Status</h3>
-                                    </div>
-                                        <div class="col-xs-6">
-                                    <p>Select Status</p>
-                                    <select class="form-control">
-                                        <option>Up</option>
-                                        <option>Down</option>
-                                        <option>Other</option>
-                                    </select>
-                                        </div>
-                                        <div class="col-xs-6">
-                                            <p>Status Description</p>
-                                            <textarea class="form-control" rows="3" placeholder="Add your status description..."></textarea>
-                                        </div>
-                                    <div class="row">
-                                        <div class="col-xs-offset-10 col-xs-1">
-                                            <button type="button" class="btn btn-success button-accordian">Submit</button>
-                                        </div>
-                                    </div>
-                                    <div class="row">
-                                        <div class="col-xs-12">
-                                            <hr class="divider-accordian">
-                                        </div>
-                                    </div>
-                                    <div class="row">
-                                    <h3 style="padding-left:2%">Edit Your Surf</h3>
-                                    </div>
                                     <div class="row">
                                         <div class="col-xs-6 ">
-                                            <p>Update Surf Name</p>
-                                            <input type="text" class="form-control" placeholder="Surf Name">
+                                            <p>Update Status Name</p>
+                                            <input type="text" class="form-control" placeholder="Status Name">
                                         </div>
                                         <div class="col-xs-6">
                                             <p>Update Surf Description</p>
@@ -341,12 +273,6 @@
         </div>
       </div>
     </div>
-
-
-      
-                        
-                        
-
 
 <!--
       <div class="row featurette">
