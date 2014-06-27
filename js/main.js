@@ -3,18 +3,38 @@ $(document).ready(function() {
     $.fn.editable.defaults.mode = 'popup';     
     
     //make username editable
-    $('#username').editable();
+    $('#username1').editable();
     
     
         //make username editable
-    $('#firstname').editable();
+    $('#update1').editable();
     
     
         //make username editable
-    $('#lastname').editable();
+    $('#add1').editable();
+
+        //make username editable
+    $('#username2').editable();
+    
     
         //make username editable
-    $('#password').editable();
+    $('#update2').editable();
+    
+    
+        //make username editable
+    $('#add2').editable();
+  
+    //make username editable
+    $('#username3').editable();
+    
+    
+        //make username editable
+    $('#update3').editable();
+    
+    
+        //make username editable
+    $('#add3').editable();
+
     
     //make status editable
     $('#status').editable({

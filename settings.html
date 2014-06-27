@@ -48,11 +48,11 @@
             <li><a href="admin.html">Admin Home</a></li>
             <li><a href="surfs.html">Surfs</a></li>
             <li><a href="surfices.html">Surfices</a></li>
-              <li class="active"><a href="status.html">Statuses</a></li>
+              <li><a href="status.html">Statuses</a></li>
             <li class="dropdown">
-              <a href="#" class="dropdown-toggle" data-toggle="dropdown">Dropdown <b class="caret"></b></a>
+              <a href="#" class="dropdown-toggle active" data-toggle="dropdown">Settings <b class="caret"></b></a>
               <ul class="dropdown-menu">
-                <li><a href="#">Action</a></li>
+                <li><a href="settings.html">User Settings</a></li>
                 <li><a href="#">Another action</a></li>
                 <li><a href="#">Something else here</a></li>
                 <li class="divider"></li>
@@ -69,19 +69,23 @@
 
 
       <!-- START THE FEATURETTES -->
+<!-- JUMBOTRON HEADER
+================================================== -->    
 <div class="container">
       <div class="jumbotron jumbotron-admin">
-        <h1>Update your Surfices</h1>
+        <h1>Surfstat Settings</h1>
     <div class="container">
-        <p>Surfice (n): the building block to the surfs that make up the ITS infrastructure</p>
+        <p>Setting (n):  the place or type of surroundings where something is positioned or where an event takes place</p>
     </div>
     </div>
     
-    
+ <!-- User Table
+================================================== -->   
 </div>
     <div class="container">
      <div class="row featurette">
-        <div class="col-md-7">
+        <div class="col-md-7 col-xs-offset-3">
+            <h3>Users and Permissions</h3>
             <table class="table table-striped">
                 <tr>
                     <th>Group</th>
@@ -89,55 +93,24 @@
                     <th>Add Permissions</th>
                 </tr>
                 <tr>
-                    <td><a href="#" id="username" data-type="text" data-pk="1" data-url="/post" data-title="Enter username">HelpDesk Students</a></td>
-                    <td><a href="#" id="firstname" data-type="text" data-pk="1" data-url="/post" data-title="Enter username">Yes</a></td>
-                    <td><a href="#" id="lastname" data-type="text" data-pk="1" data-url="/post" data-title="Enter username">Yes</a></td>
-                    <td><a href="#" id="password" data-type="password" name="password" input-type="password" data-pk="1" data-url="/post" data-title="Enter username">password</a></td>
+<!-- Table with built in "popout" editor for each <td>, referenced in main.js -->
+                    <td><a href="#" id="username1" data-type="text" data-pk="1" data-url="/post" data-title="Enter username">HelpDesk Students</a></td>
+                    <td><a href="#" id="update1" data-type="text" data-pk="1" data-url="/post" data-title="Enter username">Yes</a></td>
+                    <td><a href="#" id="add1" data-type="text" data-pk="1" data-url="/post" data-title="Enter username">No</a></td>
                 </tr>
                 <tr>
-                    <td>Webmail</td>
-                    <td>It went down</td>
-                    <td>Broken</td>
+                   <td><a href="#" id="username2" data-type="text" data-pk="1" data-url="/post" data-title="Enter username">NetTeam Students</a></td>
+                    <td><a href="#" id="update2" data-type="text" data-pk="1" data-url="/post" data-title="Enter username">Yes</a></td>
+                    <td><a href="#" id="add2" data-type="text" data-pk="1" data-url="/post" data-title="Enter username">Yes</a></td>
                 </tr>
                 <tr>
-                    <td>Webmail</td>
-                    <td>It went down</td>
-                    <td>Broken</td>
-                </tr>
-                <tr>
-                    <td>Webmail</td>
-                    <td>It went down</td>
-                    <td>Broken</td>
+                 <td><a href="#" id="username3" data-type="text" data-pk="1" data-url="/post" data-title="Enter username">LR Students</a></td>
+                    <td><a href="#" id="update3" data-type="text" data-pk="1" data-url="/post" data-title="Enter username">Absolutely Not</a></td>
+                    <td><a href="#" id="add3" data-type="text" data-pk="1" data-url="/post" data-title="Enter username">Absolutely Not</a></td>
                 </tr>
             </table>
         </div>
     </div>
-      <div>
-        <span>Status:</span>
-        <a href="#" id="status"></a>
-      </div>
-
-<!--
-      
-        <div class="col-md-5">
-          <h2 class="featurette-heading">Bring me up to speed. <span class="text-muted">What's happening lately?</span></h2>
-          <p class="lead">Donec ullamcorper nulla non metus auctor fringilla. Vestibulum id ligula porta felis euismod semper. Praesent commodo cursus magna, vel scelerisque nisl consectetur. Fusce dapibus, tellus ac cursus commodo.</p>
-        </div>
-      </div>
-
--->
-<!--
-      <div class="row featurette">
-        <div class="col-md-7">
-          <h2 class="featurette-heading">And lastly, this one. <span class="text-muted">Checkmate.</span></h2>
-          <p class="lead">Donec ullamcorper nulla non metus auctor fringilla. Vestibulum id ligula porta felis euismod semper. Praesent commodo cursus magna, vel scelerisque nisl consectetur. Fusce dapibus, tellus ac cursus commodo.</p>
-        </div>
-        <div class="col-md-5">
-          <img class="featurette-image img-responsive" data-src="holder.js/500x500/auto" alt="Generic placeholder image" src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI1MDAiIGhlaWdodD0iNTAwIj48cmVjdCB3aWR0aD0iNTAwIiBoZWlnaHQ9IjUwMCIgZmlsbD0iI2VlZSIvPjx0ZXh0IHRleHQtYW5jaG9yPSJtaWRkbGUiIHg9IjI1MCIgeT0iMjUwIiBzdHlsZT0iZmlsbDojYWFhO2ZvbnQtd2VpZ2h0OmJvbGQ7Zm9udC1zaXplOjMxcHg7Zm9udC1mYW1pbHk6QXJpYWwsSGVsdmV0aWNhLHNhbnMtc2VyaWY7ZG9taW5hbnQtYmFzZWxpbmU6Y2VudHJhbCI+NTAweDUwMDwvdGV4dD48L3N2Zz4=">
-        </div>
-      </div>
--->
-
       <hr class="featurette-divider">
       <!-- /END THE FEATURETTES -->
 
