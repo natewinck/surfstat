@@ -298,3 +298,13 @@ def surf(request, surf_url):
 		
 	# Go render the response and return it to the client
 	return render(request, 'surfice/surf.html', context_dict)
+
+
+def surfs(request):
+	return render(request, 'surfice/surfs.html')
+def surfices(request):
+	return render(request, 'surfice/surfices.html')
+def settings(request):
+	return render(request, 'surfice/settings.html')
+def status(request):
+	return render(request, 'surfice/status.html')
