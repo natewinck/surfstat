@@ -23,6 +23,7 @@ $("form[type='ajax']").on("submit", function(e) {
 //     
 //    xhr.open("POST", f.action);
 //    xhr.send(formData);
+	console.log("sent");
 });
 
 
