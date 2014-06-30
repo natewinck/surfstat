@@ -22,7 +22,6 @@
     <![endif]-->
 
     <!-- Custom styles for this template -->
-    <link href="css/admin.css" rel="stylesheet">
   </head>
 <!-- NAVBAR
 ================================================== -->
@@ -71,9 +70,38 @@
         <h1>Update your Surfs</h1>
     <div class="container">
         <p>Surf (n): the mass or line of foam formed by waves breaking on a seashore or reef</p>
-    </div>
+   	  </div>
     </div>
 </div>
+
+<div class="container">
+    <div class="col-xs-12">
+        <div class="col-xs-10 col-xs-offset-1">
+        <div class="row">
+            <form type="ajax" method="post" role="form" id="create-surf-form">
+            <h3>Create a Surf</h3>
+        </div>
+        <div class="row">
+            <div class="col-xs-6 ">
+                <p>New Surf Name</p>
+                <input type="text" class="form-control" placeholder="Surf Name">
+            </div>
+            <div class="col-xs-6">
+                <p>New Surf Description</p>
+                <textarea class="form-control" rows="3" placeholder="Update Description here.."></textarea>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-xs-offset-10 col-xs-1 button-accordian">
+            <button type="submit" class="btn btn-success">Submit</button>
+            </div>
+        </div>
+        </form>
+    </div>
+</div>
+	</div>
+</div>
+      
       
 <!--Start Accordian Container-->
       <div class="container">
@@ -107,6 +135,7 @@
                                                 <h4 style="padding-top:10px">Current Surfices</h4>
                                                 <p>Click to remove a Surfice from this Surf</p>
 <!-- List of Surfices included in the Surf -->
+                                                <form type="ajax" method="post" role="form" id="delete-surfices-surf">
                                                 <div class="form-group has-success has-feedback">
   
                                                    
@@ -121,29 +150,34 @@
                                             <li class="list-group-item">Boris<span class="glyphicon glyphicon-remove pull-right"></span></li>
                                             <li class="list-group-item">ITS<span class="glyphicon glyphicon-remove pull-right"></span></li>
                                         </ul>
+                                                    </form>
                                             </div>
                                         </div>
                                         <div class="row">
-                                            <div class="col-xs-offset-2 col-xs-8">
+                                            <div class="col-xs-offset-2 col-xs-8" id="addsurfice-surf">
+                                                <form type="ajax" method="post" role="form" id="add-surfices-surf-form">
                                                 <h3>Add a Surfice</h3>
                                                 <p>Use the dropdown to add an existing Surfice to the Surf</p>
-                                                    <select class="form-control">
+                                                    <select class="form-control" id="add-surfices-surf">
                                                         <option>Webmail</option>
                                                         <option>Amantha</option>
                                                         <option>Surfboard</option>
                                                     </select>
                                                 <button type="button" class="btn btn-success button-accordian pull-right">Submit</button>
+                                                 </form>
                                             </div>
                                         </div>
+                                       
                                     <div class="col-xs-12">
                                             <hr class="divider-accordian">
                                     </div>
                                     <div class="row">
                                     <h3 style="padding-left:2%">Update Your Surf Status</h3>
+                                        <form type="ajax" method="post" role="form" id="update-surf-status-form">
                                     </div>
                                         <div class="col-xs-6">
                                     <p>Select Status</p>
-                                    <select class="form-control">
+                                    <select class="form-control" id="update-surf-status">
                                         <option>Up</option>
                                         <option>Down</option>
                                         <option>Other</option>
@@ -151,13 +185,14 @@
                                         </div>
                                         <div class="col-xs-6">
                                             <p>Status Description</p>
-                                            <textarea class="form-control" rows="3" placeholder="Add your status description..."></textarea>
+                                            <textarea class="form-control" rows="3" placeholder="Add your status description..." id="update-surf-status-description"></textarea>
                                         </div>
                                     <div class="row">
                                         <div class="col-xs-offset-10 col-xs-1">
                                             <button type="button" class="btn btn-success button-accordian">Submit</button>
                                         </div>
                                     </div>
+                                    </form>
                                     <div class="row">
                                         <div class="col-xs-12">
                                             <hr class="divider-accordian">
@@ -165,15 +200,16 @@
                                     </div>
                                     <div class="row">
                                     <h3 style="padding-left:2%">Edit Your Surf</h3>
+                                        <form type="ajax" method="post" role="form" id="update-surf">
                                     </div>
                                     <div class="row">
                                         <div class="col-xs-6 ">
                                             <p>Update Surf Name</p>
-                                            <input type="text" class="form-control" placeholder="Surf Name">
+                                            <input type="text" class="form-control" placeholder="Surf Name" id="update-surf-name">
                                         </div>
                                         <div class="col-xs-6">
                                             <p>Update Surf Description</p>
-                                            <textarea class="form-control" rows="3" placeholder="Update Description here.."></textarea>
+                                            <textarea class="form-control" rows="3" placeholder="Update Description here.." id="update-surf-description"></textarea>
                                         </div>
                                     </div>
                                     <div class="row">
@@ -181,38 +217,17 @@
                                          <button type="submit" class="btn btn-success">Submit</button>
                                         </div>
                                     </div>
-                                    <div class="row">
-                                        <div class="col-xs-12">
-                                            <hr class="divider-accordian">
-                                        </div>
-                                    </div>
-                                    <div class="row">
-                                    <h3 style="padding-left:2%">Create a Surf</h3>
-                                    </div>
-                                    <div class="row">
-                                        <div class="col-xs-6 ">
-                                            <p>New Surf Name</p>
-                                            <input type="text" class="form-control" placeholder="Surf Name">
-                                        </div>
-                                        <div class="col-xs-6">
-                                            <p>New Surf Description</p>
-                                            <textarea class="form-control" rows="3" placeholder="Update Description here.."></textarea>
-                                        </div>
-                                    </div>
-                                    <div class="row">
-                                        <div class="col-xs-offset-10 col-xs-1 button-accordian">
-                                         <button type="submit" class="btn btn-success">Submit</button>
-                                        </div>
-                                    </div>
+                                    </form>
                                     <hr class="divider-accordian">
                                     <div class="col-xs-12">
                                         <h3>Delete Surf</h4>
                                         <button type="submit" class="btn btn-danger">Delete</button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+                                	</div>
+                            		</div>
+                        		</div>
+                    			</div>
+                				</div>
+                			</div>
             <div class="panel-group" id="accordion">
                             <div class="panel panel-default">
 <!--Start Panel 1 of Accordian-->
@@ -350,6 +365,7 @@
         </div>
       </div>
     </div>
+</div>
 
 
       
