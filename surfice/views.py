@@ -45,7 +45,7 @@ def debug():
 	surf_manual = Surf()
  	surf_manual.name = "Manual Surf"
  	surf_manual.description = "A description of the manual surf"
- 	surf_manual.save()
+ 	surf_manual.save_new()
 	
 	printv(surf_manual, "MANUAL SURF")
 	
@@ -106,7 +106,7 @@ def debug():
 	surfice_manual.surf = surf_auto
 	surfice_manual.description = "Manual Description"
 	surfice_manual.status = status # I'm afraid this won't work at all
-	surfice_manual.save()
+	surfice_manual.save_new()
 	
 	printv(surfice_manual, "MANUAL SURFICE")
 	
@@ -301,10 +301,50 @@ def surf(request, surf_url):
 
 
 def surfs(request):
-	return render(request, 'surfice/surfs.html')
+	context_dict = {}
+	
+	# If the admin is trying to create or delete a Surf, the page is refreshed
+	flag = False
+	if request.method == 'POST':
+		d = request.POST
+		
+		# Is the admin trying to delete a surf?
+		if 'surf' and 'delete' in d:
+			surf = Surf.get_surf(id=d['surf'])
+			surf.delete()
+		
+		# Is the admin trying to create a surf?
+		elif 'surf' and 'description' in d:
+			surf = Surf.create(d['surf'], d['description'])
+			if surf == None:
+				flag = True
+			
+	
+	
+	# Query for surfs and add them to context_dict
+	surf_list = Surf.get_surfs()
+	context_dict['surfs'] = surf_list
+	
+	# For each Surf, query for Surfices and add them to context_dict
+	for i, surf in enumerate(context_dict['surfs']):
+		context_dict['surfs'][i].surfices = surf.get_surfices()
+	
+	# Query all the Surfices and add them to context_dict
+	surfice_list = Surfice.get_surfices()
+	context_dict['surfices'] = surfice_list
+	
+	# Query all the Statuses and add them to context_dict
+	status_list = Status.get_statuses()
+	context_dict['statuses'] = status_list
+	
+	
+	
+	return render(request, 'surfice/base_surfs.html', context_dict)
+
+
 def surfices(request):
-	return render(request, 'surfice/surfices.html')
+	return render(request, 'surfice/base_surfices.html')
 def settings(request):
-	return render(request, 'surfice/settings.html')
+	return render(request, 'surfice/base_settings.html')
 def status(request):
 	return render(request, 'surfice/status.html')

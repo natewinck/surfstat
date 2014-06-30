@@ -1,0 +1,227 @@
+{% extends "surfice/base.html" %}
+
+{% block title %}Admin | Surfs{% endblock %}
+
+{% block nav %}
+	{% include "surfice/admin_nav.html" %}
+{% endblock %}
+
+
+{% block heading %}
+<!-- START THE FEATURETTES -->
+<div class="container">
+      <div class="jumbotron jumbotron-admin">
+        <h1>Update your Surfs</h1>
+    <div class="container">
+        <p>Surf (n): the mass or line of foam formed by waves breaking on a seashore or reef</p>
+   	  </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="col-xs-12">
+        <div class="col-xs-10 col-xs-offset-1">
+			<form action="" method="post" role="form" id="create-surf-form">
+				{# To prevent cross-site forgery, include the following required tag #}
+				{% csrf_token %}
+				<div class="row">
+					<h3>Create a Surf</h3>
+				</div>
+				<div class="row">
+					<div class="col-xs-6 ">
+						<p>New Surf Name</p>
+						<input type="text" name="surf" class="form-control" placeholder="Surf Name">
+					</div>
+					<div class="col-xs-6">
+						<p>New Surf Description</p>
+						<textarea class="form-control" name="description" rows="3" placeholder="Update Description here.."></textarea>
+					</div>
+				</div>
+				<div class="row">
+					<div class="col-xs-offset-10 col-xs-1 button-accordian">
+						<button type="submit" class="btn btn-success">Submit</button>
+					</div>
+				</div>
+			</form>
+    	</div>
+	</div>
+</div>
+      
+      
+<!--Start Accordian Container-->
+      <div class="container">
+            <div class="col-xs-12">
+                <h2>Click on a Surf to see Details</h2>
+                <div class="col-xs-offset-1  col-xs-10">  
+<!--Start Accordian-->   
+                    <div class="panel-group" id="accordion">
+                    
+                    	{% for surf in surfs %}
+                            <div class="panel panel-default">
+<!--Start Panel 1 of Accordian-->
+                                <div class="panel-heading">
+                                    <h4 class="panel-title">
+                                        <a data-toggle="collapse" data-parent="#accordion" data-target="#surf-{{ surf.id }}">{{ surf.name }}</a>
+                                    </h4>
+                                </div>
+                                <div id="surf-{{ surf.id }}" class="panel-collapse collapse">
+                                <div class="panel-body">
+                                    <div class="col-xs-12">
+<!--Row: Current Information on the Surf-->
+                                        <div class="col-xs-6">
+                                            <h4>Status</h4>
+                                            <span class="glyphicon glyphicon-ok"></span>
+                                            </div>
+                                        <div class="col-xs-6">
+                                            <h4>Description</h4>
+                                            <p>{{ surf.description }}</p>
+                                        </div>
+<!-- Row: Current Surfices-->
+<!--
+                                        <div class="row">
+                                            <div class="col-xs-offset-2 col-xs-8">
+                                                <h4 style="padding-top:10px">Current Surfices</h4>
+                                                <p>Click to remove a Surfice from this Surf</p>
+--><!-- List of Surfices included in the Surf --><!--
+                                                <form type="ajax" method="post" role="form" id="delete-surfices-surf">
+                                                <div class="form-group has-success has-feedback">
+  
+                                                   
+</div>
+                                        <ul class="list-group surfices-list">
+                                        	{% for surfice in surf.surfices %}
+                                            <li class="list-group-item" value="{{ surfice.id }}">{{ surfice.name }}&nbsp;<span class="glyphicon glyphicon-remove pull-right"></span></li>
+                                            {% endfor %}
+                                        </ul>
+                                        </form>
+                                            </div>
+                                        </div>-->
+                                        <div class="row">
+                                            <div class="col-xs-offset-2 col-xs-8" id="addsurfice-surf">
+                                                <form type="ajax" action="ajax/set-surf" method="post" role="form" id="add-surfices-surf-form">
+                                                	{# To prevent cross-site forgery, include the following required tag #}
+													{% csrf_token %}
+													<input type="hidden" name="surf" value="{{ surf.id }}">
+													<h3>Add a Surfice</h3>
+													<p>Use the dropdown to add an existing Surfice to the Surf</p>
+													<select name="surfice" class="form-control" id="add-surfices-surf">
+														{# Show surfices that are not already in the surf #}
+														{% for surfice in surfices %}
+															{% if surfice not in surf.surfices %}
+															<option value="{{ surfice.id }}">{{ surfice.name }}</option>
+															{% endif %}
+														{% endfor %}
+													</select>
+													<button type="submit" class="btn btn-success button-accordian pull-right">Submit</button>
+                                                 </form>
+                                            </div>
+                                        </div>
+                                       
+                                    <div class="col-xs-12">
+                                        <hr class="divider-accordian">
+                                    </div>
+                                    <div class="row">
+										<h3 style="padding-left:2%">Update Your Surf Status</h3>
+                                    </div>
+                                    <div class="col-xs-6">
+										<form type="ajax" action="ajax/set-surf-status" method="post" role="form" id="update-surf-status-form">
+											{# To prevent cross-site forgery, include the following required tag #}
+											{% csrf_token %}
+											<input type="hidden" name="surf" value="{{ surf.id }}">
+											<p>Select Status</p>
+											<select name="status" class="form-control" id="update-surf-status">
+												{% for status in statuses %}
+												<option value="{{ status.id }}">{{ status.name }}</option>
+												{% endfor %}
+											</select>
+												</div>
+												<div class="col-xs-6">
+													<p>Status Description</p>
+													<textarea name="description" class="form-control" rows="3" placeholder="(Optional) Add your status description..." id="update-surf-status-description"></textarea>
+												</div>
+											<div class="row">
+												<div class="col-xs-offset-10 col-xs-1">
+													<button type="submit" class="btn btn-success button-accordian">Submit</button>
+												</div>
+											</div>
+										</form>
+                                    <div class="row">
+                                        <div class="col-xs-12">
+                                            <hr class="divider-accordian">
+                                        </div>
+                                    </div>
+                                    <div class="row">
+										<h3 style="padding-left:2%">Edit Your Surf</h3>
+                                    </div>
+                                    <form type="ajax" action="ajax/update-surf" method="post">
+                                    	{# To prevent cross-site forgery, include the following required tag #}
+										{% csrf_token %}
+										<input type="hidden" name="surf" value="{{ surf.id }}">
+										<div class="row">
+											<div class="col-xs-6 ">
+												<p>Update Surf Name</p>
+												<input type="text" name="name" class="form-control select-all" placeholder="Surf Name" value="{{ surf.name }}" id="update-surf-name">
+											</div>
+											<div class="col-xs-6">
+												<p>Update Surf Description</p>
+												<textarea class="form-control select-all" name="description" rows="3" placeholder="Update Description here.." id="update-surf-description">{{ surf.description }}</textarea>
+											</div>
+										</div>
+										<div class="row">
+											<div class="col-xs-offset-10 col-xs-1 button-accordian">
+											 <button type="submit" class="btn btn-success">Submit</button>
+											</div>
+										</div>
+                                    </form>
+                                    <hr class="divider-accordian">
+                                    <div class="col-xs-12">
+                                        <h3>Delete Surf</h4>
+                                        <button type="submit" class="btn btn-danger" data-toggle="modal" data-target="#confirm-delete-surf-{{ surf.id }}">Delete</button>
+                                	</div>
+                            		</div>
+                        		</div>
+                    			</div>
+                				</div>
+                				
+                				
+                				
+                				<div class="modal fade" id="confirm-delete-surf-{{ surf.id }}" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+									<div class="modal-dialog">
+										<div class="modal-content">
+											<div class="modal-header">
+												<h4 class="modal-title">Confirm Delete</h4>
+											</div>
+											<div class="modal-body">
+												Are you sure you want to delete {{ surf.name }}?
+												All surfices included in this surf will be pushed to another surf.
+											</div>
+											<div class="modal-footer">
+												<form action="" method="post">
+													{# To prevent cross-site forgery, include the following required tag #}
+													{% csrf_token %}
+													<input type="hidden" name="surf" value="{{ surf.id }}">
+													<input type="hidden" name="delete" value="1">
+													<button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+													<button type="submit" href="#" class="btn btn-danger danger">Delete</button>
+											</div>
+										</div>
+									</div>
+								</div>
+                				{% endfor %}
+                			</div>
+                			
+
+      </div>
+    </div>
+</div>
+
+
+      
+                        
+                        
+<hr class="featurette-divider">
+<!-- /END THE FEATURETTES -->
+
+{% endblock content %}

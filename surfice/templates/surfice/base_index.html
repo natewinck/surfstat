@@ -53,7 +53,7 @@
 					  </div>
 					  <div class="modal-body">
 						
-						<form id="ding-form" class="form-horizontal text-left" role="form" action="" method="post">
+						<form id="ding-form-{{ surfice.id }}" class="form-horizontal text-left" role="form" action="" method="post">
 							{# To prevent cross-site forgery, include the following required tag #}
 							{% csrf_token %}
 							<input type="hidden" name="surfice" value="{{ surfice.id }}">
@@ -91,7 +91,7 @@
 					  </div>
 					  <div class="modal-footer">
 						<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-						<button type="button" class="btn btn-primary" onclick="$('#ding-form').submit();">Report Issue</button>
+						<button type="submit" class="btn btn-primary">Report Issue</button>
 					  </div>
 					</div>
 				  </div>

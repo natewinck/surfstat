@@ -20,7 +20,7 @@ from datetime import date, timedelta
 # *Surfice 		get_surfices(self, name)
 # bool			set_name(self, name)
 # void			set_description(self, description)
-# bool			save(self, *args, **kwargs)
+# bool			save_new(self, *args, **kwargs)
 # bool			is_saved(name)
 #
 # -------------------------------------
@@ -220,7 +220,7 @@ class Surf(models.Model):
 		self.save()
 	
 	# -------------------------------------
-	# save(self, *args, **kwargs)
+	# save_new(self, *args, **kwargs)
 	#
 	# Saves a NEW Surf object to the database. If a Surf with the same name
 	# already exists, nothing happens.
@@ -232,7 +232,7 @@ class Surf(models.Model):
 	# True if saved
 	# False if not
 	# -------------------------------------
-	def save(self, *args, **kwargs):
+	def save_new(self, *args, **kwargs):
 		# Check to see if Surf object is already in database. Don't do anything if so
 		if Surf.is_saved(self.name):
 			# Do nothing
@@ -290,7 +290,7 @@ class Surf(models.Model):
 # void				set_surf(self, surf)
 # void				set_description(self, description)
 # void				set_status(self, status, description)
-# bool				save(self, *args, **kwargs)
+# bool				save_new(self, *args, **kwargs)
 # bool				is_saved(name)
 # 
 # -------------------------------------
@@ -546,7 +546,7 @@ class Surfice(models.Model):
 		self.save()
 	
 	# -------------------------------------
-	# save(self, *args, **kwargs)
+	# save_new(self, *args, **kwargs)
 	#
 	# Saves a NEW Surfice object to the database. If a Surfice with the same name
 	# already exists, nothing happens.

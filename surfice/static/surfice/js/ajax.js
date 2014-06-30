@@ -23,7 +23,23 @@ $("form[type='ajax']").on("submit", function(e) {
 //     
 //    xhr.open("POST", f.action);
 //    xhr.send(formData);
-	console.log("sent");
+});
+
+
+/* SUBMIT FORM
+------------------------------ 
+*  Automatically makes any modal box use its submit button to submit a form included
+*  
+*  INPUT
+*  .modal [type="submit"]
+* 
+*  EVENT
+*  click
+*
+------------------------------ */
+$('.modal [type="submit"]').click(function(e) {
+	e.preventDefault();
+	$(this).parents(".modal").find("form").submit();
 });
 
 

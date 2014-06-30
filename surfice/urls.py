@@ -5,20 +5,23 @@ from surfice import views, ajax
 from django.contrib.staticfiles.urls import staticfiles_urlpatterns
 
 urlpatterns = patterns('',
+	# Home
 	url(r'^$', views.index, name='index'),
-	url(r'^admin/$', views.admin, name='admin'),
-	url(r'^admin/ajax/(?P<action>[^/]*)', ajax.ajax, name='ajax'),
+	
 	#url(r'^ajax', ajax.ajax, name='ajax'), # No params
 	#url(r'^about/$', views.about, name='about'),
 	# surf_url is passed to the surf method in views.py
 	# regex to look for any sequence of alphanumeric characters
 	# and underscores before the trailing slash
-	url(r'^surf/(?P<surf_url>\w+)/$', views.surf, name='surf'),
+	#url(r'^surf/(?P<surf_url>\w+)/$', views.surf, name='surf'),
 	
+	# AJAX
+	url(r'^.*?ajax/(?P<action>[^/]*)', ajax.ajax, name='ajax'),
 	
-	#temp
-	#url(r'^surfs.html', views.surfs, name='surfs'),
-	#url(r'^surfices.html', views.surfices, name='surfices'),
-	#url(r'^settings.html', views.settings, name='settings'),
-	#url(r'^status.html', views.status, name='status'),
+	# Admin
+	url(r'^admin/$', views.admin, name='admin'),
+	url(r'^admin/surfs/$', views.surfs, name='surfs'),
+	url(r'^admin/surfices/$', views.surfices, name='surfices'),
+	url(r'^admin/settings/$', views.settings, name='settings'),
+	url(r'^admin/status/$', views.status, name='status'),
 )

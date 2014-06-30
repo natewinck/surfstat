@@ -239,6 +239,25 @@ $(".dropdown-select .dropdown-menu li").click(function(event) {
 //    
 //    $(this).parents("form").submit();
 //});
+
+
+/* SELECT ALL
+------------------------------ 
+*  Finds all inputs that have the class select-all
+*  When the user focuses on the input, select everything inside
+*  
+*  INPUT
+*  input.select-all        input elements with class "select-all"
+*
+------------------------------ */
+// $("input.select-all").click(function() {
+// 	$(this).select();
+// });
     
-    
+
+// $('#confirm-delete').on('show.bs.modal', function(e) {
+//     $(this).find('form').attr('action', $(e.relatedTarget).data('href'));
+//     console.log("here");
+// });
+
 });
