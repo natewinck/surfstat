@@ -18,25 +18,25 @@ def debug():
 	#print Event.get_events(end='2014-06-19')
 	
 	# Clear database of debug data first
-	try: Surf.get_surf('Manual Surf').delete_surf()
+	try: Surf.get_surf('Manual Surf').delete()
 	except: pass
-	try: Surf.get_surf('Auto Surf').delete_surf()
+	try: Surf.get_surf('Auto Surf').delete()
 	except: pass
-	try: Surf.get_surf('Auto Surf Without Description').delete_surf()
+	try: Surf.get_surf('Auto Surf Without Description').delete()
 	except: pass
-	try: Status.get_status('Status Without Description').delete_status()
+	try: Status.get_status('Status Without Description').delete()
 	except: pass
-	try: Status.get_status('Status With Description').delete_status()
+	try: Status.get_status('Status With Description').delete()
 	except: pass
-	try: Status.get_status('Status2').delete_status()
+	try: Status.get_status('Status2').delete()
 	except: pass
-	try: Surfice.get_surfice('Manual Surfice').delete_surfice()
+	try: Surfice.get_surfice('Manual Surfice').deleteice()
 	except: pass
-	try: Surfice.get_surfice('Surfice').delete_surfice()
+	try: Surfice.get_surfice('Surfice').deleteice()
 	except: pass
-	try: Surfice.get_surfice('Surfice1').delete_surfice()
+	try: Surfice.get_surfice('Surfice1').deleteice()
 	except: pass
-	try: Surfice.get_surfice('Surfice2').delete_surfice()
+	try: Surfice.get_surfice('Surfice2').deleteice()
 	except: pass
 	
 	
@@ -45,18 +45,18 @@ def debug():
 	surf_manual = Surf()
  	surf_manual.name = "Manual Surf"
  	surf_manual.description = "A description of the manual surf"
- 	surf_manual.save_surf()
+ 	surf_manual.save()
 	
 	printv(surf_manual, "MANUAL SURF")
 	
 	# Now automatic Surf
-	surf_auto_nodescr = Surf.create_surf("Auto Surf Without Description")
-	surf_auto = Surf.create_surf("Auto Surf", "A Description for the Auto")
+	surf_auto_nodescr = Surf.create("Auto Surf Without Description")
+	surf_auto = Surf.create("Auto Surf", "A Description for the Auto")
 	printv(surf_auto_nodescr, "AUTO SURF W/O DESCRIPTION")
 	printv(surf_auto, "AUTO SURF")
 	
 	# Now try to overwrite a Surf (it shouldn't work)
-	surf_overwrite = Surf.create_surf("Auto Surf")
+	surf_overwrite = Surf.create("Auto Surf")
 	print "The following overwrite should not work:"
 	try: printv(surf_overwrite, "SURF OVERWRITE")
 	except: pass
@@ -66,7 +66,7 @@ def debug():
 	printv(surf_by_name, "GET AUTO SURF BY NAME")
 	
 	# Now delete the manual Surf
-	surf_manual.delete_surf()
+	surf_manual.delete()
 	print "MANUAL SURF STILL SAVED AFTER DELETION? (Should be False)\n============================"
 	print Surf.is_saved(surf_manual.name) # Test to see if it worked
 	
@@ -75,8 +75,8 @@ def debug():
 	
 	
 	# Second, create a new Status
-	status_nodescr = Status.create_status("Status Without Description")
-	status = Status.create_status("Status With Description", "A description")
+	status_nodescr = Status.create("Status Without Description")
+	status = Status.create("Status With Description", "A description")
 	
 	printv(status_nodescr, "STATUS W/O DESCRIPTION")
 	printv(status, "STATUS WITH DESCRIPTION")
@@ -87,12 +87,12 @@ def debug():
 	printv(status_by_name, "GET STATUS W/O DESCRIPTION BY NAME")
 	
 	# Delete the status without a description
-	status_by_name.delete_status()
+	status_by_name.delete()
 	
 	print "NO DESCRIPTION STILL SAVED? (should be False)\n======================="
 	print Status.is_saved("Status Without Description")
 	
-	status2 = Status.create_status("Status2", "A 2nd description")
+	status2 = Status.create("Status2", "A 2nd description")
 
 
 
@@ -106,25 +106,25 @@ def debug():
 	surfice_manual.surf = surf_auto
 	surfice_manual.description = "Manual Description"
 	surfice_manual.status = status # I'm afraid this won't work at all
-	surfice_manual.save_surfice()
+	surfice_manual.save()
 	
 	printv(surfice_manual, "MANUAL SURFICE")
 	
 	# Now Delete the manual one
-	surfice_manual.delete_surfice()
+	surfice_manual.deleteice()
 	
 	print "Is the Manual Surfice still saved (It should be False)\n========================"
 	print Surfice.is_saved(surfice_manual.name)
 	
 	
 	# Now Automatically
-	surfice = Surfice.create_surfice("Surfice", surf_auto, status, "A Surfice description")
-	surfice2 = Surfice.create_surfice("Surfice2", surf_auto, status, "A 2nd Surfice description")
+	surfice = Surfice.createice("Surfice", surf_auto, status, "A Surfice description")
+	surfice2 = Surfice.createice("Surfice2", surf_auto, status, "A 2nd Surfice description")
 	printv(surfice, "SURFICE")
 	printv(surfice2, "SURFICE2")
 	
 	# Try to overwrite it
-	surfice_overwrite = Surfice.create_surfice("Surfice", surf_auto, status)
+	surfice_overwrite = Surfice.createice("Surfice", surf_auto, status)
 	print surfice_overwrite
 	
 	# Get surfices
@@ -144,22 +144,22 @@ def debug():
 	
 # 	
 	# Delete everything
-	try: surf_auto.delete_surf()
+	try: surf_auto.delete()
 	except: pass
-	try: surf_auto_nodescr.delete_surf()
-	except: pass
-	
-	try: status_nodescr = delete_status()
+	try: surf_auto_nodescr.delete()
 	except: pass
 	
-	try: status.delete_status()
-	except: pass
-	try: status2.delete_status()
+	try: status_nodescr = delete()
 	except: pass
 	
-	try: surfice.delete_surfice()
+	try: status.delete()
 	except: pass
-	try: surfice2.delete_surfice()
+	try: status2.delete()
+	except: pass
+	
+	try: surfice.deleteice()
+	except: pass
+	try: surfice2.deleteice()
 	except: pass
 
 
@@ -171,7 +171,7 @@ def ding(request):
     d = request.POST
     return HttpResponse(d['email'])
     #return render(request, 'surfice/index.html', {})
-	#Ding.create_ding(d['surfice'], d['status'], d['email'], d['description'])
+	#Ding.create(d['surfice'], d['status'], d['email'], d['description'])
 	#index(request)
 
 # Test with Django tango
@@ -188,7 +188,7 @@ def index(request):
 			print Status.get_status(id=d['status'])
 			print d['email']
 			print d['description']
-			ding = Ding.create_ding(
+			ding = Ding.create(
 				Surfice.get_surfice(id=d['surfice']),
 				Status.get_status(id=d['status']),
 				d['email'],
@@ -244,7 +244,7 @@ def index(request):
 	
 	# The context is already figured out by the render() shortcut so...
 	# Render the response and send it back!
-	return render(request, 'surfice/index.html', context_dict)
+	return render(request, 'surfice/base_index.html', context_dict)
 	
 	#return HttpResponse("Rango says hello world!")
 
@@ -268,7 +268,7 @@ def admin(request):
 	status_list = Status.get_statuses()
 	context_dict['statuses'] = status_list
 	
-	return render(request, 'surfice/admin.html', context_dict)
+	return render(request, 'surfice/base_admin.html', context_dict)
 
 
 def surf(request, surf_url):

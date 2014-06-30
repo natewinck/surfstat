@@ -13,14 +13,14 @@ from datetime import date, timedelta
 #
 # METHODS
 # String		__unicode__(self)
-# Surf			create_surf(name, description)
-# void			delete_surf(self)
+# Surf			create(name, description)
+# void			delete(self, *args, **kwargs)
 # Surf			get_surf(name, id)
 # *Surf			get_surfs(name)
 # *Surfice 		get_surfices(self, name)
 # bool			set_name(self, name)
 # void			set_description(self, description)
-# bool			save_surf(self)
+# bool			save(self, *args, **kwargs)
 # bool			is_saved(name)
 #
 # -------------------------------------
@@ -34,7 +34,7 @@ class Surf(models.Model):
 		return self.name
 	
 	# -------------------------------------
-	# @staticmethod create_surf(name, description)
+	# @staticmethod create(name, description)
 	#
 	# Creates a Surf object in the database defined by the given name and description
 	# 
@@ -46,7 +46,7 @@ class Surf(models.Model):
 	# The created surf
 	# -------------------------------------
 	@staticmethod
-	def create_surf(name, description=''):
+	def create(name, description=''):
 		surf = None
 		
 		# Check to make sure another Surf object with the same name isn't
@@ -66,15 +66,19 @@ class Surf(models.Model):
 		return surf
 	
 	# -------------------------------------
-	# delete_surf(self)
+	# delete(self, *args, **kwargs)
+	#
+	# INPUT
+	# args, kwargs			Only for extension of built-in delete() function
 	# 
 	# Deletes this surf from the database
 	# -------------------------------------
-	def delete_surf(self):
+	def delete(self, *args, **kwargs):
 		# Check to make sure the Surf object is in the database first
 		try:
 			if Surf.objects.filter(pk=self.id).count() != 0:
-				self.delete()
+				# Call the real delete() function
+				super(Surf, self).delete(*args, **kwargs)
 		except Surf.DoesNotExist:
 			pass
 	
@@ -216,22 +220,26 @@ class Surf(models.Model):
 		self.save()
 	
 	# -------------------------------------
-	# save_surf(self)
+	# save(self, *args, **kwargs)
 	#
 	# Saves a NEW Surf object to the database. If a Surf with the same name
 	# already exists, nothing happens.
+	#
+	# INPUT
+	# args, kwargs		Only for future extension of the save() function
 	# 
 	# RETURNS
 	# True if saved
 	# False if not
 	# -------------------------------------
-	def save_surf(self):
+	def save(self, *args, **kwargs):
 		# Check to see if Surf object is already in database. Don't do anything if so
 		if Surf.is_saved(self.name):
 			# Do nothing
 			flag = False
 		else:
-			self.save()
+			# Call the real save() method
+			super(Surf, self).save(*args, **kwargs)
 			flag = True
 		
 		return flag
@@ -272,8 +280,8 @@ class Surf(models.Model):
 #
 # METHODS
 # String			__unicode__(self)
-# Surfice			create_surfice(name, surf, description)
-# void				delete_surfice(self)
+# Surfice			create(name, surf, description)
+# void				delete(self, *args, **kwargs)
 # Surfice			get_surfice(name, id)
 # *Surfice			get_surfices(...)
 # Status			get_status(self)
@@ -282,7 +290,7 @@ class Surf(models.Model):
 # void				set_surf(self, surf)
 # void				set_description(self, description)
 # void				set_status(self, status, description)
-# bool				save_surfice(self)
+# bool				save(self, *args, **kwargs)
 # bool				is_saved(name)
 # 
 # -------------------------------------
@@ -304,7 +312,7 @@ class Surfice(models.Model):
 	#	self.group = Surf()
 	
 	# -------------------------------------
-	# @staticmethod create_surfice(name, surf, description)
+	# @staticmethod create(name, surf, description)
 	# 
 	# Create a new Surfice object and store it in the database
 	# 
@@ -318,7 +326,7 @@ class Surfice(models.Model):
 	# The created Surfice object
 	# -------------------------------------
 	@staticmethod
-	def create_surfice(name, surf, status, description=''):
+	def create(name, surf, status, description=''):
 		surfice = None
 		
 		# Check to make sure a Surfice object with the same name
@@ -339,12 +347,16 @@ class Surfice(models.Model):
 		return surfice
 		
 	# -------------------------------------
-	# delete_surfice(self)
+	# delete(self, *args, **kwargs)
+	#
+	# INPUT
+	# args, kwargs		Only for extension of the built-in function
 	# 
 	# Deletes this surfice from the database
 	# -------------------------------------
-	def delete_surfice(self):
-		self.delete()
+	def delete(self, *args, **kwargs):
+		# Call the real delete() function
+		super(Surfice, self).delete(*args, **kwargs)
 	
 	# -------------------------------------
 	# get_surfice(name, id)
@@ -528,13 +540,13 @@ class Surfice(models.Model):
 		# If we want to create an event along with updating the status,
 		# do it here.
 		if description != False:
-			Event.create_event(self, status, description)
+			Event.create(self, status, description)
 		
 		self.status = status
 		self.save()
 	
 	# -------------------------------------
-	# save_surfice(self)
+	# save(self, *args, **kwargs)
 	#
 	# Saves a NEW Surfice object to the database. If a Surfice with the same name
 	# already exists, nothing happens.
@@ -543,13 +555,14 @@ class Surfice(models.Model):
 	# True if it saved
 	# False if it didn't
 	# -------------------------------------
-	def save_surfice(self):
+	def save_surfice(self, *args, **kwargs):
 		# Check to see if Surfice object is already in database. Don't do anything if so
 		if Surfice.is_saved(self.name):
 			# Do nothing
 			flag = False
 		else:
-			self.save()
+			# Call the real save() method
+			super(Surfice, self).save(*args, **kwargs)
 			flag = True
 		
 		return flag
@@ -587,8 +600,8 @@ class Surfice(models.Model):
 #
 # METHODS
 # 
-# Status		create_status(name, description)
-# void			delete_status(self)
+# Status		create(name, description)
+# void			delete(self, *args, **kwargs)
 # Status		get_status(name, id)
 # *Status		get_statuses(name)
 # bool			set_name(self, name)
@@ -605,7 +618,7 @@ class Status(models.Model):
 		return self.name
 	
 	# -------------------------------------
-	# @staticmethod create_status(name, description)
+	# @staticmethod create(name, description)
 	#
 	# Create a new status with name and optional description
 	#
@@ -617,7 +630,7 @@ class Status(models.Model):
 	# The created Status object
 	# -------------------------------------
 	@staticmethod
-	def create_status(name, description=''):
+	def create(name, description=''):
 		status = None
 		
 		# Check to make sure a Status object with the same name
@@ -636,12 +649,16 @@ class Status(models.Model):
 		return status
 	
 	# -------------------------------------
-	# delete_status(self)
+	# delete(self, *args, **kwargs)
+	#
+	# INPUT
+	# args, kwargs			Only for extension of the built-in function
 	# 
 	# Deletes this status from the database
 	# -------------------------------------
-	def delete_status(self):
-		self.delete()
+	def delete(self, *args, **kwargs):
+		# Call the real delete() function
+		super(Status, self).delete(*args, **kwargs)
 	
 	# -------------------------------------
 	# @staticmethod get_status(name)
@@ -793,7 +810,7 @@ class Status(models.Model):
 # NEED TO ADD RESOLVED FIELD
 #
 # METHODS
-# Ding			create_ding(surfice, status, email, description)
+# Ding			create(surfice, status, email, description)
 # *Ding			get_dings(...)
 # 
 # -----------------------------------------
@@ -809,7 +826,7 @@ class Ding(models.Model):
 		return self.status.name
 	
 	# -------------------------------------
-	# @staticmethod create_ding(surfice, status, email, description)
+	# @staticmethod create(surfice, status, email, description)
 	# 
 	# Creates an ding for the set surfice and stores it in the database
 	#
@@ -823,7 +840,7 @@ class Ding(models.Model):
 	# The created ding
 	# -------------------------------------
 	@staticmethod
-	def create_ding(surfice, status, email, description=''):
+	def create(surfice, status, email, description=''):
 		# Create the Ding object
 		ding = Ding()
 		
@@ -967,8 +984,10 @@ class Ding(models.Model):
 # description		description of the event
 #
 # METHODS
-# Event			create_event(surfice, status, description)
+# Event			create(surfice, status, description)
+# void			delete(self, *args, **kwargs)
 # *Event		get_events(...)
+###### Need to make setter function######################################
 # ---------------------------------------
 class Event(models.Model):
 	# Class variables
@@ -981,7 +1000,7 @@ class Event(models.Model):
 		return self.status.name
 	
 	# -------------------------------------
-	# @staticmethod create_event(surfice, status, description)
+	# @staticmethod create(surfice, status, description)
 	# 
 	# Creates an event for the set surfice. The surfice's status is also updated
 	#
@@ -994,7 +1013,7 @@ class Event(models.Model):
 	# The created event
 	# -------------------------------------
 	@staticmethod
-	def create_event(surfice, status, description=''):
+	def create(surfice, status, description=''):
 		# Probably need to check these before setting them
 		event = Event()
 		
@@ -1011,6 +1030,18 @@ class Event(models.Model):
 		event.save()
 		
 		return event
+	
+	# -------------------------------------
+	# delete(self, *args, **kwargs)
+	#
+	# INPUT
+	# args, kwargs			Only for extension of the built-in function
+	# 
+	# Deletes this event from the database
+	# -------------------------------------
+	def delete(self, *args, **kwargs):
+		# Call the real delete() function
+		super(Event, self).delete(*args, **kwargs)
 	
 	# -------------------------------------
 	# @staticmethod get_event(id)

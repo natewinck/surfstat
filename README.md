@@ -32,3 +32,28 @@ What We've Done
 - Designed 85% of the templates
 - Pull data from an SQLite database
 - Write Dings (issues) to the database and update statuses/create events
+
+Programming Goals
+-----------------
+- Add, update, delete surfs and surfices
+- A surfice can only be part of one surf
+- We want to be able to report the status (with a color) of any surfice
+- Any issues that are reported are able to be viewed both on the admin side and on the frontend
+- - Email once a threshold has been reached
+- LDAP login for admin
+- Email to Groups
+- Email someone once issues reach a peak set in the admin site
+- Unlimited events stored in the database for EVERY status update
+- - Still have the ability to edit and delete events
+- Initial setup
+- MySQL support?
+
+
+
+- Future:
+- Maintenance Plugin
+- - Ahead of time
+- - Start it
+- - End it
+- Network Plugin
+- - Tie in real-time network info (like bandwidth usage, spam filtering, etc.) on homepage

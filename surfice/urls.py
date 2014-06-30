@@ -17,8 +17,8 @@ urlpatterns = patterns('',
 	
 	
 	#temp
-	url(r'^surfs.html', views.surfs, name='surfs'),
-	url(r'^surfices.html', views.surfices, name='surfices'),
-	url(r'^settings.html', views.settings, name='settings'),
-	url(r'^status.html', views.status, name='status'),
+	#url(r'^surfs.html', views.surfs, name='surfs'),
+	#url(r'^surfices.html', views.surfices, name='surfices'),
+	#url(r'^settings.html', views.settings, name='settings'),
+	#url(r'^status.html', views.status, name='status'),
 )

@@ -1,0 +1,187 @@
+{% extends "surfice/base.html" %}
+
+{% block title %}Admin{% endblock %}
+
+{% load static %}
+{% load humanize %}
+{% load slugify %}
+
+{% block body_class %}admin{% endblock %}
+
+
+{% block nav %}
+	{% include "surfice/admin_nav.html" %}
+{% endblock %}
+
+
+{% block heading %}
+<form class="row jumbotron" type="ajax" action="ajax/set-status" method="post">
+{# To prevent cross-site forgery, include the following required tag #}
+{% csrf_token %}
+	<div class="col-xs-12">
+		<div class="input-group input-group-lg">
+		  <input type="text" name="description" class="form-control" placeholder="Feed me an update...">
+		  <div class="input-group-btn dropdown-select">
+			  <input type="hidden" name="surfice">
+			<button type="button" class="btn btn-straight btn-default dropdown-toggle form-control" data-toggle="dropdown" tabindex="-1"><span data-bind="label">Surfice</span>
+			  <span class="caret"></span>
+			  <span class="sr-only">Toggle Dropdown</span>
+			</button>
+			<ul class="dropdown-menu" role="menu">
+				{% for surfice in surfices %}
+					<li value="{{ surfice.id }}"><a href="#">{{ surfice.name }}</a></li>
+				{% endfor %}
+			</ul>
+			  
+			
+		  </div>
+		  <div class="input-group-btn dropdown-select">
+			  <input type="hidden" name="status">
+			<button type="button" class="btn btn-straight btn-default dropdown-toggle" data-toggle="dropdown" tabindex="-1"><span data-bind="label">Status</span>
+			  <span class="caret"></span>
+			  <span class="sr-only">Toggle Dropdown</span>
+			</button>
+			<ul class="dropdown-menu pull-right" role="menu">
+				{% for status in statuses %}
+					<li value="{{ status.id }}"><a href="#">{{ status.name }}</a>
+				{% endfor %}
+			</ul>
+		</div>
+		<div class="input-group-btn">
+			<button type="submit" class="btn btn-default btn-primary">Update!</button>
+		</div>
+			
+	  </div>
+		
+	</div>
+</form>
+{% endblock %}
+
+
+
+{% block content %}
+<!-- START THE FEATURETTES -->
+<hr class="featurette-divider">
+    
+    
+<div class="col-xs-12">
+    <div class="row">
+        <div class="col-xs-6">
+            <h2 class="featurette-heading">Here are all your Surfs</h2> 
+            <p>Update ALL the Surfices at once by updating a Surf! Just select a new status from each surf's dropdown menu. Here at Asbury ITS, we work with the utmost efficiency.</p>
+        </div>    
+        <div class="col-xs-6">
+            <table class="table panel panel-default table-hover">
+                {% for surf in surfs %}
+                <tr>
+                    
+                    <td><a href="surfs/{{ surf.name|slugify }}">{{ surf.name }}</a></td>
+                    <td>
+                        <form type="ajax" action="ajax/set-surf-status" method="post">
+                            {# To prevent cross-site forgery, include the following required tag #}
+                            {% csrf_token %}
+                            <input type="hidden" name="surf" value="{{ surf.id }}">
+                            <div class="dropdown dropdown-select autosubmit pull-right">
+                                <input type="hidden" name="status">
+                                <button type="button" class="btn btn-default btn-xs dropdown-toggle" data-toggle="dropdown" tabindex="-1"><span data-bind="label">Change Status</span>
+                                    <span class="caret"></span>
+                                </button>
+                                <ul class="dropdown-menu" role="menu" aria-labelledby="dLabel">
+                                    {% for status in statuses %}
+                                    <li value="{{ status.id }}"><a href="#">{{ status.name }}</a></li>
+                                    {% endfor %}
+                                </ul>
+                            </div>
+                        </form>
+                    </td>
+                </tr>
+                {% endfor %}
+            </table>
+        </div>
+    </div>
+    
+<hr class="featurette-divider">
+
+<div class="col-xs-12">
+    <div class="row">
+        <div class="col-xs-6 events">
+                <table class="table panel panel-default table-hover">
+                    {% for surfice in surfices %}
+                    <tr>
+                        <td><a href="surfices/{{ surfice.name|slugify }}">{{ surfice.name }}</a></td>
+                        <td>
+                            
+                            <form type="ajax" method="post" action="ajax/set-status">
+                                {# To prevent cross-site forgery, include the following required tag #}
+                                {% csrf_token %}
+                                <input type="hidden" name="surfice" value="{{ surfice.id }}">
+                                <div class="dropdown pull-right dropdown-select autosubmit">
+                                    <input type="hidden" name="status">
+                                    <button type="button" class="btn btn-default btn-xs dropdown-toggle" data-toggle="dropdown" tabindex="-1"><span data-bind="label">{{ surfice.status.name }}</span>
+                                        <span class="caret"></span>
+                                    </button>
+                                    <ul class="dropdown-menu" role="menu" aria-labelledby="dLabel">
+                                        {% for status in statuses %}
+                                        <li value="{{ status.id }}"><a href="#">{{ status.name }}</a></li>
+                                        {% endfor %}
+                                    </ul>
+                                </div>
+                                
+                            </form>
+                            
+                        </td>
+                    </tr>
+                    {% endfor %}
+                    
+                    
+                </table>
+            </div>
+            <div class="col-xs-6">
+            <h2 class="featurette-heading" style="text-align:right">Surf through your Surfices</h2>
+            <p style="text-align:right">The latest update was to the Webmail surfice with a status of Up.  To make any changes, just select a new status from each surfice's dropdown menu.</p>
+            </div>  
+</div>
+    
+<hr class="featurette-divider">
+    
+<div class="col-xs-12">
+            <h2 class="featurette-heading text-center">What's happening lately?</h2>
+    
+            {% for event in events %}
+            <div class="row">
+                <div class="col-xs-3 col-xs-offset-2">{{ event.timestamp|naturaltime }}</div>
+                <div class="col-xs-7">{{ event.description }}</div>
+            </div>
+            {% endfor %}
+            
+    <div class="row featurette bg">
+        
+    </div>
+
+    <hr class="featurette-divider">
+      <div class="row featurette">
+          <h2 class="featurette-heading" style="margin-top:-30px; margin-bottom:15px;">Charts on Charts on Charts</h2>
+          <div class="row">
+        <div class="col-md-12 tabs-below">
+            
+            <div class="tab-content">
+                <div class="tab-pane fade in active" id="all"><canvas class="chart" data-id="all" width="800" height="300"></canvas></div>
+                <div class="tab-pane fade" id="webmail"><canvas class="chart" data-id="webmail" width="800" height="300"></canvas></div>
+                <div class="tab-pane fade" id="online"><canvas class="chart" data-id="online" width="800" height="300"></canvas></div>
+            </div>
+            
+            <ul class="nav nav-pills chart-nav">
+                <li class="active"><a href="#all" data-toggle="pill">All</a></li>
+                <li><a href="#webmail" data-toggle="pill">Webmail</a></li>
+                <li><a href="#online" data-toggle="pill">Online</a></li>
+            </ul>
+        </div>
+      </div>
+
+      <hr class="featurette-divider">
+      <!-- /END THE FEATURETTES -->
+
+{% endblock %}
+
+
+{% block scripts %}<script src="{% static 'surfice/js/ajax.js' %}"></script>{% endblock %}
