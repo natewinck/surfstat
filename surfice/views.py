@@ -385,5 +385,12 @@ def surfices(request):
 
 def settings(request):
 	return render(request, 'surfice/base_settings.html')
+
 def status(request):
-	return render(request, 'surfice/status.html')
+	context_dict = {}
+	
+	# Query all the Statuses and add them to context_dict
+	status_list = Status.get_statuses()
+	context_dict['statuses'] = status_list
+	
+	return render(request, 'surfice/base_status.html', context_dict)

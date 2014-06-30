@@ -1,5 +1,7 @@
 {% extends "surfice/base.html" %}
 
+{% block title %}Admin | Surfices{% endblock %}
+
 {% load static %}
 {% load humanize %}
 {% load slugify %}
@@ -112,7 +114,7 @@
 											<p>Select Status</p>
 											<select name="status" class="form-control" id="status-surfice-update">
 												{% for status in statuses %}
-												<option value="{{ status.id }}">{{ status.name }}</option>
+												<option value="{{ status.id }}" {% if status == surfice.status %}selected="selected"{% endif %}>{{ status.name }}</option>
 												{% endfor %}
 											</select>
 										</div>
@@ -195,6 +197,7 @@
 											<input type="hidden" name="delete" value="1">
 											<button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
 											<button type="submit" href="#" class="btn btn-danger danger">Delete</button>
+										</form>
 									</div>
 								</div>
 							</div>

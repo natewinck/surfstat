@@ -1,333 +1,163 @@
-<!DOCTYPE html>
-<html lang="en">
-  <head>
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="description" content="">
-    <meta name="author" content="">
-    <link rel="shortcut icon" href="assets/ico/favicon.ico">
+{% extends "surfice/base.html" %}
 
-    <title>Status Admin</title>
+{% block title %}Admin | Status{% endblock %}
 
-    <!-- Bootstrap core CSS -->
-    <link href="css/bootstrap.min.css" rel="stylesheet">
-    <link href="css/bootstrap-switch.min.css" rel="stylesheet">
-     <link href="css/carousel.css" rel="stylesheet">
+{% load static %}
+{% load humanize %}
+{% load slugify %}
 
-    <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
-    <!--[if lt IE 9]>
-      <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
-      <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
-    <![endif]-->
+{% block body_class %}admin{% endblock %}
 
-    <!-- Custom styles for this template -->
-  </head>
-<!-- NAVBAR
+
+{% block nav %}
+	{% include "surfice/admin_nav.html" %}
+{% endblock %}
+
+
+{% block heading %}
+<!-- JUMBOTRON HEADER
 ================================================== -->
-  <body class="admin">
-  <a name="top"></a>
+<div class="container jumbotron jumbotron-admin">
+	<h1>Update your Statuses</h1>
 
-    <div class="navbar navbar-default navbar-static-top" role="navigation">
-      <div class="container">
-        <div class="navbar-header">
-          <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
-            <span class="sr-only">Toggle navigation</span>
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-          </button>
-          <a class="navbar-brand" href="bootstrap.html">Asbury University Status</a>
-        </div>
-        <div class="navbar-collapse collapse">
-          <ul class="nav navbar-nav">
-            <li><a href="admin.html">Admin Home</a></li>
-            <li><a href="surfs.html">Surfs</a></li>
-            <li><a href="surfices.html">Surfices</a></li>
-              <li class="active"><a href="status.html">Statuses</a></li>
-            <li class="dropdown">
-              <a href="#" class="dropdown-toggle" data-toggle="dropdown">Settings<b class="caret"></b></a>
-              <ul class="dropdown-menu">
-                <li><a href="settings.html">User Settings</a></li>
-                <li><a href="#">Another action</a></li>
-                <li><a href="#">Something else here</a></li>
-                <li class="divider"></li>
-                <li class="dropdown-header">Nav header</li>
-                <li><a href="#">Separated link</a></li>
-                <li><a href="#">One more separated link</a></li>
-              </ul>
-            </li>
-          </ul>
-        </div>
-      </div>
-    </div>
-    <!-- ./navbar -->
-
-      <!-- JUMBOTRON HEADER
-================================================== -->    
-
-      <!-- START THE FEATURETTES -->
-<div class="container">
-      <div class="jumbotron jumbotron-admin">
-        <h1>Update your Surfices</h1>
-    <div class="container">
-        <p>Surfice (n): the building block to the surfs that make up the ITS infrastructure</p>
-    </div>
-    </div>
-</div>
-      
-<!-- Start Edit Accordian
+	<div class="container">
+		<p>Status (n): the position of affairs at a particular time</p>
+	</div>
+</div>{% endblock heading %} {% block content %} <!-- Start Edit Accordian
 ==================================================
 Each of the <row> act as a different function of the Edit process
--->    
- <div class="container">     
-    <div class="col-xs-offset-2 col-xs-8">
-        
-        
-<!-- Create a Status Section, text details--> 
-        <div class="row">
-            <h3>Create a Status</h3>
-        </div>
-        <div class="row">
-            <div class="col-xs-6">
-                <p>New Status Name</p>
-                <input type="text" class="form-control" placeholder="Status Name">
-            </div>
-            <div class="col-xs-6">
-                <p>New Status Description</p>
-                <textarea class="form-control" rows="3" placeholder="Add Status Description"></textarea>
-            </div>
-        </div>
-<!-- Add color to status, referencing js --> 
-        <div class="row">
-            <div class="col-xs-6">
-                <p>Assign Status Color</p>    
-                <input type="text" class="form-control color" placeholder="Status Name">
-            </div>
-        </div>
-        <div class="row">
-            <button type="button" class="btn btn-success pull-right button-accordian">Add</button>
-        </div>
-        <div class="row">
-            <h3>Current Statuses</h3>
-            <p>Click to edit status</p>
-        </div>
-        <div class="row">
-            <div class="panel-group" id="accordion">
-                    <div class="panel panel-default">
-<!--Start Panel 1 of Accordian-->
-                         <div class="panel-heading">
-                                <h4 class="panel-title">
-                                    <a data-toggle="collapse" data-parent="#accordion" data-target="#collapseOne">Up</a>
-                                </h4>
-                        </div>
-                        <div id="collapseOne" class="panel-collapse collapse">
-                            <div class="panel-body">
-                                <div class="col-xs-12">
-                                    <h3>Edit Your Status</h3>
-                                </div>
-                                    <div class="row">
-                                        <div class="col-xs-6">
-                                            <p>Update Status Name</p>
-                                            <input type="text" class="form-control" placeholder="Status Name">
-                                        </div>
-                                        <div class="col-xs-6">
-                                            <p>Update Status Description</p>
-                                            <textarea class="form-control" rows="3" placeholder="Update Description here.."></textarea>
-                                        </div>
-                                    </div>
-                                    <div class="row">
-                                        <div class="col-xs-4">
-                                        <p>Define Status Color</p>
-                                       <input type="text" class="form-control color" placeholder="Text input">
-                                        </div>
-                                    </div>
-                                <div class="row">
-                                        <div class="col-xs-offset-6 col-xs-3">
-                                            <button type="button" class="btn btn-danger button-accordian pull-right">Delete Status</button>
-                                        </div>
-                                        <div class="col-xs-3">
-                                        <button type="button" class="btn btn-success button-accordian pull-right">Submit Changes</button>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-            <div class="panel-group" id="accordion">
-                    <div class="panel panel-default">
-<!--Start Panel 1 of Accordian-->
-                        <div class="panel-heading">
-                                <h4 class="panel-title">
-                                    <a data-toggle="collapse" data-parent="#accordion" data-target="#collapseTwo">Up</a>
-                                </h4>
-                        </div>
-                        <div id="collapseTwo" class="panel-collapse collapse">
-                            <div class="panel-body">
-                                <div class="col-xs-12">
-                                    <h3>Edit Your Status</h3>
-                                </div>
-                                    <div class="row">
-                                        <div class="col-xs-6">
-                                            <p>Update Status Name</p>
-                                            <input type="text" class="form-control" placeholder="Status Name">
-                                        </div>
-                                        <div class="col-xs-6">
-                                            <p>Update Status Description</p>
-                                            <textarea class="form-control" rows="3" placeholder="Update Description here.."></textarea>
-                                        </div>
-                                    </div>
-                                    <div class="row">
-                                        <div class="col-xs-4">
-                                        <p>Define Status Color</p>
-                                       <input type="text" class="form-control color" placeholder="Text input">
-                                        </div>
-                                    </div>
-                                    <div class="row">
-                                        <div class="col-xs-offset-6 col-xs-3">
-                                            <button type="button" class="btn btn-danger button-accordian pull-right">Delete Status</button>
-                                        </div>
-                                        <div class="col-xs-3">
-                                        <button type="button" class="btn btn-success button-accordian pull-right">Submit Changes</button>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                                    </div>
-                                </div>
-                            </div>
-            
-            
-            
-            
-            
-                        </div>
-                    </div>
-     
-        
-
-<!--
-      <div class="row featurette">
-        <div class="col-md-7">
-            <table class="table table-striped">
-                <tr>
-                    <th>Surfice</th>
-                    <th>Short Description</th>
-                    <th>Status</th>
-                </tr>
-                <tr>
-                    <td>Webmail</td>
-                    <td>It went down</td>
-                    <td>Broken</td>
-                </tr>
-                <tr>
-                    <td>Webmail</td>
-                    <td>It went down</td>
-                    <td>Broken</td>
-                </tr>
-                <tr>
-                    <td>Webmail</td>
-                    <td>It went down</td>
-                    <td>Broken</td>
-                </tr>
-                <tr>
-                    <td>Webmail</td>
-                    <td>It went down</td>
-                    <td>Broken</td>
-                </tr>
-            </table>
-        </div>
-        <div class="col-md-5">
-          <h2 class="featurette-heading">Bring me up to speed. <span class="text-muted">What's happening lately?</span></h2>
-          <p class="lead">Donec ullamcorper nulla non metus auctor fringilla. Vestibulum id ligula porta felis euismod semper. Praesent commodo cursus magna, vel scelerisque nisl consectetur. Fusce dapibus, tellus ac cursus commodo.</p>
-        </div>
-      </div>
-
 -->
-<!--
-      <div class="row featurette">
-        <div class="col-md-7">
-          <h2 class="featurette-heading">And lastly, this one. <span class="text-muted">Checkmate.</span></h2>
-          <p class="lead">Donec ullamcorper nulla non metus auctor fringilla. Vestibulum id ligula porta felis euismod semper. Praesent commodo cursus magna, vel scelerisque nisl consectetur. Fusce dapibus, tellus ac cursus commodo.</p>
-        </div>
-        <div class="col-md-5">
-          <img class="featurette-image img-responsive" data-src="holder.js/500x500/auto" alt="Generic placeholder image" src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI1MDAiIGhlaWdodD0iNTAwIj48cmVjdCB3aWR0aD0iNTAwIiBoZWlnaHQ9IjUwMCIgZmlsbD0iI2VlZSIvPjx0ZXh0IHRleHQtYW5jaG9yPSJtaWRkbGUiIHg9IjI1MCIgeT0iMjUwIiBzdHlsZT0iZmlsbDojYWFhO2ZvbnQtd2VpZ2h0OmJvbGQ7Zm9udC1zaXplOjMxcHg7Zm9udC1mYW1pbHk6QXJpYWwsSGVsdmV0aWNhLHNhbnMtc2VyaWY7ZG9taW5hbnQtYmFzZWxpbmU6Y2VudHJhbCI+NTAweDUwMDwvdGV4dD48L3N2Zz4=">
-        </div>
-      </div>
--->
+<div class="row">
+	<div class="container col-xs-offset-2 col-xs-8">
+		<!-- Create a Status Section, text details-->
 
-      <hr class="featurette-divider">
-      <!-- /END THE FEATURETTES -->
+		<div class="row">
+			<h3>Create a Status</h3>
+		</div>
+		
+		<form action="" method="post">
+			{# To prevent cross-site forgery, include the following required tag #}
+			{% csrf_token %}
+			<div class="row">
+				<div class="col-xs-6">
+					<p>New Status Name</p>
+					<input name="name" class="form-control" placeholder="Status Name" type="text">
+				</div>
 
+				<div class="col-xs-6">
+					<p>New Status Description</p>
+					<textarea name="description" class="form-control" placeholder="Add Status Description" rows="3"></textarea>
+				</div>
+			</div><!-- Add color to status, referencing js -->
 
-      <!-- FOOTER -->
-      <footer>
-          <div class="container">
-        <p class="pull-right"><a href="#top">Back to top</a></p>
-        <p>Jumbotron Image by: <a href="https://www.flickr.com/photos/24101060@N00/">stewartbaird / photo on flickr</a><br/>
-        &copy; 2014 Asbury University &middot; <a href="#">Privacy</a> &middot; <a href="#">Terms</a> </p>
-      </footer>
+			<div class="row col-xs-6">
+				<p>Assign Status Color</p>
+				<input name="color" class="form-control color" placeholder="Status Name" type="text">
+			</div>
 
-    </div><!-- /.container -->
+			<div class="row">
+				<button class="btn btn-success pull-right button-accordian" type="submit">Add</button>
+			</div>
+		</form>
 
+		<div class="row">
+			<h3>Current Statuses</h3>
 
-    <!-- Bootstrap core JavaScript
-    ================================================== -->
-    <!-- Placed at the end of the document so the pages load faster -->
-    <script src="js/jquery-1.11.1.min.js"></script>
+			<p>Click to edit status</p>
+		</div>
 
-    <script src="js/bootstrap.min.js"></script>
-    <script src="js/bootstrap-switch.min.js"></script>
-      
-    <script src="js/jquery.inview.min.js"></script>
-    <script src="js/Chart.min.js"></script>
-    <script src="jscolor/jscolor.js"></script>
-    <script>
-        
-        // Dynamically filled onload
-        
-        chartData = [];
-        chartData['all'] = {
-            labels : ["January","February","March","April","May","June","July"],
-            datasets : [
-                {
-                    data : [65,59,90,81,56,55,40]
-                },
-                {
-                    data : [28,48,40,19,96,27,40]
-                }
-            ]
-        };
-        
-        chartData['webmail'] = {
-            labels : ["January","February","March","April","May","June","July"],
-            datasets : [
-                {
-                    data : [62,59,40,81,56,85,40]
-                },
-                {
-                    data : [58,48,10,39,96,27,48]
-                }
-            ]
-        };
-        
-        chartData['online'] = {
-            labels : ["January","February","March","April","May","June","July"],
-            datasets : [
-                {
-                    data : [62,59,40,81,56,85,40]
-                },
-                {
-                    data : [58,48,10,39,96,27,48]
-                }
-            ]
-        };
-        
-        // END AUTOFILL
-        
-        
-    </script>
-    <script src="js/effects.js"></script>
+		<div class="row panel-group" id="accordion">
+			{% for status in statuses %}
+			<div class="panel panel-default">
+				<!--Start Panel 1 of Accordian-->
 
-</body>
-</html>
+				<div class="panel-heading">
+					<h4 class="panel-title"><a data-parent="#accordion" data-target="#status-{{ status.id }}" data-toggle="collapse">{{ status.name }}</a></h4>
+				</div>
+
+				<div class="panel-collapse collapse panel-body" id="status-{{ status.id }}">
+					<div class="col-xs-12">
+						<h3>Edit Your Status</h3>
+					</div>
+					<form type="ajax" action="ajax/update-status" method="post">
+						<div class="row">
+							<div class="col-xs-6">
+								<p>Update Status Name</p>
+								<input name="name" class="form-control" placeholder="Status Name" value="{{ status.name }}" type="text">
+							</div>
+
+							<div class="col-xs-6">
+								<p>Update Status Description</p>
+								<textarea name="description" class="form-control" placeholder="Update Description here..." rows="3">{{ status.description }}</textarea>
+							</div>
+						</div>
+
+						<div class="row col-xs-4">
+							<p>Define Status Color</p>
+							<input name="color" value="{{ status.name }}" class="form-control color" placeholder="Text input" type="text">
+						</div>
+					
+						<div class="row">
+							<div class="col-xs-offset-6 col-xs-3">
+								<button class="btn btn-danger button-accordian pull-right" type="button" data-toggle="modal" data-target="#confirm-delete-status-{{ status.id }}">Delete Status</button>
+							</div>
+
+							<div class="col-xs-3">
+								<button class="btn btn-success button-accordian pull-right" type="submit">Submit Changes</button>
+							</div>
+						</div>
+					</form>
+				</div>
+			</div>
+			
+			
+			<div class="modal fade" id="confirm-delete-status-{{ status.id }}" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+				<div class="modal-dialog">
+					<div class="modal-content">
+						<div class="modal-header">
+							<h4 class="modal-title">Confirm Delete</h4>
+						</div>
+						<form action="" method="post">
+							<div class="modal-body">
+								<p>
+								Are you sure you want to delete the status, {{ status.name }}?
+								All surfices assigned with this status will be re-assigned to the below status once this status is deleted.</p>
+								<div class="form-group">
+									<label class="col-sm-4 control-label" for="new_status">Reassign Surfices to...</label>
+									<div class="col-sm-6">
+										<select name="new_status" class="form-control">
+											<option disabled selected>Select a status...</option>
+											{% for newstatus in statuses %}
+												{% if newstatus != status %}
+												<option value="{{ newstatus.id }}">{{ newstatus.name }}</option>
+												{% endif %}
+											{% endfor %}
+										</select>
+									</div>
+								</div>
+							</div>
+							<div class="modal-footer">
+								{# To prevent cross-site forgery, include the following required tag #}
+								{% csrf_token %}
+								<input type="hidden" name="status" value="{{ status.id }}">
+								<input type="hidden" name="delete" value="1">
+								<button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+								<button type="submit" href="#" class="btn btn-danger danger">Delete</button>
+							</div>
+						</form>
+					</div>
+				</div>
+			</div>
+			
+			
+			{% endfor %}
+			
+		</div>
+	</div>
+</div>
+<hr class="featurette-divider">
+<!-- /END THE FEATURETTES -->
+
+{% endblock content %}
+
+{% block scripts %}<script src="{% static 'surfice/js/jscolor/jscolor.js' %}"></script>{% endblock %}
