@@ -555,7 +555,7 @@ class Surfice(models.Model):
 	# True if it saved
 	# False if it didn't
 	# -------------------------------------
-	def save_surfice(self, *args, **kwargs):
+	def save_new(self, *args, **kwargs):
 		# Check to see if Surfice object is already in database. Don't do anything if so
 		if Surfice.is_saved(self.name):
 			# Do nothing

@@ -67,6 +67,16 @@ def ajax(request, action=''):
 			flag = surf.set_name(request.POST['name'])
 			
 			surf.set_description(request.POST['description'])
+	
+	
+	# Update the surfice's name, description, and surf
+	elif action == 'update-surfice':
+		if 'surfice' and 'surf' and 'name' and 'description' in request.POST:
+			surfice = Surfice.get_surfice(id=request.POST['surfice'])
+			# CHECK TO MAKE SURE THAT THE NAME ISN'T ALREADY IN THE DATABASE
+			flag = surfice.set_name(request.POST['name'])
+			surfice.set_description(request.POST['description'])
+			surfice.set_surf(Surf.get_surf(id=request.POST['surf']))
 			
 			
 	return HttpResponse()

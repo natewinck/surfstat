@@ -343,7 +343,46 @@ def surfs(request):
 
 
 def surfices(request):
-	return render(request, 'surfice/base_surfices.html')
+	context_dict = {}
+	
+	# If the admin is trying to create or delete a Surfice, the page is refreshed
+	flag = False
+	if request.method == 'POST':
+		d = request.POST
+		# Is the admin trying to delete a surf?
+		if 'surfice' and 'delete' in d:
+			surfice = Surfice.get_surfice(id=d['surfice'])
+			surfice.delete()
+		
+		# Is the admin trying to create a surf?
+		elif 'surfice' and 'description' and 'surf' and 'status' in d:
+			print "HI"
+			print d['surfice']
+			print d['description']
+			surf = Surf.get_surf(id=d['surf'])
+			status = Status.get_status(id=d['status'])
+			surfice = Surfice.create(d['surfice'], surf, status, d['description'])
+			if surfice == None:
+				flag = True
+			
+	
+	
+	# Query for surfs and add them to context_dict
+	surf_list = Surf.get_surfs()
+	context_dict['surfs'] = surf_list
+	
+	# Query all the Surfices and add them to context_dict
+	surfice_list = Surfice.get_surfices()
+	context_dict['surfices'] = surfice_list
+	
+	# Query all the Statuses and add them to context_dict
+	status_list = Status.get_statuses()
+	context_dict['statuses'] = status_list
+	
+	
+	return render(request, 'surfice/base_surfices.html', context_dict)
+
+
 def settings(request):
 	return render(request, 'surfice/base_settings.html')
 def status(request):
