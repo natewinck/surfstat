@@ -57,3 +57,38 @@ Programming Goals
 - - End it
 - Network Plugin
 - - Tie in real-time network info (like bandwidth usage, spam filtering, etc.) on homepage
+
+TO DO
+=====
+UI
+--
+- Finish templatifying design
+- Add frontside form checking
+- Hit enter for forms to submit
+- Restrict "What's Happening Lately?" to 2 weeks and up to ~10 entries
+
+AJAX
+----
+- AJAX check if name is already in database when creating/updating a Surf/Surfice/Status
+- AJAX function to update all AJAX get fields on a page
+
+Backend
+-------
+- Deleting a Surf gives you the option to move all containing Surfices to another surfice
+- Deleting a Surfice also removes all events/dings associated with it
+- Validate email and other info on server side when updating/creating/deleting info
+- Make checkers for Ding.create()
+- Flesh out Surf.get_surfs() and all getters to include orderby and other filters (create a generic filter)
+- When deleting a status, all Surfices associated with it can be given a new status without throwing a new event (and all events associated with the status are either updated or deleted)
+- Add comments everywhere! Especially HTML, CSS, JavaScript, views.py, urls.py, ajax.py
+
+Data
+----
+- [Possible—destroys group model] One Surfice can be in multiple Surfs
+- Set up MySQL in addition to SQLite
+
+Testing
+-------
+- Make a test deployment server
+- Test database creation
+
