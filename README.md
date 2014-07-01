@@ -40,23 +40,20 @@ Programming Goals
 - We want to be able to report the status (with a color) of any surfice
 - Any issues that are reported are able to be viewed both on the admin side and on the frontend
 - - Email once a threshold has been reached
-- LDAP login for admin
 - Email to Groups
 - Email someone once issues reach a peak set in the admin site
 - Unlimited events stored in the database for EVERY status update
-- - Still have the ability to edit and delete events
-- Initial setup
-- MySQL support?
-
+  - Still have the ability to edit and delete events
+- LDAP login for admin
 
 
 - Future:
 - Maintenance Plugin
-- - Ahead of time
-- - Start it
-- - End it
+  - Ahead of time
+  - Start it
+  - End it
 - Network Plugin
-- - Tie in real-time network info (like bandwidth usage, spam filtering, etc.) on homepage
+  - Tie in real-time network info (like bandwidth usage, spam filtering, etc.) on homepage
 
 TO DO
 =====
@@ -66,6 +63,8 @@ UI
 - Add frontside form checking
 - Hit enter for forms to submit
 - Restrict "What's Happening Lately?" to 2 weeks and up to ~10 entries
+- Initial setup step-by-step process (and can choose MySQL, SQLite, or PostgreSQL)
+- Email to Groups
 
 AJAX
 ----
@@ -81,14 +80,17 @@ Backend
 - Flesh out Surf.get_surfs() and all getters to include orderby and other filters (create a generic filter)
 - When deleting a status, all Surfices associated with it can be given a new status without throwing a new event (and all events associated with the status are either updated or deleted)
 - Add comments everywhere! Especially HTML, CSS, JavaScript, views.py, urls.py, ajax.py
+- Initial setup step-by-step process (and can choose MySQL, SQLite, or PostgreSQL)
+- Email to Groups
 
 Data
 ----
-- [Possible—destroys group model] One Surfice can be in multiple Surfs
+- Add color and generic JSON columns for every data model
+- [Possible — destroys group model] One Surfice can be in multiple Surfs
 - Set up MySQL in addition to SQLite
 
 Testing
 -------
 - Make a test deployment server
 - Test database creation
-
+- Test initial setup
