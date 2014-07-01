@@ -16,7 +16,7 @@ urlpatterns = patterns('',
 	#url(r'^surf/(?P<surf_url>\w+)/$', views.surf, name='surf'),
 	
 	# AJAX
-	url(r'^.*?ajax/(?P<action>[^/]*)', ajax.ajax, name='ajax'),
+	url(r'^.*?ajax/(?P<action>[^/]*)', ajax.dispatch, name='ajax'),
 	
 	# Admin
 	url(r'^admin/$', views.admin, name='admin'),

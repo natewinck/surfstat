@@ -59,7 +59,7 @@ TO DO
 =====
 UI
 --
-- Finish templatifying design
+- ~~Finish templatifying design~~
 - Add frontside form checking
 - Hit enter for forms to submit
 - Restrict "What's Happening Lately?" to 2 weeks and up to ~10 entries
@@ -85,7 +85,7 @@ Backend
 
 Data
 ----
-- Add color and generic JSON columns for every data model
+- ~~Add generic JSON columns for every data model~~
 - [Possible — destroys group model] One Surfice can be in multiple Surfs
 - Set up MySQL in addition to SQLite
 

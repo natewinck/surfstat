@@ -1,0 +1,82 @@
+{% extends "surfice/base.html" %}
+
+{% load static %}
+
+{% block title %}Admin | Surfs{% endblock %}
+
+{% block nav %}
+	{% include "surfice/admin_nav.html" %}
+{% endblock %}
+
+{% block css %}
+<!-- x-editable (bootstrap version) -->
+<link href="//cdnjs.cloudflare.com/ajax/libs/x-editable/1.5.0/bootstrap3-editable/css/bootstrap-editable.css" rel="stylesheet"/>
+<link href="{% static 'surfice/css/bootstrap-editable.css' %}" rel="stylesheet">
+{% endblock %}
+
+{% block heading %}
+<!-- JUMBOTRON HEADER
+================================================== -->    
+<div class="jumbotron jumbotron-admin">
+		<h1>Surfstat Settings</h1>
+	<div class="container">
+		<p>Setting (n):  the place or type of surroundings where something is positioned or where an event takes place</p>
+	</div>
+</div>
+{% endblock %}
+
+{% block content %}  
+ <!-- User Table
+================================================== -->   
+    <div class="container">
+     <div class="row featurette">
+     	<div class="col-md-4">
+     		<div>
+     			<div class="list-group select">
+     				<a href="#users" class="list-group-item active">Something here</a>
+     				<a href="#something" class="list-group-item">Another thing here</a>
+     			</div>
+     		</div>
+     	</div>
+        <div class="col-md-7 col-md-offset-1">
+            <h3>Users and Permissions</h3>
+            <table class="table table-striped">
+                <tr>
+                    <th>Group</th>
+                    <th>Update Permissions</th>
+                    <th>Add Permissions</th>
+                </tr>
+                <tr>
+<!-- Table with built in "popout" editor for each <td>, referenced in main.js -->
+                    <td><a href="#" id="username1" data-type="text" data-pk="1" data-url="/post" data-name="username" data-title="Enter username" class="editable">HelpDesk Students</a></td>
+                    <td><a href="#" id="update1" data-type="text" data-pk="1" data-url="/post" data-title="Enter username" class="editable">Yes</a></td>
+                    <td><a href="#" id="add1" data-type="text" data-pk="1" data-url="/post" data-title="Enter username" class="editable">No</a></td>
+                </tr>
+                <tr>
+                   <td><a href="#" id="username2" data-type="text" data-pk="1" data-url="/post" data-title="Enter username" class="editable">NetTeam Students</a></td>
+                    <td><a href="#" id="update2" data-type="text" data-pk="1" data-url="/post" data-title="Enter username" class="editable">Yes</a></td>
+                    <td><a href="#" id="add2" data-type="text" data-pk="1" data-url="/post" data-title="Enter username" class="editable">Yes</a></td>
+                </tr>
+                <tr>
+                 <td><a href="#" id="username3" data-type="text" data-pk="1" data-url="/post" data-title="Enter username" class="editable">LR Students</a></td>
+                    <td><a href="#" id="update3" data-type="text" data-pk="1" data-url="/post" data-title="Enter username" class="editable">Absolutely Not</a></td>
+                    <td><a href="#" id="add3" data-type="text" data-pk="1" data-url="/post" data-title="Enter username" class="editable">Absolutely Not</a></td>
+                </tr>
+            </table>
+        </div>
+    </div>
+<hr class="featurette-divider">
+<!-- /END THE FEATURETTES -->
+{% endblock content %}
+
+{% block scripts %}
+<script src="//cdnjs.cloudflare.com/ajax/libs/x-editable/1.5.0/bootstrap3-editable/js/bootstrap-editable.min.js"></script>
+<script src="{% static 'surfice/js/bootstrap-editable.js' %}"></script>
+<script>
+$(function() {
+	$.fn.editable.defaults.mode = 'popup';
+	$(".editable").editable()
+});
+</script>
+
+{% endblock %}

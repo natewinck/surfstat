@@ -260,4 +260,10 @@ $(".dropdown-select .dropdown-menu li").click(function(event) {
 //     console.log("here");
 // });
 
+$(".list-group.select .list-group-item").click(function() {
+	$(this).closest(".list-group.select").find(".list-group-item.active").removeClass("active");
+	$(this).addClass("active");
+});
+
+
 });

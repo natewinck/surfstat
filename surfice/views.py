@@ -5,6 +5,7 @@ from django.shortcuts import render
 from django.http import HttpResponse
 #from django.template import Context, Template
 from surfice.models import Surf, Surfice, Status, Ding, Event
+import json
 
 # Create your views here.
 
@@ -75,11 +76,12 @@ def debug():
 	
 	
 	# Second, create a new Status
-	status_nodescr = Status.create("Status Without Description")
-	status = Status.create("Status With Description", "A description")
+	status_nodescr = Status.create("Status Without Description", color="#678434")
+	status = Status.create("Status With Description", "A description", misc="haha")
 	
 	printv(status_nodescr, "STATUS W/O DESCRIPTION")
 	printv(status, "STATUS WITH DESCRIPTION")
+	print(status.data, "DATA of STATUS")
 	
 	# Get a status by name
 	status_by_name = Status.get_status("Status Without Description")
@@ -92,7 +94,7 @@ def debug():
 	print "NO DESCRIPTION STILL SAVED? (should be False)\n======================="
 	print Status.is_saved("Status Without Description")
 	
-	status2 = Status.create("Status2", "A 2nd description")
+	status2 = Status.create("Status2", "A 2nd description", possible=5)
 
 
 
@@ -111,20 +113,20 @@ def debug():
 	printv(surfice_manual, "MANUAL SURFICE")
 	
 	# Now Delete the manual one
-	surfice_manual.deleteice()
+	surfice_manual.delete()
 	
 	print "Is the Manual Surfice still saved (It should be False)\n========================"
 	print Surfice.is_saved(surfice_manual.name)
 	
 	
 	# Now Automatically
-	surfice = Surfice.createice("Surfice", surf_auto, status, "A Surfice description")
-	surfice2 = Surfice.createice("Surfice2", surf_auto, status, "A 2nd Surfice description")
+	surfice = Surfice.create("Surfice", surf_auto, status, "A Surfice description")
+	surfice2 = Surfice.create("Surfice2", surf_auto, status, "A 2nd Surfice description")
 	printv(surfice, "SURFICE")
 	printv(surfice2, "SURFICE2")
 	
 	# Try to overwrite it
-	surfice_overwrite = Surfice.createice("Surfice", surf_auto, status)
+	surfice_overwrite = Surfice.create("Surfice", surf_auto, status)
 	print surfice_overwrite
 	
 	# Get surfices
@@ -142,14 +144,14 @@ def debug():
 	printv(surfice, "SURFICE1 UPDATED")
 	
 	
-# 	
+	
 	# Delete everything
 	try: surf_auto.delete()
 	except: pass
 	try: surf_auto_nodescr.delete()
 	except: pass
 	
-	try: status_nodescr = delete()
+	try: status_nodescr.delete()
 	except: pass
 	
 	try: status.delete()
@@ -157,9 +159,9 @@ def debug():
 	try: status2.delete()
 	except: pass
 	
-	try: surfice.deleteice()
+	try: surfice.delete()
 	except: pass
-	try: surfice2.deleteice()
+	try: surfice2.delete()
 	except: pass
 
 
@@ -184,13 +186,13 @@ def index(request):
 			pass
 		else:
 			print "AH"
-			print Surfice.get_surfice(id=d['surfice'])
-			print Status.get_status(id=d['status'])
+			print Surfice.get_surfice(pk=d['surfice'])
+			print Status.get_status(pk=d['status'])
 			print d['email']
 			print d['description']
 			ding = Ding.create(
-				Surfice.get_surfice(id=d['surfice']),
-				Status.get_status(id=d['status']),
+				Surfice.get_surfice(pk=d['surfice']),
+				Status.get_status(pk=d['status']),
 				d['email'],
 				d['description']
 			)
@@ -310,7 +312,7 @@ def surfs(request):
 		
 		# Is the admin trying to delete a surf?
 		if 'surf' and 'delete' in d:
-			surf = Surf.get_surf(id=d['surf'])
+			surf = Surf.get_surf(pk=d['surf'])
 			surf.delete()
 		
 		# Is the admin trying to create a surf?
@@ -351,7 +353,7 @@ def surfices(request):
 		d = request.POST
 		# Is the admin trying to delete a surf?
 		if 'surfice' and 'delete' in d:
-			surfice = Surfice.get_surfice(id=d['surfice'])
+			surfice = Surfice.get_surfice(pk=d['surfice'])
 			surfice.delete()
 		
 		# Is the admin trying to create a surf?
@@ -359,8 +361,8 @@ def surfices(request):
 			print "HI"
 			print d['surfice']
 			print d['description']
-			surf = Surf.get_surf(id=d['surf'])
-			status = Status.get_status(id=d['status'])
+			surf = Surf.get_surf(pk=d['surf'])
+			status = Status.get_status(pk=d['status'])
 			surfice = Surfice.create(d['surfice'], surf, status, d['description'])
 			if surfice == None:
 				flag = True
@@ -384,10 +386,39 @@ def surfices(request):
 
 
 def settings(request):
-	return render(request, 'surfice/base_settings.html')
+	context_dict = {}
+	
+	return render(request, 'surfice/base_settings.html', context_dict)
 
 def status(request):
 	context_dict = {}
+	
+	# If the admin is trying to create or delete a Surfice, the page is refreshed
+	flag = False
+	if request.method == 'POST':
+		d = request.POST
+		# Is the admin trying to delete a status?
+		if 'status' and 'delete' in d:
+			surfice = Surfice.get_surfice(pk=d['surfice'])
+			surfice.delete()
+		
+		# Is the admin trying to create a status?
+		elif 'name' in request.POST:
+			
+			data = {}
+			if 'data' in request.POST:
+				# Get the JSON data from POST
+				data = json.loads(request.POST['data'])
+				print "HERE"
+			
+			# Set the general data by passing in data as keyword arguments
+			status = Status.create	(
+										name = d['name'],
+										description = request.POST.get('description', ''),
+										**data
+									)
+			if status == None:
+				flag = True
 	
 	# Query all the Statuses and add them to context_dict
 	status_list = Status.get_statuses()

@@ -6,6 +6,7 @@
   fields:
     name: Hawaii
     description: The best Surf in the world
+    data: 
 
 # Three different default statuses: clean, choppy, totally axed
 - model: surfice.status
@@ -13,18 +14,25 @@
   fields:
     name: Clean
     description: Everything is epic
+    data:
+        color: '#2ecc71'
 
 - model: surfice.status
   pk: 2
   fields:
     name: Choppy
     description: Things are a little mushy, but conditions will improve.
+    data:
+        color: '#ffcccc'
 
 - model: surfice.status
   pk: 3
   fields:
     name: Totally Axed
     description: It wiped-out, so we're applying a little wax.
+    data:
+        color: '#ff0000'
+
 
 # Create two default surfices (service)
 - model: surfice.surfice
@@ -34,6 +42,7 @@
     surf: 1
     description: Jaws (Pe’ahi in Hawaiian) is the biggest and baddest surf spot in all of Hawaii.
     status: 1
+    data: 
 
 - model: surfice.surfice
   pk: 2
@@ -42,6 +51,7 @@
     surf: 1
     description: "Oahu’s North Shore is home to some of the world’s biggest waves, and Laniakea may be the best point break on the coastline. Strong currents and the nearly exposed reef bottom at low tide make the spot dicey at times. Laniakea is also renowned for the sea turtles that call it home, and the area draws about as many turtle watchers as surfers."
     status: 1
+    data: 
 
 # Create some dummy events
 - model: surfice.event
@@ -51,6 +61,7 @@
     surfice: 1
     description: All surfices related to Jaws have gone down. Please check back regularly to get updates.
     timestamp: 2014-06-25 18:33:57.059399
+    data: 
 
 - model: surfice.event
   pk: 2
@@ -59,6 +70,7 @@
     surfice: 1
     description: Now they're all really dead
     timestamp: 2014-06-25 18:34:11.810243
+    data: 
 
 - model: surfice.event
   pk: 3
@@ -67,6 +79,7 @@
     surfice: 1
     description: Letters A-Q have been restored. We are still working with support to get R-Z up.
     timestamp: 2014-06-25 18:34:21.311858
+    data: 
 
 - model: surfice.event
   pk: 4
@@ -75,6 +88,7 @@
     surfice: 1
     description: All surfices related to webmail have now been restored.
     timestamp: 2014-06-25 18:34:30.860495
+    data: 
     
 - model: surfice.event
   pk: 5
@@ -83,3 +97,4 @@
     surfice: 2
     description: Laniakea got an update again!
     timestamp: 2014-06-25 18:34:39.748206
+    data: 

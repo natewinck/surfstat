@@ -15,14 +15,45 @@ $(function() {
 $("form[type='ajax']").on("submit", function(e) {
     
     e.preventDefault();
-    $.post(this.action, $(this).serialize());
+    $.post(this.action,
+    	// Get the data and serialize it
+    	function() {
+    		// name = data
+    		// Attribute data-name=x
+    		//$(this).children(a
+    		formData = $(this).serializeArray();
+    		
+    		data = {};
+    		$(this).children('[name="data"]').each(function() {
+    			data[$(this).attr("data-name")] = $(this).val()
+    		});
+    		
+    		// If there were data fields found
+    		if (!jQuery.isEmptyObject(data)) {
+    			formData.push({name: "data", value: data});
+    		}
+    		
+    		return formData
+    		
+    	},
+    	// Get the response from the server
+    	function(data, textStatus, jqXHR) {
+    		// use data, which will be all JSON
+    	}
     
-//    var f = e.target,
-//        formData = new FormData(f),
-//        xhr = new XMLHttpRequest();
-//     
-//    xhr.open("POST", f.action);
-//    xhr.send(formData);
+    );
+});
+
+$("form").on("submit", function(e) {
+	data = {};
+	$(this).children('[name="data"]').each(function() {
+		data[$(this).attr("data-name")] = $(this).val()
+	});
+	
+	// If there were data fields found
+	if (!jQuery.isEmptyObject(data)) {
+		formData.push({name: "data", value: data});
+	}
 });
 
 

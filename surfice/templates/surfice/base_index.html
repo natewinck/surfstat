@@ -22,9 +22,10 @@
 			<div class="surfices">
 				
 				<!-- START THE SURFICES -->
-				{# Color still needs to into the the boxes #}
+				{# Example of using the general data field #}
+				{# If color is set in data, set the color #}
 				{% for surfice in surfices %}
-				<div class="surfice surfice-success">
+				<div class="surfice surfice-success" {% if surfice.status.data.color %}style="background-color:{{ surfice.status.data.color }}"{% endif %}>
 					<h2 class="center-all featurette-heading-grid surfice-active">{{ surfice.name }}</h2><a class="btn btn-lg btn-info center-all-button featurette-heading-grid surfice-hover" role="button" data-toggle="modal" data-target="#ding-{{ surfice.id }}">Report an Issue</a>
 				</div>
 				{% endfor %}

@@ -15,7 +15,7 @@
 
 
 {% block heading %}
-<form class="row jumbotron" type="ajax" action="ajax/set-status" method="post">
+<form class="row jumbotron jumbotron-admin" type="ajax" action="ajax/set-status" method="post">
 {# To prevent cross-site forgery, include the following required tag #}
 {% csrf_token %}
 	<div class="col-xs-12">

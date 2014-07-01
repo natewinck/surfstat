@@ -1,4 +1,7 @@
 from django.db import models
+
+from yamlfield.fields import YAMLField
+
 from datetime import date, timedelta
 
 
@@ -10,14 +13,16 @@ from datetime import date, timedelta
 # CLASS VARIABLES
 # name			Name of the Surf
 # description	Description of the Surf
+# data			Generic data field stored as separate keys
 #
 # METHODS
 # String		__unicode__(self)
 # Surf			create(name, description)
 # void			delete(self, *args, **kwargs)
-# Surf			get_surf(name, id)
+# Surf			get_surf(name, pk, id)
 # *Surf			get_surfs(name)
 # *Surfice 		get_surfices(self, name)
+# void			set(self, name, description, **kwargs)
 # bool			set_name(self, name)
 # void			set_description(self, description)
 # bool			save_new(self, *args, **kwargs)
@@ -28,25 +33,27 @@ class Surf(models.Model):
 	# Class variables
 	name 		= models.CharField(max_length=512, unique=True)
 	description = models.TextField()
+	data		= YAMLField()
 	
 	# Class methods
 	def __unicode__(self):
 		return self.name
 	
 	# -------------------------------------
-	# @staticmethod create(name, description)
+	# @staticmethod create(name, description, **kwargs)
 	#
 	# Creates a Surf object in the database defined by the given name and description
 	# 
 	# INPUT
 	# name (required)			A string that gives the name of the surf
 	# description (optional)	A string that describes the surf
+	# kwargs					Generic data to be stored in the database as separate keys
 	#
 	# RETURNS
 	# The created surf
 	# -------------------------------------
 	@staticmethod
-	def create(name, description=''):
+	def create(name, description='', **kwargs):
 		surf = None
 		
 		# Check to make sure another Surf object with the same name isn't
@@ -58,6 +65,10 @@ class Surf(models.Model):
 			# Set the surf attributes
 			surf.name = name
 			surf.description = description
+			
+			# Set any generic data that might've been passed
+			for key in kwargs:
+				surf.data[key] = kwargs[key]
 			
 			# Save the surf in the database
 			surf.save()
@@ -76,7 +87,7 @@ class Surf(models.Model):
 	def delete(self, *args, **kwargs):
 		# Check to make sure the Surf object is in the database first
 		try:
-			if Surf.objects.filter(pk=self.id).count() != 0:
+			if Surf.objects.filter(pk=self.pk).count() != 0:
 				# Call the real delete() function
 				super(Surf, self).delete(*args, **kwargs)
 		except Surf.DoesNotExist:
@@ -85,18 +96,18 @@ class Surf(models.Model):
 	# --------------------------
 	# @staticmethod get_surf(name)
 	#
-	# Get a Surf object by name OR id from the database
+	# Get a Surf object by name OR id/pk from the database
 	#
 	# INPUT
 	# name			The name of the Surf object
-	# id			The id of the Surf object
+	# id = pk		The id/primary key of the Surf object
 	#
 	# RETURNS
 	# A Surf object
 	# None if no object found
 	# ---------------------------
 	@staticmethod
-	def get_surf(name=None, id=None):
+	def get_surf(name=None, pk=None, id=None):
 		surf = None
 		
 		if name != None:
@@ -105,9 +116,13 @@ class Surf(models.Model):
 			except Surf.DoesNotExist:
 				pass
 
-		elif id != None:
+		elif id != None or pk != None:
+			# If pk is not set (meaning id is set), use id
+			if pk == None:
+				pk = id
+			
 			try:
-				surf = Surf.objects.get(id=id)
+				surf = Surf.objects.get(pk=pk)
 			except Surf.DoesNotExist:
 				pass
 
@@ -176,6 +191,39 @@ class Surf(models.Model):
 			pass
 		
 		return surfices
+	
+	# -------------------------------------
+	# set(self, name, description, **kwargs)
+	#
+	# Generic setter function. All fields are optional, but nothing happens
+	# if no parameters are passed
+	#
+	# INPUT
+	# name (optional)			The new name of the surf object
+	# description (optional)	The new description of the surf object
+	# kwargs					Any other fields that would go into the generic data field as keys
+	# -------------------------------------
+	def set(self, name=None, description=None, **kwargs):
+		
+		# If name is set, name hasn't changed, and there isn't another object
+		# with the same name (case insensitive), update the name
+		if	(
+				name != None 		and
+				name != self.name 	and
+				Surf.objects.filter(name__iexact='name').count() == 0
+			):
+			self.name = name
+		
+		# If description is set, change the description
+		if description != None:
+			self.description = description
+		
+		# Go through the generic data and put it in their respective fields
+		for key in kwargs:
+			self.data[key] = kwargs[key]
+		
+		# Save the object to the database
+		self.save()
 	
 	# -------------------------------------
 	# set_name(self, name)
@@ -277,15 +325,17 @@ class Surf(models.Model):
 # surf			Which Surf group this belongs to. Defaults to NULL
 # description	Description of the service
 # status		Status of the Surfice
+# data			Generic data stored as keys
 #
 # METHODS
 # String			__unicode__(self)
-# Surfice			create(name, surf, description)
+# Surfice			create(name, surf, description, **kwargs)
 # void				delete(self, *args, **kwargs)
-# Surfice			get_surfice(name, id)
+# Surfice			get_surfice(name, pk, id)
 # *Surfice			get_surfices(...)
 # Status			get_status(self)
 # *Event			get_events(self, ...)
+# void				set(self, name, surf, description, **kwargs)
 # bool				set_name(self, name)
 # void				set_surf(self, surf)
 # void				set_description(self, description)
@@ -299,9 +349,8 @@ class Surfice(models.Model):
 	name 		= models.CharField(max_length=512, unique=True)
 	surf 		= models.ForeignKey(Surf)
 	description = models.TextField()
-	
-	# Status is part of the model
-	status = models.ForeignKey('Status')
+	status		= models.ForeignKey('Status')
+	data		= YAMLField()
 	
 	def __unicode__(self):
 		return self.name
@@ -312,7 +361,7 @@ class Surfice(models.Model):
 	#	self.group = Surf()
 	
 	# -------------------------------------
-	# @staticmethod create(name, surf, description)
+	# @staticmethod create(name, surf, description, **kwargs)
 	# 
 	# Create a new Surfice object and store it in the database
 	# 
@@ -321,12 +370,13 @@ class Surfice(models.Model):
 	# surf						Surf object that this Surfice belongs to
 	# status					Status object that Surfice has
 	# description (optional)	Description of the Surfice
+	# kwargs (optional)			Generic data stored as keys
 	# 
 	# RETURNS
 	# The created Surfice object
 	# -------------------------------------
 	@staticmethod
-	def create(name, surf, status, description=''):
+	def create(name, surf, status, description='', **kwargs):
 		surfice = None
 		
 		# Check to make sure a Surfice object with the same name
@@ -340,6 +390,10 @@ class Surfice(models.Model):
 			surfice.surf = surf # I NEED TO CHECK IF THE SURF EXISTS FIRST
 			surfice.description = description
 			surfice.status = status
+			
+			# Add generic data
+			for key in kwargs:
+				surfice.data[key] = kwargs[key]
 			
 			# Save the Status object to the database
 			surfice.save()
@@ -359,20 +413,20 @@ class Surfice(models.Model):
 		super(Surfice, self).delete(*args, **kwargs)
 	
 	# -------------------------------------
-	# get_surfice(name, id)
+	# get_surfice(name, pk, id)
 	# 
-	# Gets the surfice with the defined name OR id
+	# Gets the surfice with the defined name OR id/pk
 	# 
 	# INPUT
 	# name			The name of the surfice
-	# id			id of the surfice
+	# id = pk		id/primary key of the surfice
 	#
 	# RETURNS
 	# A surfice object
 	# None if no surfice found
 	# -------------------------------------
 	@staticmethod
-	def get_surfice(name=None, id=None):
+	def get_surfice(name=None, pk=None, id=None):
 		surfice = None
 		try:
 			# If name is set, find the Surfice whose name matches (case-insensitive)
@@ -380,8 +434,12 @@ class Surfice(models.Model):
 				surfice = Surfice.objects.get(name__iexact=name)
 			
 			# If id is set, find the Surfice that has that id
-			elif id != None:
-				surfice = Surfice.objects.get(id=id)
+			elif pk != None or id != None:
+				# If pk is not set (meaning id is set), use id
+				if pk == None:
+					pk = id
+				
+				surfice = Surfice.objects.get(pk=pk)
 			
 		except Surfice.DoesNotExist:
 			pass
@@ -460,8 +518,50 @@ class Surfice(models.Model):
 	def get_events(self, **kwargs):
 		# NEED TO WRITE
 		events = []
-		events = Event.objects.filter(surfice=self.id) #NOT SURE IF THIS WORKS OR NOT
+		events = Event.objects.filter(surfice=self.pk) #NOT SURE IF THIS WORKS OR NOT
 		return events
+	
+	# -------------------------------------
+	# set(self, name, surf, description, **kwargs)
+	#
+	# Generic setter function. All fields are optional, but nothing happens
+	# if no parameters are passed
+	#
+	# INPUT
+	# name (optional)			The new name of the surfice object
+	# surf (optional)			The new surf object this surfice is part of
+	# description (optional)	The new description of the surfice object
+	# kwargs					Any other fields that would go into the generic data field as keys
+	# -------------------------------------
+	def set(self, name=None, surf=None, description=None, **kwargs):
+		
+		# If name is set, name hasn't changed, and there isn't another object
+		# with the same name (case insensitive), update the name
+		if	(
+				name != None 		and
+				name != self.name 	and
+				Surf.objects.filter(name__iexact='name').count() == 0
+			):
+			self.name = name
+		
+		# If surf is set and is in the database, update it
+		if	(
+				surf != None and
+				type(surf) is Surf and
+				Surf.objects.filter(pk=Surf.pk).count() == 1
+			):
+			self.surf = surf
+		
+		# If description is set, change the description
+		if description != None:
+			self.description = description
+		
+		# Go through the generic data and put it in their respective fields
+		for key in kwargs:
+			self.data[key] = kwargs[key]
+		
+		# Save the object to the database
+		self.save()
 	
 	# -------------------------------------
 	# set_name(self, name)
@@ -597,13 +697,15 @@ class Surfice(models.Model):
 # CLASS VARIABLES
 # name			Name of the status e.g. "Totally axed" or "choppy" or "clean"
 # description	Description of the status
+# data			Generic data
 #
 # METHODS
 # 
 # Status		create(name, description)
 # void			delete(self, *args, **kwargs)
-# Status		get_status(name, id)
+# Status		get_status(name, pk, id)
 # *Status		get_statuses(name)
+# void			set(self, name, description, **kwargs)
 # bool			set_name(self, name)
 # void			set_description(self, description)
 # bool			is_saved(name)
@@ -613,24 +715,26 @@ class Status(models.Model):
 	# Class variables
 	name 		= models.CharField(max_length=512, unique=True)
 	description = models.TextField()
+	data		= YAMLField()
 	
 	def __unicode__(self):
 		return self.name
 	
 	# -------------------------------------
-	# @staticmethod create(name, description)
+	# @staticmethod create(name, description, **kwargs)
 	#
 	# Create a new status with name and optional description
 	#
 	# INPUT
 	# name						Name of the status
 	# description (optional)	Description of the status
+	# kwargs (optional)			Generic data to be put in the database
 	#
 	# RETURNS
 	# The created Status object
 	# -------------------------------------
 	@staticmethod
-	def create(name, description=''):
+	def create(name, description='', **kwargs):
 		status = None
 		
 		# Check to make sure a Status object with the same name
@@ -642,6 +746,13 @@ class Status(models.Model):
 			# Set the Status class variables
 			status.name = name
 			status.description = description
+			
+			# Set a default color
+			status.data = {'color': '#ffffff'}
+			
+			# Loop through the kwargs and add them to the generic data field jdata
+			for key in kwargs:
+				status.data[key] = kwargs[key]
 			
 			# Save the Status object to the database
 			status.save()
@@ -663,19 +774,19 @@ class Status(models.Model):
 	# -------------------------------------
 	# @staticmethod get_status(name)
 	# 
-	# Gets a status object by name OR id. If no parameter is
+	# Gets a status object by name OR id/pk. If no parameter is
 	# passed, nothing is returned
 	#
 	# INPUT
 	# name (optional)		The name of the status
-	# id (optional)			The id of the status
+	# id=pk (optional)		The id/primary key of the status
 	#
 	# RETURNS
 	# A status object if found
 	# If nothing is found, nothing is returned
 	# -------------------------------------
 	@staticmethod
-	def get_status(name=None, id=None):
+	def get_status(name=None, pk=None, id=None):
 		# Default value to return is nothing
 		status = None
 		
@@ -684,9 +795,12 @@ class Status(models.Model):
 			if name != None:
 				status = Status.objects.get(name__iexact=name)
 
-			# If id is set, get the status with that id
-			elif id != None:
-				status = Status.objects.get(id=id)
+			# If id or pk is set, get the status with that pk or id
+			elif pk != None or id != None:
+				# If pk is not set (meaning id is set), use id
+				if pk == None:
+					pk = id
+				status = Status.objects.get(pk=pk)
 			
 		# If nothing is found, do nothing
 		except Status.DoesNotExist:
@@ -729,6 +843,40 @@ class Status(models.Model):
 		return statuses
 	
 	# -------------------------------------
+	# set(self, name, description, **kwargs)
+	#
+	# Generic setter function. All fields are optional, but nothing happens
+	# if no parameters are passed
+	#
+	# INPUT
+	# name (optional)			The new name of the status object
+	# description (optional)	The new description of the status object
+	# kwargs					Any other fields that would go into the generic data field
+	# -------------------------------------
+	def set(self, name=None, description=None, **kwargs):
+		
+		# If name is set, name hasn't changed, and there isn't another object
+		# with the same name, update the name
+		if	(
+				name != None 		and
+				name != self.name 	and
+				Status.objects.filter(name__iexact='name').count() == 0
+			):
+			self.name = name
+		
+		# If description is set, change the description
+		if description != None:
+			self.description = description
+		
+		# Go through the generic data and put it in their respective fields
+		for key in kwargs:
+			self.data[key] = kwargs[key]
+		
+		# Save the object to the database
+		self.save()
+			
+	
+	# -------------------------------------
 	# set_name(self, name)
 	#
 	# Sets the name of the status to a new unique name
@@ -753,6 +901,7 @@ class Status(models.Model):
 			self.name = name
 			self.save()
 			code = True
+		
 		return code
 	
 	# -------------------------------------
@@ -807,10 +956,12 @@ class Status(models.Model):
 # status			Status object that the user is reporting
 # email				Email of the user who submitted an ding
 # description		Description of the ding
+# data				Generic data stored as keys
 # NEED TO ADD RESOLVED FIELD
 #
 # METHODS
 # Ding			create(surfice, status, email, description)
+# Ding			get_ding(pk)
 # *Ding			get_dings(...)
 # 
 # -----------------------------------------
@@ -821,6 +972,7 @@ class Ding(models.Model):
 	status		= models.ForeignKey(Status)
 	email		= models.EmailField()
 	description	= models.TextField()
+	data		= YAMLField()
 	
 	def __unicode__(self):
 		return self.status.name
@@ -835,12 +987,13 @@ class Ding(models.Model):
 	# status					The reported status of the surfice
 	# email						The email address of the person who submitted the ding
 	# description (optional)	Description of the event
+	# kwargs (optional)			Generic data stored as keys
 	#
 	# RETURNS
 	# The created ding
 	# -------------------------------------
 	@staticmethod
-	def create(surfice, status, email, description=''):
+	def create(surfice, status, email, description='', **kwargs):
 		# Create the Ding object
 		ding = Ding()
 		
@@ -850,32 +1003,36 @@ class Ding(models.Model):
 		ding.email = email
 		ding.description = description
 		
+		# Go through kwargs and assign to generic data field
+		for key in kwargs:
+			ding.data[key] = kwargs[key]
+		
 		# Save the Ding object to the database
 		ding.save()
 		
 		return ding
 	
 	# -------------------------------------
-	# @staticmethod get_ding(id)
+	# @staticmethod get_ding(pk)
 	# 
-	# Get ding that corresponds to the id parameter. If no param is passed
+	# Get ding that corresponds to the pk parameter. If no param is passed
 	# nothing is returned
 	#
 	# INPUT
-	# id			id of the Ding
+	# pk			primary key of the Ding
 	#
 	# RETURNS
-	# Ding corresponding to the id
+	# Ding corresponding to the primary key
 	# None if nothing is found
 	# -------------------------------------
 	@staticmethod
-	def get_ding(id):
+	def get_ding(pk):
 		# Default value to return is nothing
 		ding = None
 		
 		try:
 			# If name is set, get the ding that has that name
-			ding = Ding.objects.get(id=id)
+			ding = Ding.objects.get(pk=pk)
 			
 		# If nothing is found, do nothing
 		except Ding.DoesNotExist:
@@ -918,29 +1075,29 @@ class Ding(models.Model):
 		# Get all dings related to a specific surfice
 		if 'surfice' in kwargs:
 			surfice = kwargs['surfice']
-			dings = Ding.objects.filter(surfice=surfice).order_by('-timestamp', '-id')
+			dings = Ding.objects.filter(surfice=surfice).order_by('-timestamp', '-pk')
 		
 		# Get all dings related to a specific email
 		elif 'email' in kwargs:
 			email = kwargs['email']
-			dings = Ding.objects.filter(email=email).order_by('-timestamp', '-id')
+			dings = Ding.objects.filter(email=email).order_by('-timestamp', '-pk')
 		
 		# Get all dings that report a specific status
 		elif 'status' in kwargs:
 			status = kwargs['status']
-			dings = Ding.objects.filter(status=status).order_by('-timestamp', '-id')
+			dings = Ding.objects.filter(status=status).order_by('-timestamp', '-pk')
 		
 		# Get all dings in the past x days
 		elif 'days' in kwargs:
 			x = kwargs['days']
 			start = date.today() - timedelta(x)
 			# Equivalent in SQL to SELECT ... WHERE timestamp >= start
-			dings = Ding.objects.filter(timestamp__gte=start).order_by('-timestamp', '-id')
+			dings = Ding.objects.filter(timestamp__gte=start).order_by('-timestamp', '-pk')
 			
 		# Get the past x number of events	
 		elif 'dings' in kwargs:
 			x = kwargs['events']
-			dings = Ding.objects.all().order_by('-timestamp', '-id')[:x]
+			dings = Ding.objects.all().order_by('-timestamp', '-pk')[:x]
 		
 		# Get dings up to the current date from the start date
 		# If end is set, get dings between (inclusive) these dates			
@@ -951,20 +1108,20 @@ class Ding(models.Model):
 			# Else, just use the current date
 			if 'end' in kwargs:
 				end = kwargs['end']
-				dings = Ding.objects.filter(timestamp__gte=start, timestamp__lte=end).order_by('-timestamp', '-id')
+				dings = Ding.objects.filter(timestamp__gte=start, timestamp__lte=end).order_by('-timestamp', '-pk')
 				
 			else:
 				end = date.today()
-				dings = Ding.objects.filter(timestamp__gte=start).order_by('-timestamp', '-id')
+				dings = Ding.objects.filter(timestamp__gte=start).order_by('-timestamp', '-pk')
 
 		# Get events up to and including the end date
 		elif 'end' in kwargs:
 			end = kwargs['end']
-			dings = Ding.objects.filter(timestamp__lte=end).order_by('-timestamp', '-id')
+			dings = Ding.objects.filter(timestamp__lte=end).order_by('-timestamp', '-pk')
 			
 		# If no argument is given, get all events 
 		else:
-			dings = Ding.objects.all().order_by('-timestamp', '-id')
+			dings = Ding.objects.all().order_by('-timestamp', '-pk')
 			
 		
 		return dings
@@ -980,13 +1137,15 @@ class Ding(models.Model):
 # CLASS VARIABLES
 # timestamp			timestamp of the event
 # status			Status object
-# surfice			id of the service
+# surfice			Surfice object that event affects
 # description		description of the event
+# data				Generic data stored as keys
 #
 # METHODS
 # Event			create(surfice, status, description)
 # void			delete(self, *args, **kwargs)
 # *Event		get_events(...)
+# void			set(status, surfice, description, **kwargs)
 ###### Need to make setter function######################################
 # ---------------------------------------
 class Event(models.Model):
@@ -995,12 +1154,13 @@ class Event(models.Model):
 	status		= models.ForeignKey(Status)
 	surfice		= models.ForeignKey(Surfice)
 	description	= models.TextField()
+	data		= YAMLField()
 	
 	def __unicode__(self):
 		return self.status.name
 	
 	# -------------------------------------
-	# @staticmethod create(surfice, status, description)
+	# @staticmethod create(surfice, status, description, **kwargs)
 	# 
 	# Creates an event for the set surfice. The surfice's status is also updated
 	#
@@ -1008,12 +1168,13 @@ class Event(models.Model):
 	# surfice					The surfice object that has an event
 	# status					The new status of the surfice
 	# description (optional)	Description of the event
+	# kwargs (optional)			Generic data stored as keys
 	#
 	# RETURNS
 	# The created event
 	# -------------------------------------
 	@staticmethod
-	def create(surfice, status, description=''):
+	def create(surfice, status, description='', **kwargs):
 		# Probably need to check these before setting them
 		event = Event()
 		
@@ -1021,6 +1182,10 @@ class Event(models.Model):
 		event.surfice = surfice
 		event.status = status
 		event.description = description
+		
+		# Loop through kwargs and store as generic data in the database
+		for key in kwargs:
+			event.data[key] = kwargs[key]
 		
 		# Update the current status of the surfice
 		# BAD MODEL: COMMENTING OUT
@@ -1044,26 +1209,26 @@ class Event(models.Model):
 		super(Event, self).delete(*args, **kwargs)
 	
 	# -------------------------------------
-	# @staticmethod get_event(id)
+	# @staticmethod get_event(pk)
 	# 
-	# Get event that corresponds to the id parameter. If no param is passed
+	# Get event that corresponds to the pk parameter. If no param is passed
 	# nothing is returned
 	#
 	# INPUT
-	# id			id of the Event
+	# pk			primary key of the Event
 	#
 	# RETURNS
-	# Event corresponding to the id
+	# Event corresponding to the primary key
 	# None if nothing is found
 	# -------------------------------------
 	@staticmethod
-	def get_event(id):
+	def get_event(pk):
 		# Default value to return is nothing
 		event = None
 		
 		try:
 			# If name is set, get the event that has that name
-			event = Event.objects.get(id=id)
+			event = Event.objects.get(pk=pk)
 			
 		# If nothing is found, do nothing
 		except Event.DoesNotExist:
@@ -1103,12 +1268,12 @@ class Event(models.Model):
 			x = kwargs['days']
 			start = date.today() - timedelta(x)
 			# Equivalent in SQL to SELECT ... WHERE timestamp >= start
-			events = Event.objects.filter(timestamp__gte=start).order_by('-timestamp', '-id')
+			events = Event.objects.filter(timestamp__gte=start).order_by('-timestamp', '-pk')
 			
 		# Get the past x number of events	
 		elif 'events' in kwargs:
 			x = kwargs['events']
-			events = Event.objects.all().order_by('-timestamp', '-id')[:x]
+			events = Event.objects.all().order_by('-timestamp', '-pk')[:x]
 		
 		# Get events up to the current date from the start date
 		# If end is set, get events between (inclusive) these dates			
@@ -1119,23 +1284,64 @@ class Event(models.Model):
 			# Else, just use the current date
 			if 'end' in kwargs:
 				end = kwargs['end']
-				events = Event.objects.filter(timestamp__gte=start, timestamp__lte=end).order_by('-timestamp', '-id')
+				events = Event.objects.filter(timestamp__gte=start, timestamp__lte=end).order_by('-timestamp', '-pk')
 				
 			else:
 				end = date.today()
-				events = Event.objects.filter(timestamp__gte=start).order_by('-timestamp', '-id')
+				events = Event.objects.filter(timestamp__gte=start).order_by('-timestamp', '-pk')
 
 		# Get events up to and including the end date
 		elif 'end' in kwargs:
 			end = kwargs['end']
-			events = Event.objects.filter(timestamp__lte=end).order_by('-timestamp', '-id')
+			events = Event.objects.filter(timestamp__lte=end).order_by('-timestamp', '-pk')
 			
 		# If no argument is given, get all events 
 		else:
-			events = Event.objects.all().order_by('-timestamp', '-id')
+			events = Event.objects.all().order_by('-timestamp', '-pk')
 			
 		
 		return events
+	
+	# -------------------------------------
+	# set(self, status, description, **kwargs)
+	#
+	# Generic setter function. All fields are optional, but nothing happens
+	# if no parameters are passed
+	#
+	# INPUT
+	# status (optional)			The new name of the event
+	# surfice (optional)		The new surfice of the event
+	# description (optional)	The new description of the event
+	# kwargs					Any other fields that would go into the generic data field as keys
+	# -------------------------------------
+	def set(self, status=None, surfice=None, description=None, **kwargs):
+		
+		# If status is set and is in the database, update it
+		if	(
+				status != None and
+				type(status) is Status and
+				Status.objects.filter(pk=Status.pk).count() == 1
+			):
+			self.status = status
+		
+		# If srufice is set and is in the database, update it
+		if	(
+				surfice != None and
+				type(surfice) is Surfice and
+				Surfice.objects.filter(pk=Surfice.pk).count() == 1
+			):
+			self.surfice = surfice
+		
+		# If description is set, change the description
+		if description != None:
+			self.description = description
+		
+		# Go through the generic data and put it in their respective fields
+		for key in kwargs:
+			self.data[key] = kwargs[key]
+		
+		# Save the object to the database
+		self.save()
 
 			
 
