@@ -308,16 +308,42 @@ def surfs(request):
 	# If the admin is trying to create or delete a Surf, the page is refreshed
 	flag = False
 	if request.method == 'POST':
-		d = request.POST
-		
-		# Is the admin trying to delete a surf?
-		if 'surf' and 'delete' in d:
-			surf = Surf.get_surf(pk=d['surf'])
-			surf.delete()
+			
+		# Is the admin trying to delete a status?
+		if	(
+				'delete' in request.POST and
+				'surf' in request.POST and
+				'new_surf' in request.POST
+			):
+			
+			# Get the surf that we're about to delete
+			surf = Surf.get_surf(pk=request.POST['surf'])
+			
+			# Get the new surf that we're changing surfices to
+			new_surf = Surf.get_surf(pk=request.POST['new_surf'])
+			
+			# Only continue if the new surf actually exists and is not the same
+			# as the one that's being deleted
+			if type(new_surf) is Surf and new_surf != surf:
+				
+				# Get all the surfices associated with this surf
+				surfices = surf.get_surfices()
+				
+				# Now loop through all the surfices and change their surf
+				# to the new surf
+				for surfice in surfices:
+					surfice.set_surf(surf=new_surf)
+				
+				# Go ahead and delete the surf now that everything has be re-assigned
+				surf.delete()
+			
+			# A new surf wasn't selected or it doesn't exist, so don't do anything
+			else:
+				pass
 		
 		# Is the admin trying to create a surf?
-		elif 'surf' and 'description' in d:
-			surf = Surf.create(d['surf'], d['description'])
+		elif 'surf' in request.POST and 'description' in request.POST:
+			surf = Surf.create(request.POST['surf'], request.POST['description'])
 			if surf == None:
 				flag = True
 			

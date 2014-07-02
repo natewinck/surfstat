@@ -39,7 +39,7 @@ Programming Goals
 - A surfice can only be part of one surf
 - We want to be able to report the status (with a color) of any surfice
 - Any issues that are reported are able to be viewed both on the admin side and on the frontend
-- - Email once a threshold has been reached
+  - Email once a threshold has been reached
 - Email to Groups
 - Email someone once issues reach a peak set in the admin site
 - Unlimited events stored in the database for EVERY status update
@@ -74,8 +74,9 @@ AJAX
 
 Backend
 -------
-- Deleting a Surf gives you the option to move all containing Surfices to another surfice
+- ~~Deleting a Surf gives you the option to move all containing Surfices to another surfice~~
 - Deleting a Surfice also removes all events/dings associated with it
+- Disable deleting a Surf or Status if this is the last one
 - Validate email and other info on server side when updating/creating/deleting info
 - Make checkers for Ding.create()
 - Flesh out Surf.get_surfs() and all getters to include orderby and other filters (create a generic filter)
