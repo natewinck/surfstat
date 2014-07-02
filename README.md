@@ -75,8 +75,8 @@ AJAX
 Backend
 -------
 - ~~Deleting a Surf gives you the option to move all containing Surfices to another surfice~~
-- Deleting a Surfice also removes all events/dings associated with it
-- Disable deleting a Surf or Status if this is the last one
+- ~~Deleting a Surfice also removes all events/dings associated with it~~
+- ~~Disable deleting a Surf or Status if this is the last one~~
 - Validate email and other info on server side when updating/creating/deleting info
 - Make checkers for Ding.create()
 - Flesh out Surf.get_surfs() and all getters to include orderby and other filters (create a generic filter)

@@ -376,20 +376,51 @@ def surfices(request):
 	# If the admin is trying to create or delete a Surfice, the page is refreshed
 	flag = False
 	if request.method == 'POST':
-		d = request.POST
-		# Is the admin trying to delete a surf?
-		if 'surfice' and 'delete' in d:
-			surfice = Surfice.get_surfice(pk=d['surfice'])
-			surfice.delete()
+		
+		# Is the admin trying to delete a surfice?
+		if	(
+				'delete' in request.POST and
+				'surfice' in request.POST
+			):
+			
+			# Get the surfice that we're about to delete
+			surfice = Surfice.get_surfice(pk=request.POST['surfice'])
+			
+			# Django automatically deletes all related objects
+			# along with the surfice so go ahead and delete the surfice
+			if type(surfice) is Surfice:
+				surfice.delete()
+			
+			# The code below is equivalent to what the single delete()
+			# function above is doing. Django automatically deletes all related
+			# objects from the database. Below is just what it does explicitly
+				
+			## Get all the events and dings associated with this surf
+			#events = Event.get_events(surfice=surfice)
+			#dings = Ding.get_dings(surfice=surfice)
+			
+			## Now loop through all these events and delete them
+			#for event in events:
+			#	event.delete()
+			
+			## And loop through all these dings and delete them
+			#for ding in dings:
+			#	ding.delete()
+			
+			## Go ahead and delete the surfice now that everything associated with it has
+			## been deleted
+			#surfice.delete()
 		
 		# Is the admin trying to create a surf?
-		elif 'surfice' and 'description' and 'surf' and 'status' in d:
-			print "HI"
-			print d['surfice']
-			print d['description']
-			surf = Surf.get_surf(pk=d['surf'])
-			status = Status.get_status(pk=d['status'])
-			surfice = Surfice.create(d['surfice'], surf, status, d['description'])
+		elif	(
+					'surfice' in request.POST and
+					'surf' in request.POST and
+					'status' in request.POST
+				):
+			
+			surf = Surf.get_surf(pk=request.POST['surf'])
+			status = Status.get_status(pk=request.POST['status'])
+			surfice = Surfice.create(request.POST['surfice'], surf, status, request.POST.get('description', ''))
 			if surfice == None:
 				flag = True
 			

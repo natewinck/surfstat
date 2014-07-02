@@ -1256,6 +1256,8 @@ class Event(models.Model):
 	#			from before and including this date
 	# start, end		if both are set, all events between (inclusive)
 	#					will be returned
+	# surfice	Surfice object that has events
+	# status	Status of events
 	# [none]	If no argument is passed, all stored events will be returned
 	# NEED TO ADD GET ALL EVENTS THAT HAPPENED WITH A SPECIFIC SURFICE OR SURF
 	#
@@ -1299,6 +1301,15 @@ class Event(models.Model):
 		elif 'end' in kwargs:
 			end = kwargs['end']
 			events = Event.objects.filter(timestamp__lte=end).order_by('-timestamp', '-pk')
+		
+		# Get all events associated with this surfice
+		elif 'surfice' in kwargs:
+			events = Event.objects.filter(surfice=kwargs['surfice']).order_by('-timestamp', '-pk')
+		
+		# Get all events that have a certain status
+		elif 'status' in kwargs:
+			events = Event.objects.filter(status=kwargs['status']).order_by('-timestamp', '-pk')
+			
 			
 		# If no argument is given, get all events 
 		else:

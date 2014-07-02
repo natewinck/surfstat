@@ -109,7 +109,11 @@ Each of the <row> act as a different function of the Edit process
 					
 							<div class="row">
 								<div class="col-sm-12 text-right">
+									{# If there is more than one status in the database #}
+									{# Allow them to be deleted #}
+									{% if statuses|length > 1 %}
 									<button class="btn btn-danger button-accordian" type="button" data-toggle="modal" data-target="#confirm-delete-status-{{ status.id }}">Delete</button>
+									{% endif %}
 									<button class="btn btn-success button-accordian" type="submit">Save</button>
 								</div>
 							</div>
@@ -118,7 +122,9 @@ Each of the <row> act as a different function of the Edit process
 				</div>
 			</div>
 			
-			
+			{# If there is more than one status in the database #}
+			{# Allow them to be deleted #}
+			{% if statuses|length > 1 %}
 			<div class="modal fade" id="confirm-delete-status-{{ status.id }}" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
 				<div class="modal-dialog">
 					<div class="modal-content">
@@ -133,6 +139,7 @@ Each of the <row> act as a different function of the Edit process
 								<p>
 								Are you sure you want to delete the status, {{ status.name }}?
 								All surfices assigned with this status will be re-assigned to the below status once this status is deleted.</p>
+								<p>All events associated with this status will NOT be re-assigned. They will be deleted.</p>
 								<div class="form-group">
 									<label class="col-sm-4 control-label" for="new_status">Reassign Surfices to...</label>
 									<div class="col-sm-6">
@@ -159,6 +166,7 @@ Each of the <row> act as a different function of the Edit process
 					</div>
 				</div>
 			</div>
+			{% endif %}
 			
 			
 			{% endfor %}
