@@ -54,7 +54,7 @@ Each of the <row> act as a different function of the Edit process
 				<p>Assign Status Color</p>
 				<div class="input-group">
 					<span class="input-group-addon">#</span>
-					<input name="data" data-name="color" class="form-control color" placeholder="Status Name" type="text">
+					<input data-name="color" class="form-control color" placeholder="Status Name" type="text">
 				</div>
 			</div>
 
@@ -78,38 +78,43 @@ Each of the <row> act as a different function of the Edit process
 					<h4 class="panel-title"><a data-parent="#accordion" data-target="#status-{{ status.id }}" data-toggle="collapse">{{ status.name }}</a></h4>
 				</div>
 
-				<div class="panel-collapse collapse panel-body" id="status-{{ status.id }}">
-					<div class="col-xs-12">
-						<h3>Edit Your Status</h3>
-					</div>
-					<form type="ajax" action="ajax/update-status" method="post">
-						<div class="row">
-							<div class="col-xs-6">
-								<p>Update Status Name</p>
-								<input name="name" class="form-control" placeholder="Status Name" value="{{ status.name }}" type="text">
+				<div class="panel-collapse collapse" id="status-{{ status.id }}">
+					<div class="panel-body">
+						<div class="col-xs-12">
+							<h3>Edit Your Status</h3>
+						</div>
+						<form type="ajax" action="ajax/update-status" method="post">
+							{# To prevent cross-site forgery, include the following required tag #}
+							{% csrf_token %}
+							<input type="hidden" name="status" value="{{ status.id }}">
+							<div class="row">
+								<div class="col-xs-6">
+									<p>Update Status Name</p>
+									<input name="name" class="form-control" placeholder="Status Name" value="{{ status.name }}" type="text">
+								</div>
+
+								<div class="col-xs-6">
+									<p>Update Status Description</p>
+									<textarea name="description" class="form-control" placeholder="Update Description here..." rows="3">{{ status.description }}</textarea>
+								</div>
 							</div>
 
-							<div class="col-xs-6">
-								<p>Update Status Description</p>
-								<textarea name="description" class="form-control" placeholder="Update Description here..." rows="3">{{ status.description }}</textarea>
+							<div class="row col-xs-6">
+								<p>Define Status Color</p>
+								<div class="input-group">
+									<span class="input-group-addon">#</span>
+									<input data-name="color" value="{{ status.data.color|slice:'1:' }}" class="form-control color" placeholder="Status Color" type="text">
+								</div>
 							</div>
-						</div>
-
-						<div class="row col-xs-4">
-							<p>Define Status Color</p>
-							<input name="color" value="{{ status.name }}" class="form-control color" placeholder="Text input" type="text">
-						</div>
 					
-						<div class="row">
-							<div class="col-xs-offset-6 col-xs-3">
-								<button class="btn btn-danger button-accordian pull-right" type="button" data-toggle="modal" data-target="#confirm-delete-status-{{ status.id }}">Delete Status</button>
+							<div class="row">
+								<div class="col-sm-12 text-right">
+									<button class="btn btn-danger button-accordian" type="button" data-toggle="modal" data-target="#confirm-delete-status-{{ status.id }}">Delete</button>
+									<button class="btn btn-success button-accordian" type="submit">Save</button>
+								</div>
 							</div>
-
-							<div class="col-xs-3">
-								<button class="btn btn-success button-accordian pull-right" type="submit">Submit Changes</button>
-							</div>
-						</div>
-					</form>
+						</form>
+					</div>
 				</div>
 			</div>
 			
@@ -121,6 +126,9 @@ Each of the <row> act as a different function of the Edit process
 							<h4 class="modal-title">Confirm Delete</h4>
 						</div>
 						<form action="" method="post">
+							{# To prevent cross-site forgery, include the following required tag #}
+							{% csrf_token %}
+							<input type="hidden" name="status" value="{{ status.id }}">
 							<div class="modal-body">
 								<p>
 								Are you sure you want to delete the status, {{ status.name }}?
@@ -130,9 +138,9 @@ Each of the <row> act as a different function of the Edit process
 									<div class="col-sm-6">
 										<select name="new_status" class="form-control">
 											<option disabled selected>Select a status...</option>
-											{% for newstatus in statuses %}
-												{% if newstatus != status %}
-												<option value="{{ newstatus.id }}">{{ newstatus.name }}</option>
+											{% for new_status in statuses %}
+												{% if new_status != status %}
+												<option value="{{ new_status.id }}">{{ new_status.name }}</option>
 												{% endif %}
 											{% endfor %}
 										</select>
@@ -163,4 +171,9 @@ Each of the <row> act as a different function of the Edit process
 
 {% endblock content %}
 
-{% block scripts %}<script src="{% static 'surfice/js/jscolor/jscolor.js' %}"></script>{% endblock %}
+{% block scripts %}
+<script src="{% static 'surfice/js/jscolor/jscolor.js' %}"></script>
+<script>
+
+</script>
+{% endblock %}

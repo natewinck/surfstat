@@ -294,6 +294,43 @@ body {
 }
 
 
+/* ANIMATIONS
+------------------- */
+.flash {
+
+  -moz-animation: flash 1.5s ease infinite;
+
+  -webkit-animation: flash 1.5s ease infinite;
+
+  -ms-animation: flash 1.2s ease infinite
+
+}
+
+@-webkit-keyframes flash {
+    0% { opacity: 1; }
+    10% { opacity: 1; }
+    50% { opacity: .5;}
+    90% { opacity: 1; }
+    100% { opacity: 1; }
+}
+
+@-moz-keyframes flash {
+    0% { opacity: 1; }
+    10% { opacity: 1; }
+    50% { opacity: .5;}
+    90% { opacity: 1; }
+    100% { opacity: 1; }
+}
+
+@-ms-keyframes flash {
+    0% { opacity: 1; }
+    10% { opacity: 1; }
+    50% { opacity: .5;}
+    90% { opacity: 1; }
+    100% { opacity: 1; }
+}
+
+
 
 
 

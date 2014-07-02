@@ -84,7 +84,7 @@
                                     </h4>
                                 </div>
                                 <div id="surfice-{{ surfice.id }}" class="panel-collapse collapse">
-                                <div class="panel-body">
+									<div class="panel-body">
                                     <div class="col-xs-12">
 <!--Row: Current Information on the Surf-->
                                         <div class="col-xs-4">
@@ -176,32 +176,32 @@
 										</div>
                                     </div>
                                 </div>
-                            </div>
-                        </div>
+                            	</div>
+                        	</div>
                         
-                        <div class="modal fade" id="confirm-delete-surfice-{{ surfice.id }}" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-							<div class="modal-dialog">
-								<div class="modal-content">
-									<div class="modal-header">
-										<h4 class="modal-title">Confirm Delete</h4>
-									</div>
-									<div class="modal-body">
-										Are you sure you want to delete {{ surfice.name }}?
-										All data related to this surfice including all events assigned to it will be deleted.
-									</div>
-									<div class="modal-footer">
-										<form action="" method="post">
-											{# To prevent cross-site forgery, include the following required tag #}
-											{% csrf_token %}
-											<input type="hidden" name="surfice" value="{{ surfice.id }}">
-											<input type="hidden" name="delete" value="1">
-											<button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
-											<button type="submit" href="#" class="btn btn-danger danger">Delete</button>
-										</form>
+							<div class="modal fade" id="confirm-delete-surfice-{{ surfice.id }}" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+								<div class="modal-dialog">
+									<div class="modal-content">
+										<div class="modal-header">
+											<h4 class="modal-title">Confirm Delete</h4>
+										</div>
+										<div class="modal-body">
+											Are you sure you want to delete {{ surfice.name }}?
+											All data related to this surfice including all events assigned to it will be deleted.
+										</div>
+										<div class="modal-footer">
+											<form action="" method="post">
+												{# To prevent cross-site forgery, include the following required tag #}
+												{% csrf_token %}
+												<input type="hidden" name="surfice" value="{{ surfice.id }}">
+												<input type="hidden" name="delete" value="1">
+												<button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+												<button type="submit" href="#" class="btn btn-danger danger">Delete</button>
+											</form>
+										</div>
 									</div>
 								</div>
 							</div>
-						</div>
                         
                         
                         {% endfor %}

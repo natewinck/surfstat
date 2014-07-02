@@ -225,6 +225,56 @@ def update_surfice(request):
 	return errors
 
 # -----------------------------------------
+# update_status(request)
+#
+# Update a status's name, description, and color based on what's in request
+# If no status is in request, nothing happens
+#
+# INPUT
+# request						A request object
+#	- status					The pk of a status
+#	- name (optional)			New name of the status
+#	- description (optional)	New description of the status
+#	- data (optional)			JSON data for general data of the status (like color)
+#
+# RETURNS
+# *errors
+# -----------------------------------------
+def update_status(request):
+	errors = []
+	
+	# If status is set, go ahead and edit it
+	if 'status' in request.POST:
+		
+		# Get the status object
+		status = Status.get_status(pk=request.POST['status'])
+		
+		# If name is in request, give this status a new name
+		# Returns a False flag when another status already has this new name
+		if 'name' in request.POST:
+			flag = status.set_name(request.POST['name'])
+			if not flag:
+				errors.append("That name is either already being used by another status, or you didn't change this one.")
+		
+		# If description is in request, set the description to this new description
+		if 'description' in request.POST:
+			status.set_description(request.POST['description'])
+		
+		# If data is in request, set the general data
+		if 'data' in request.POST:
+			# Get the JSON data from POST
+			data = json.loads(request.POST['data'])
+			
+			# Set the general data by passing in data as keyword arguments
+			status.set(**data)
+	
+	# If no status is set, throw an error
+	else:
+		errors.append("It's usually good to have a status to edit.")
+	
+	return errors
+
+# -----------------------------------------
 # dispatch(request, action)
 #
 # Fires functions based on the action passed.
@@ -267,5 +317,12 @@ def dispatch(request, action=''):
 	# Update the surfice's name, description, and surf
 	elif action == 'update-surfice':
 		errors = update_surfice(request)
+	
+	# Update the status's name, description, and color
+	elif action == 'update-status':
+		errors = update_status(request)
+	
+	else:
+		errors = ["No action called " + action]
 	
 	return HttpResponse(json.dumps(errors), content_type='application/json')

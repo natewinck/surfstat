@@ -393,14 +393,41 @@ def settings(request):
 def status(request):
 	context_dict = {}
 	
-	# If the admin is trying to create or delete a Surfice, the page is refreshed
+	# If the admin is trying to create or delete a Status, the page is refreshed
 	flag = False
 	if request.method == 'POST':
-		d = request.POST
 		# Is the admin trying to delete a status?
-		if 'status' and 'delete' in d:
-			surfice = Surfice.get_surfice(pk=d['surfice'])
-			surfice.delete()
+		if	(
+				'delete' in request.POST and
+				'status' in request.POST and
+				'new_status' in request.POST
+			):
+			
+			# Get the status that we're about to delete
+			status = Status.get_status(pk=request.POST['status'])
+			
+			# Get the new status that we're changing surfices to
+			new_status = Status.get_status(pk=request.POST['new_status'])
+			
+			# Only continue if the new status actually exists and is not the same
+			# as the one that's being deleted
+			if type(new_status) is Status and new_status != status:
+				
+				# Get all the surfices associated with this status
+				surfices = Surfice.get_surfices(status=status)
+				
+				# Now loop through all the surfices and change their status
+				# to the status passed through POST
+				for surfice in surfices:
+					surfice.set_status(status=new_status)
+				
+				# Go ahead and delete the status now that everything has be re-assigned
+				status.delete()
+			
+			# A new status wasn't selected or it doesn't exist, so don't do anything
+			else:
+				pass
+				
 		
 		# Is the admin trying to create a status?
 		elif 'name' in request.POST:
@@ -408,12 +435,13 @@ def status(request):
 			data = {}
 			if 'data' in request.POST:
 				# Get the JSON data from POST
+				print request.POST['data']
 				data = json.loads(request.POST['data'])
-				print "HERE"
+				print data
 			
 			# Set the general data by passing in data as keyword arguments
 			status = Status.create	(
-										name = d['name'],
+										name = request.POST['name'],
 										description = request.POST.get('description', ''),
 										**data
 									)

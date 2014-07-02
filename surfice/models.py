@@ -462,7 +462,7 @@ class Surfice(models.Model):
 	# An array of found Surfice objects
 	# -------------------------------------
 	@staticmethod
-	def get_surfices(surf=None, name=None):
+	def get_surfices(surf=None, name=None, status=None):
 		
 		try:
 			
@@ -479,6 +479,10 @@ class Surfice(models.Model):
 			# If name is set, find all Surfices that contain that name
 			elif name != None:
 				surfices = Surfice.objects.filter(name__icontains=name)
+			
+			# If status is set, find all Surfices that have this status
+			elif status != None:
+				surfices = Surfice.objects.filter(status=status)
 			
 			# If nothing is set, find all Surfices
 			else:
@@ -870,6 +874,7 @@ class Status(models.Model):
 		
 		# Go through the generic data and put it in their respective fields
 		for key in kwargs:
+			print key, kwargs[key]
 			self.data[key] = kwargs[key]
 		
 		# Save the object to the database

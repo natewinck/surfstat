@@ -65,6 +65,7 @@ UI
 - Restrict "What's Happening Lately?" to 2 weeks and up to ~10 entries
 - Initial setup step-by-step process (and can choose MySQL, SQLite, or PostgreSQL)
 - Email to Groups
+- Make sure UX is excellent
 
 AJAX
 ----
@@ -78,7 +79,7 @@ Backend
 - Validate email and other info on server side when updating/creating/deleting info
 - Make checkers for Ding.create()
 - Flesh out Surf.get_surfs() and all getters to include orderby and other filters (create a generic filter)
-- When deleting a status, all Surfices associated with it can be given a new status without throwing a new event (and all events associated with the status are either updated or deleted)
+- ~~When deleting a status, all Surfices associated with it can be given a new status without throwing a new event (and all events associated with the status are either updated or deleted)~~
 - Add comments everywhere! Especially HTML, CSS, JavaScript, views.py, urls.py, ajax.py
 - Initial setup step-by-step process (and can choose MySQL, SQLite, or PostgreSQL)
 - Email to Groups
