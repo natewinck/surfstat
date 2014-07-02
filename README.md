@@ -77,8 +77,8 @@ Backend
 - ~~Deleting a Surf gives you the option to move all containing Surfices to another surfice~~
 - ~~Deleting a Surfice also removes all events/dings associated with it~~
 - ~~Disable deleting a Surf or Status if this is the last one~~
-- Validate email and other info on server side when updating/creating/deleting info
-- Make checkers for Ding.create()
+- ~~Validate email and other info on server side when updating/creating/deleting info~~
+- ~~Make checkers for Ding.create()~~
 - Flesh out Surf.get_surfs() and all getters to include orderby and other filters (create a generic filter)
 - ~~When deleting a status, all Surfices associated with it can be given a new status without throwing a new event (and all events associated with the status are either updated or deleted)~~
 - Add comments everywhere! Especially HTML, CSS, JavaScript, views.py, urls.py, ajax.py

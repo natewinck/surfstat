@@ -69,7 +69,7 @@ def debug():
 	# Now delete the manual Surf
 	surf_manual.delete()
 	print "MANUAL SURF STILL SAVED AFTER DELETION? (Should be False)\n============================"
-	print Surf.is_saved(surf_manual.name) # Test to see if it worked
+	print Surf.is_saved(name=surf_manual.name) # Test to see if it worked
 	
 	
 	print "\n\n\n\n"
@@ -92,7 +92,7 @@ def debug():
 	status_by_name.delete()
 	
 	print "NO DESCRIPTION STILL SAVED? (should be False)\n======================="
-	print Status.is_saved("Status Without Description")
+	print Status.is_saved(name="Status Without Description")
 	
 	status2 = Status.create("Status2", "A 2nd description", possible=5)
 
@@ -116,7 +116,7 @@ def debug():
 	surfice_manual.delete()
 	
 	print "Is the Manual Surfice still saved (It should be False)\n========================"
-	print Surfice.is_saved(surfice_manual.name)
+	print Surfice.is_saved(name=surfice_manual.name)
 	
 	
 	# Now Automatically
@@ -176,27 +176,9 @@ def ding(request):
 	#Ding.create(d['surfice'], d['status'], d['email'], d['description'])
 	#index(request)
 
-# Test with Django tango
+
 def index(request):
 	if DEBUG: debug()
-	
-	if request.method == 'POST':
-		d = request.POST
-		if d.get('email') and '@' not in d['email']:
-			pass
-		else:
-			print "AH"
-			print Surfice.get_surfice(pk=d['surfice'])
-			print Status.get_status(pk=d['status'])
-			print d['email']
-			print d['description']
-			ding = Ding.create(
-				Surfice.get_surfice(pk=d['surfice']),
-				Status.get_status(pk=d['status']),
-				d['email'],
-				d['description']
-			)
-			print ding
 	
 	# Query the database for a list of ALL surfices currently stored.
 	# Order them by status in descending order
@@ -411,17 +393,17 @@ def surfices(request):
 			## been deleted
 			#surfice.delete()
 		
-		# Is the admin trying to create a surf?
+		# Is the admin trying to create a surfice?
 		elif	(
-					'surfice' in request.POST and
+					'name' in request.POST and
 					'surf' in request.POST and
 					'status' in request.POST
 				):
 			
 			surf = Surf.get_surf(pk=request.POST['surf'])
 			status = Status.get_status(pk=request.POST['status'])
-			surfice = Surfice.create(request.POST['surfice'], surf, status, request.POST.get('description', ''))
-			if surfice == None:
+			surfice = Surfice.create(request.POST['name'], surf, status, request.POST.get('description', ''))
+			if type(surfice) is not Surfice:
 				flag = True
 			
 	
@@ -492,9 +474,7 @@ def status(request):
 			data = {}
 			if 'data' in request.POST:
 				# Get the JSON data from POST
-				print request.POST['data']
 				data = json.loads(request.POST['data'])
-				print data
 			
 			# Set the general data by passing in data as keyword arguments
 			status = Status.create	(

@@ -1,5 +1,7 @@
 from surfice.models import Surf, Surfice, Status, Ding, Event
 from django.http import HttpResponse
+from django.core.exceptions import ValidationError
+from django.core.validators import validate_email
 import json
 
 # -----------------------------------------
@@ -22,21 +24,25 @@ def set_status(request):
 	errors = []
 	# If neither surfice nor status are present,
 	# don't do anything
-	if 'surfice' in request.POST and 'status' in request.POST:
-		print "ELSE"
-		# Get the surfice and status parameters to set the status of the surfice
-		surfice = Surfice.get_surfice(pk=request.POST['surfice'])
-		status = Status.get_status(pk=request.POST['status'])
+	try:
+		if 'surfice' in request.POST and 'status' in request.POST:
+			print "ELSE"
+			# Get the surfice and status parameters to set the status of the surfice
+			surfice = Surfice.get_surfice(pk=request.POST['surfice'])
+			status = Status.get_status(pk=request.POST['status'])
 		
-		# Get the description. If no description was passed,
-		# fill it in with the default value of the empty string
-		# Using .get() allows for description not being set in POST
-		description = request.POST.get('description','')
+			# Get the description. If no description was passed,
+			# fill it in with the default value of the empty string
+			# Using .get() allows for description not being set in POST
+			description = request.POST.get('description','')
 		
-		surfice.set_status(status, description)
+			surfice.set_status(status, description)
 	
-	else:
-		errors.append("I need a Surfice and a Status in order to update the status.")
+		else:
+			errors.append("I need a Surfice and a Status in order to update the status.")
+	except:
+		# Surfice or status are not in the database
+		pass
 	
 	return errors
 
@@ -275,6 +281,61 @@ def update_status(request):
 	return errors
 
 # -----------------------------------------
+# submit_ding(request)
+#
+# Submit a ding based on the surfice, email, and state passed to it
+#
+# INPUT
+# request						A request object
+#	- surfice					The pk of a status
+#	- email						Email address of the user submitting the ding
+#	- description (optional)	Description of the ding
+#	- status (optional)			The reported status of the surfice
+#	- data (optional)			JSON data for general data of the status (like color)
+#
+# RETURNS
+# *errors
+# -----------------------------------------
+def submit_ding(request):
+	errors = []
+	
+	# If both surfice and email is set
+	if 'surfice' in request.POST and 'email' in request.POST:
+		try:
+			# First see if the email address is actually an email address
+			validate_email(request.POST['email'])
+			
+			# Get the surfice from the database
+			surfice = Surfice.get_surfice(pk=request.POST['surfice'])
+			
+			# If no surfice exists, raise an exception
+			if type(surfice) is not Surfice: raise Exception()
+			
+			# If data is in request, parse the data
+			data = {}
+			if 'data' in request.POST:
+				# Get the JSON data from POST
+				data = json.loads(request.POST['data'])
+			
+			ding = Ding.create(
+				Surfice.get_surfice(pk=request.POST['surfice']),
+				Status.get_status(pk=request.POST['status']),
+				request.POST['email'],
+				request.POST['description'],
+				**data
+			)
+			
+		except ValidationError:
+			# The user entered an invalid email address
+			errors.append("Hey, that's not a valid email address")
+			pass
+		except:
+			errors.append("Whoa, something unexpected happened")
+			pass
+	
+	return errors
+
+# -----------------------------------------
 # dispatch(request, action)
 #
 # Fires functions based on the action passed.
@@ -321,6 +382,9 @@ def dispatch(request, action=''):
 	# Update the status's name, description, and color
 	elif action == 'update-status':
 		errors = update_status(request)
+	
+	elif action == 'submit-ding':
+		errors = submit_ding(request)
 	
 	else:
 		errors = ["No action called " + action]

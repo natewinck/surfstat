@@ -26,7 +26,7 @@ from datetime import date, timedelta
 # bool			set_name(self, name)
 # void			set_description(self, description)
 # bool			save_new(self, *args, **kwargs)
-# bool			is_saved(name)
+# bool			is_saved(name, pk, surf)
 #
 # -------------------------------------
 class Surf(models.Model):
@@ -58,7 +58,7 @@ class Surf(models.Model):
 		
 		# Check to make sure another Surf object with the same name isn't
 		# already in the database
-		if not Surf.is_saved(name):
+		if not Surf.is_saved(name=name):
 			# Create the Surf object
 			surf = Surf()
 			
@@ -130,7 +130,7 @@ class Surf(models.Model):
 		return surf
 	
 	# --------------------------
-	# @staticmethod get_surfs() ###########
+	# @staticmethod get_surfs()
 	#
 	# Get Surf objects that contain a name.  If no name is given, all Surfs are returned
 	#
@@ -170,10 +170,10 @@ class Surf(models.Model):
 	# name (optional)		Filter surfices to find all that contain name (case insensitive)
 	#
 	# RETURNS
-	# False if no surfices are found
 	# An Array of surfices if they are found
 	# -------------------------------------
 	def get_surfices(self, name=None):
+		surfices = []
 		try:
 			# Find all Surfice objects that are in this surf
 			# and that also contain the name param
@@ -187,7 +187,6 @@ class Surf(models.Model):
 		except Surfice.DoesNotExist:
 			# We get here if we didn't find the specified category.
 			# Don't do anything - the template displays the "no category" message for us.
-			surfices = None
 			pass
 		
 		return surfices
@@ -282,7 +281,7 @@ class Surf(models.Model):
 	# -------------------------------------
 	def save_new(self, *args, **kwargs):
 		# Check to see if Surf object is already in database. Don't do anything if so
-		if Surf.is_saved(self.name):
+		if Surf.is_saved(name=self.name):
 			# Do nothing
 			flag = False
 		else:
@@ -293,24 +292,32 @@ class Surf(models.Model):
 		return flag
 	
 	# -------------------------------------
-	# @staticmethod is_saved(name)
+	# @staticmethod is_saved(name, pk, surf)
 	# 
 	# Checks to see if Surf object is already in database.
 	# 
 	# INPUT
-	# name			Name of the Surf object
+	# name (optional)	Name of the Surf object
+	# pk (optional)		Private key of the Surf object
+	# surf (optional)	Surf object
 	# 
 	# RETURNS
 	# True if Surf object is in database
 	# False if Surf object is not in database
 	# -------------------------------------
 	@staticmethod
-	def is_saved(name):
-		if Surf.objects.filter(name__iexact=name).count() == 0:
-			exists = False
-		else:
+	def is_saved(name=None, pk=None, surf=None):
+		exists = false
+		
+		if name != None and Surf.objects.filter(name__iexact=name).count() > 0:
 			exists = True
-			
+		
+		elif pk != None and Surf.objects.filter(pk=pk).count() > 0:
+			exists = True
+		
+		elif type(surf) is Surf and Surf.objects.filter(surf=surf).count() > 0
+			exists = True
+		
 		return exists
 
 
@@ -341,7 +348,7 @@ class Surf(models.Model):
 # void				set_description(self, description)
 # void				set_status(self, status, description)
 # bool				save_new(self, *args, **kwargs)
-# bool				is_saved(name)
+# bool				is_saved(name, pk, surfice)
 # 
 # -------------------------------------
 class Surfice(models.Model):
@@ -387,7 +394,7 @@ class Surfice(models.Model):
 			
 			# Set the Surfice class variables
 			surfice.name = name
-			surfice.surf = surf # I NEED TO CHECK IF THE SURF EXISTS FIRST
+			surfice.surf = surf
 			surfice.description = description
 			surfice.status = status
 			
@@ -520,9 +527,8 @@ class Surfice(models.Model):
 	# An array of events
 	# -------------------------------------
 	def get_events(self, **kwargs):
-		# NEED TO WRITE
-		events = []
-		events = Event.objects.filter(surfice=self.pk) #NOT SURE IF THIS WORKS OR NOT
+		# Get events
+		events = Event.get_events(surfice=self)
 		return events
 	
 	# -------------------------------------
@@ -607,7 +613,7 @@ class Surfice(models.Model):
 	# -------------------------------------
 	def set_surf(self, surf):
 		# Check to make sure Surf is actually in the database
-		if Surf.is_saved(surf.name):
+		if Surf.is_saved(surf=surf):
 			self.surf = surf
 		
 			# Save surfice object to database
@@ -634,7 +640,6 @@ class Surfice(models.Model):
 	# Sets the status of a surfice object with a status object
 	#
 	# INPUT
-	# self						implicitly set
 	# status					a Status object
 	# description (optional)	If set (even to a blank string), create an
 	#							event along with the status
@@ -661,7 +666,7 @@ class Surfice(models.Model):
 	# -------------------------------------
 	def save_new(self, *args, **kwargs):
 		# Check to see if Surfice object is already in database. Don't do anything if so
-		if Surfice.is_saved(self.name):
+		if Surfice.is_saved(name=self.name):
 			# Do nothing
 			flag = False
 		else:
@@ -672,24 +677,34 @@ class Surfice(models.Model):
 		return flag
 	
 	# -------------------------------------
-	# @staticmethod is_saved(name)
+	# @staticmethod is_saved(name, pk, surfice)
 	# 
 	# Checks to see if Surfice object is already in database.
 	# 
 	# INPUT
 	# name			Name of the Surfice object
+	# pk			Private key of the surfice object
+	# surfice		Surfice object
 	# 
 	# RETURNS
 	# True if Surfice object is in database
 	# False if Surfice object is not in database
 	# -------------------------------------
 	@staticmethod
-	def is_saved(name):
-		if Surfice.objects.filter(name__iexact=name).count() == 0:
-			exists = False
-		else:
+	def is_saved(name=None, pk=None, surfice=None):
+		
+		# If name is set and the object is in the database
+		if name != None and Surfice.objects.filter(name__iexact=name).count() > 0:
 			exists = True
-			
+		
+		# If pk is set and the object is in the database
+		elif pk != None and Surfice.objects.filter(pk=pk).count() > 0:
+			exists = True
+		
+		# If surfice is set, check to see if it's in the database
+		elif type(surfice) is Surfice and Surfice.objects.filter(surfice=surfice).count() > 0
+			exists = True
+		
 		return exists
 
 # -----------------------------------------
@@ -712,8 +727,7 @@ class Surfice(models.Model):
 # void			set(self, name, description, **kwargs)
 # bool			set_name(self, name)
 # void			set_description(self, description)
-# bool			is_saved(name)
-######void set_default()		Set this status as the default
+# bool			is_saved(name, pk, status)
 # -----------------------------------------
 class Status(models.Model):
 	# Class variables
@@ -812,8 +826,6 @@ class Status(models.Model):
 		
 		return status
 	
-	
-	
 	# -------------------------------------
 	# @staticmethod get_statuses()
 	# 
@@ -879,7 +891,6 @@ class Status(models.Model):
 		
 		# Save the object to the database
 		self.save()
-			
 	
 	# -------------------------------------
 	# set_name(self, name)
@@ -925,24 +936,34 @@ class Status(models.Model):
 		self.save()
 	
 	# -------------------------------------
-	# @staticmethod is_saved(name)
+	# @staticmethod is_saved(name, pk, status)
 	# 
-	# Checks to see if Surf object is already in database.
+	# Checks to see if Status object is already in database.
 	# 
 	# INPUT
 	# name			Name of the Status object
+	# pk			Private key of the object
+	# status		Status object
 	# 
 	# RETURNS
 	# True if Status object is in database
 	# False if Status object is not in database
 	# -------------------------------------
 	@staticmethod
-	def is_saved(name):
-		if Status.objects.filter(name__iexact=name).count() == 0:
-			exists = False
-		else:
+	def is_saved(name, pk, status):
+		
+		# If name is set and the object is in the database
+		if name != None and Status.objects.filter(name__iexact=name).count() > 0:
 			exists = True
-			
+		
+		# If pk is set and the object is in the database
+		elif pk != None and Status.objects.filter(pk=pk).count() > 0:
+			exists = True
+		
+		# If surfice is set, check to see if it's in the database
+		elif type(status) is Status and Status.objects.filter(status=status).count() > 0
+			exists = True
+		
 		return exists
 	
 
@@ -1001,8 +1022,6 @@ class Ding(models.Model):
 	def create(surfice, status, email, description='', **kwargs):
 		# Create the Ding object
 		ding = Ding()
-		
-		# Assign the attributes to the Ding object SHOULD CHECK THESE FIRST!
 		ding.surfice = surfice
 		ding.status = status
 		ding.email = email
@@ -1151,7 +1170,6 @@ class Ding(models.Model):
 # void			delete(self, *args, **kwargs)
 # *Event		get_events(...)
 # void			set(status, surfice, description, **kwargs)
-###### Need to make setter function######################################
 # ---------------------------------------
 class Event(models.Model):
 	# Class variables
@@ -1259,7 +1277,6 @@ class Event(models.Model):
 	# surfice	Surfice object that has events
 	# status	Status of events
 	# [none]	If no argument is passed, all stored events will be returned
-	# NEED TO ADD GET ALL EVENTS THAT HAPPENED WITH A SPECIFIC SURFICE OR SURF
 	#
 	# RETURNS
 	# Array of events in reverse chronological order (newest first)
@@ -1309,8 +1326,7 @@ class Event(models.Model):
 		# Get all events that have a certain status
 		elif 'status' in kwargs:
 			events = Event.objects.filter(status=kwargs['status']).order_by('-timestamp', '-pk')
-			
-			
+		
 		# If no argument is given, get all events 
 		else:
 			events = Event.objects.all().order_by('-timestamp', '-pk')
@@ -1340,7 +1356,7 @@ class Event(models.Model):
 			):
 			self.status = status
 		
-		# If srufice is set and is in the database, update it
+		# If surfice is set and is in the database, update it
 		if	(
 				surfice != None and
 				type(surfice) is Surfice and
@@ -1358,6 +1374,4 @@ class Event(models.Model):
 		
 		# Save the object to the database
 		self.save()
-
-			
 

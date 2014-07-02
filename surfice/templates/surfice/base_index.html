@@ -54,16 +54,16 @@
 					  </div>
 					  <div class="modal-body">
 						
-						<form id="ding-form-{{ surfice.id }}" class="form-horizontal text-left" role="form" action="" method="post">
+						<form id="ding-form-{{ surfice.id }}" class="form-horizontal text-left" role="form" action="ajax/submit-ding" type="ajax" method="post">
 							{# To prevent cross-site forgery, include the following required tag #}
 							{% csrf_token %}
 							<input type="hidden" name="surfice" value="{{ surfice.id }}">
-						  <div class="form-group"> 
-							<label class="col-sm-2 control-label" for="exampleInputEmail1">Email</label>
-							<div class="col-sm-6">
-								<input type="email" class="form-control" name="email" placeholder="Enter email">
-							</div>
-						  </div>
+						  	<div class="form-group"> 
+								<label class="col-sm-2 control-label" for="exampleInputEmail1">Email</label>
+								<div class="col-sm-6">
+									<input type="email" class="form-control" name="email" placeholder="Enter email">
+								</div>
+						  	</div>
 							
 							
 							
