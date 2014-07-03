@@ -1,5 +1,13 @@
 $(function() {
 
+
+jQuery.fn.fadeSlide = function(speed, easing, callback) {
+  if (this.is(":hidden")) {
+    return this.slideDown(speed, easing).fadeTo(speed, 1, easing, callback);
+  } else {
+    return this.fadeTo(speed, 0, easing).slideUp(speed, easing, callback);
+  }
+};
     
     
 /* SMOOTH SCROLLING
@@ -260,9 +268,40 @@ $(".dropdown-select .dropdown-menu li").click(function(event) {
 //     console.log("here");
 // });
 
-$(".list-group.select .list-group-item").click(function() {
-	$(this).closest(".list-group.select").find(".list-group-item.active").removeClass("active");
-	$(this).addClass("active");
+
+/* LIST GROUP SELECT
+------------------------------ 
+*  Selects all list groups that the .select class and makes them a select
+*  
+*  INPUT
+*  .list-group.select .list-group-item       The list elements (links)
+*
+------------------------------ */
+$(".list-group.select .list-group-item").click(function(e) {
+	// Prevent a # from showing up in the URL
+	e.preventDefault();
+	
+	if (!$(this).hasClass("active")) {
+		// Find the previous element that was selected
+		var old_id = $(this).closest(".list-group.select").find(".list-group-item.active").removeClass("active").attr("href");
+		var new_id = $(this).addClass("active").attr("href");
+	
+		// Using the id of the old selected item, fade out the corresponding panel
+		// and fade in the new one
+		//$(old_id).fadeSlide(750, "swing", $(new_id).fadeSlide());
+		// $(old_id).fadeSlide(200, "swing", function() {
+// 			$(this).removeClass("in");
+// 			$(new_id).addClass("in").fadeSlide(200, "swing", function() {
+// 				//$(this).addClass("in");
+// 			});
+// 		});
+		console.log($(old_id));
+		console.log($(new_id));
+		$(old_id).removeClass("active in");
+		$(new_id).addClass("active in");
+		
+	}
+	
 });
 
 

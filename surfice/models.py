@@ -315,7 +315,7 @@ class Surf(models.Model):
 		elif pk != None and Surf.objects.filter(pk=pk).count() > 0:
 			exists = True
 		
-		elif type(surf) is Surf and Surf.objects.filter(surf=surf).count() > 0:
+		elif type(surf) is Surf and Surf.objects.filter(pk=surf.pk).exists():
 			exists = True
 		
 		return exists

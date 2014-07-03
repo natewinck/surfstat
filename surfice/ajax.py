@@ -115,7 +115,6 @@ def set_surf(request):
 		
 		# Set the surf
 		surfice.set_surf(surf)
-		errors.append("This actually isn't an error...just a test")
 	
 	# If either surf or surfice was not in the request, throw an error
 	else:

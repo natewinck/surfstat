@@ -27,99 +27,100 @@
 ==================================================
 Each of the <row> act as a different function of the Edit process
 -->
-<div class="row">
-	<div class="container col-xs-offset-0 col-xs-12">
-		<!-- Create a Status Section, text details-->
-
-		<div class="row">
-			<h3>Create a Status</h3>
-		</div>
-		
-		<form action="" method="post">
-			{# To prevent cross-site forgery, include the following required tag #}
-			{% csrf_token %}
-			<div class="row">
-				<div class="col-xs-6">
-					<p>New Status Name</p>
-					<input name="name" class="form-control" placeholder="Status Name" type="text">
-				</div>
-
-				<div class="col-xs-6">
-					<p>New Status Description</p>
-					<textarea name="description" class="form-control" placeholder="Add Status Description" rows="3"></textarea>
-				</div>
-			</div><!-- Add color to status, referencing js -->
-
-			<div class="row col-xs-6">
-				<p>Assign Status Color</p>
-				<div class="input-group">
-					<span class="input-group-addon">#</span>
-					<input data-name="color" class="form-control color" placeholder="Status Name" type="text">
-				</div>
-			</div>
-
-			<div class="row">
-				<button class="btn btn-success pull-right button-accordian" type="submit">Add</button>
-			</div>
-		</form>
-
-		<div class="row">
-			<h3>Current Statuses</h3>
-
-			<p>Click to edit status</p>
-		</div>
-
-		<div class="row panel-group" id="accordion">
+<div class="container">
+	<!-- Create a Status Section, text details-->
+	
+	<div class="page-header">
+		<h2>Click on a Status to see Details</h2>
+	</div>
+	<div class="col-sm-4">
+		<div class="list-group select">
+			<a href="#new" class="list-group-item list-group-item-success">Create New Status<span class="glyphicon glyphicon-plus pull-right"></span></a>
 			{% for status in statuses %}
-			<div class="panel panel-default">
-				<!--Start Panel 1 of Accordian-->
+			<a href="#status-{{ status.name|slugify }}" class="list-group-item {% if forloop.first %}active{% endif %}">{{ status.name }}<span class="glyphicon glyphicon-chevron-right pull-right"></span></a>
+			{% endfor %}
+		</div>
+	</div>
+	<div class="col-sm-8">
+		<div class="panel-group tab-content">
+			<div class="tab-pane fade" id="new">
+				<h3>Create a Status</h3>
 
-				<div class="panel-heading">
-					<h4 class="panel-title"><a data-parent="#accordion" data-target="#status-{{ status.id }}" data-toggle="collapse">{{ status.name }}</a></h4>
-				</div>
-
-				<div class="panel-collapse collapse" id="status-{{ status.id }}">
-					<div class="panel-body">
-						<div class="col-xs-12">
-							<h3>Edit Your Status</h3>
-						</div>
-						<form type="ajax" action="ajax/update-status" method="post">
-							{# To prevent cross-site forgery, include the following required tag #}
-							{% csrf_token %}
-							<input type="hidden" name="status" value="{{ status.id }}">
-							<div class="row">
-								<div class="col-xs-6">
-									<p>Update Status Name</p>
-									<input name="name" class="form-control" placeholder="Status Name" value="{{ status.name }}" type="text">
-								</div>
-
-								<div class="col-xs-6">
-									<p>Update Status Description</p>
-									<textarea name="description" class="form-control" placeholder="Update Description here..." rows="3">{{ status.description }}</textarea>
+				<form action="" method="post">
+					{# To prevent cross-site forgery, include the following required tag #}
+					{% csrf_token %}
+					<div class="row">
+						<div class="col-sm-6">
+							<div class="form-group">
+								<label>New Status Name</label>
+								<input name="name" class="form-control" placeholder="Status Name" type="text">
+							</div>
+							
+							<div class="form-group">
+								<label>Assign Status Color</label>
+								<div class="input-group">
+									<span class="input-group-addon">#</span>
+									<input data-name="color" class="form-control color" placeholder="Status Name" type="text">
 								</div>
 							</div>
+						</div>
 
-							<div class="row col-xs-6">
-								<p>Define Status Color</p>
+						<div class="col-sm-6">
+							<div class="form-group">
+								<label>New Status Description</label>
+								<textarea name="description" class="form-control" placeholder="Add Status Description" rows="3"></textarea>
+							</div>
+						</div>
+					</div>
+
+					<div class="row">
+						<button class="btn btn-success pull-right button-accordian" type="submit">Add</button>
+					</div>
+				</form>
+			</div>
+			
+			{% for status in statuses %}
+			<div class="tab-pane fade {% if forloop.first %}in active{% endif %}" id="status-{{ status.name|slugify }}">
+				<h3>Edit Your Status</h3>
+				<form type="ajax" action="ajax/update-status" method="post">
+					{# To prevent cross-site forgery, include the following required tag #}
+					{% csrf_token %}
+					<input type="hidden" name="status" value="{{ status.id }}">
+					<div class="row">
+						<div class="col-xs-6">
+							<div class="form-group">
+								<label>Update Status Name</label>
+								<input name="name" class="form-control" placeholder="Status Name" value="{{ status.name }}" type="text">
+							</div>
+							
+							<div class="form-group">
+								<label>Edit Status Color</label>
 								<div class="input-group">
 									<span class="input-group-addon">#</span>
 									<input data-name="color" value="{{ status.data.color|slice:'1:' }}" class="form-control color" placeholder="Status Color" type="text">
 								</div>
 							</div>
-					
-							<div class="row">
-								<div class="col-sm-12 text-right">
-									{# If there is more than one status in the database #}
-									{# Allow them to be deleted #}
-									{% if statuses|length > 1 %}
-									<button class="btn btn-danger button-accordian" type="button" data-toggle="modal" data-target="#confirm-delete-status-{{ status.id }}">Delete</button>
-									{% endif %}
-									<button class="btn btn-success button-accordian" type="submit">Save</button>
-								</div>
+						</div>
+
+						<div class="col-xs-6">
+							<div class="form-group">
+								<label>Update Status Description</label>
+								<textarea name="description" class="form-control" placeholder="Update Description here..." rows="3">{{ status.description }}</textarea>
 							</div>
-						</form>
+						</div>
 					</div>
-				</div>
+					
+					<div class="row">
+						<div class="col-sm-12 text-right">
+							{# If there is more than one status in the database #}
+							{# Allow them to be deleted #}
+							{% if statuses|length > 1 %}
+							<button class="btn btn-danger button-accordian" type="button" data-toggle="modal" data-target="#confirm-delete-status-{{ status.id }}">Delete</button>
+							{% endif %}
+							<button class="btn btn-success button-accordian" type="submit">Save</button>
+						</div>
+					</div>
+				</form>
 			</div>
 			
 			{# If there is more than one status in the database #}

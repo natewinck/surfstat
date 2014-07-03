@@ -293,6 +293,15 @@ body {
     padding-left: 2%;
 }
 
+.hide-slide {
+	display: none;
+}
+
+.hide-slide.first-in {
+	display: block;
+	position: relative;
+}
+
 
 /* ANIMATIONS
 ------------------- */
@@ -396,7 +405,7 @@ body {
     padding: 10px;
     text-align: center;
     height:40px;
-    border: 1px solid #ccc;;
+    border: 1px solid #ccc;
     background: #fafafa;
     transition:0.2s ease-in-out;
 
