@@ -307,7 +307,7 @@ class Surf(models.Model):
 	# -------------------------------------
 	@staticmethod
 	def is_saved(name=None, pk=None, surf=None):
-		exists = false
+		exists = False
 		
 		if name != None and Surf.objects.filter(name__iexact=name).count() > 0:
 			exists = True
@@ -315,7 +315,7 @@ class Surf(models.Model):
 		elif pk != None and Surf.objects.filter(pk=pk).count() > 0:
 			exists = True
 		
-		elif type(surf) is Surf and Surf.objects.filter(surf=surf).count() > 0
+		elif type(surf) is Surf and Surf.objects.filter(surf=surf).count() > 0:
 			exists = True
 		
 		return exists
@@ -702,7 +702,7 @@ class Surfice(models.Model):
 			exists = True
 		
 		# If surfice is set, check to see if it's in the database
-		elif type(surfice) is Surfice and Surfice.objects.filter(surfice=surfice).count() > 0
+		elif type(surfice) is Surfice and Surfice.objects.filter(surfice=surfice).count() > 0:
 			exists = True
 		
 		return exists
@@ -961,7 +961,7 @@ class Status(models.Model):
 			exists = True
 		
 		# If surfice is set, check to see if it's in the database
-		elif type(status) is Status and Status.objects.filter(status=status).count() > 0
+		elif type(status) is Status and Status.objects.filter(status=status).count() > 0:
 			exists = True
 		
 		return exists

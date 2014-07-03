@@ -1,0 +1,42 @@
+{% extends "surfice/base.html" %}
+
+{% block title %}Admin{% endblock %}
+
+{% load static %}
+{% load humanize %}
+{% load slugify %}
+
+{% block body_class %}admin{% endblock %}
+
+
+{% block nav %}
+	{% include "surfice/admin_nav.html" %}
+{% endblock %}
+
+
+{% block heading %}
+{% endblock %}
+
+
+
+{% block content %}
+
+{% if form.errors %}
+<p>Your username and password didn't match. Please try again.</p>
+{% endif %}
+
+<div class="container">
+	<div class="login-container">
+		<div id="output"></div>
+		<div class="form-box">
+			<form action="{% url 'django.contrib.auth.views.login' %}" method="post">
+				{% csrf_token %}
+				<input name="username" type="text" placeholder="username">
+				<input name="password" type="password" placeholder="password">
+				<button class="btn btn-info btn-block login" type="submit">Login</button>
+				<input type="hidden" name="next" value="{{ next }}" />
+			</form>
+		</div>
+	</div> 
+</div>
+{% endblock %}

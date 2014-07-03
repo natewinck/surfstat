@@ -7,6 +7,10 @@ from django.http import HttpResponse
 from surfice.models import Surf, Surfice, Status, Ding, Event
 import json
 
+# For the admin pages
+from django.contrib.auth.decorators import login_required
+from django.contrib.auth import authenticate, login
+
 # Create your views here.
 
 def printv(obj, title=""): # Print your variables!
@@ -232,7 +236,7 @@ def index(request):
 	
 	#return HttpResponse("Rango says hello world!")
 
-
+@login_required
 def admin(request):
 	context_dict = {}
 	
@@ -253,7 +257,6 @@ def admin(request):
 	context_dict['statuses'] = status_list
 	
 	return render(request, 'surfice/base_admin.html', context_dict)
-
 
 def surf(request, surf_url):
 	# Change underscores in the category name to spaces.
@@ -283,7 +286,7 @@ def surf(request, surf_url):
 	# Go render the response and return it to the client
 	return render(request, 'surfice/surf.html', context_dict)
 
-
+@login_required
 def surfs(request):
 	context_dict = {}
 	
@@ -351,7 +354,7 @@ def surfs(request):
 	
 	return render(request, 'surfice/base_surfs.html', context_dict)
 
-
+@login_required
 def surfices(request):
 	context_dict = {}
 	
@@ -423,12 +426,13 @@ def surfices(request):
 	
 	return render(request, 'surfice/base_surfices.html', context_dict)
 
-
+@login_required
 def settings(request):
 	context_dict = {}
 	
 	return render(request, 'surfice/base_settings.html', context_dict)
 
+@login_required
 def status(request):
 	context_dict = {}
 	

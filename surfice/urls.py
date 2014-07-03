@@ -24,4 +24,5 @@ urlpatterns = patterns('',
 	url(r'^admin/surfices/$', views.surfices, name='surfices'),
 	url(r'^admin/settings/$', views.settings, name='settings'),
 	url(r'^admin/status/$', views.status, name='status'),
+	#url(r'^admin/login/$', views.login, name='login'),
 )

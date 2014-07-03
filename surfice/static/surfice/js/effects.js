@@ -266,4 +266,15 @@ $(".list-group.select .list-group-item").click(function() {
 });
 
 
+$(".navbar-nav a").click(function(e) {
+	//e.preventDefault();
+	var html;
+	//console.log($(this).attr("href"));
+	$.get($(this).attr("href"), function(html) {
+		//var html = $.load($(this).attr("href"));
+		console.log(html);
+		//window.history.pushState({"html": html},"A new one", $(this).attr("href"));
+	});
+});
+
 });
