@@ -4,6 +4,7 @@ from django.core.exceptions import ValidationError
 from django.core.validators import validate_email
 import json
 from django.forms.models import model_to_dict
+from django.core import serializers
 
 # -----------------------------------------
 # set_status(request)
@@ -338,8 +339,7 @@ def submit_ding(request):
 # -----------------------------------------
 # get_surf(request)
 #
-# Sets the surf of a surfice
-# If no surf or surfice is in request, nothing happens
+# Gets a surf based on the id/pk passed
 #
 # INPUT
 # request		A request object
@@ -364,6 +364,36 @@ def get_surf(request):
 		surf.append("A Surf was not passed")
 	
 	return surf
+
+# -----------------------------------------
+# get_status(request)
+#
+# Gets a status based on the id/pk passed
+#
+# INPUT
+# request		A request object
+#	- status	The status of the surf
+#
+# RETURNS
+# Status
+# -----------------------------------------
+def get_status(request):
+	status = {}
+	
+	# Both surf and surfice need to be in request
+	if 'status' in request.GET:
+		# Get the surf object from the database
+		status = Status.get_status(pk=request.GET['status'])
+		
+		# Convert the surf to a dictionary so that we can pass it back as JSON
+		status = model_to_dict(status)
+		#status = serializers.serialize("json", [status])
+	
+	# If surf was not in the request, throw an error
+	else:
+		status.append("A Surf was not passed")
+	
+	return status
 
 # -----------------------------------------
 # dispatch(request, action)
@@ -413,12 +443,18 @@ def dispatch(request, action=''):
 	elif action == 'update-status':
 		response = update_status(request)
 	
+	# Submit a ding from the user
 	elif action == 'submit-ding':
 		response = submit_ding(request)
 	
+	# Get a single surf
 	elif action == 'get-surf':
 		print "getting it"
 		response = get_surf(request)
+	
+	# Get a single status
+	elif action == 'get-status':
+		response = get_status(request)
 	
 	else:
 		response = ["No action called " + action]

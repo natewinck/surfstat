@@ -1,3 +1,46 @@
+function getJSONVal(json, keys) {
+	//console.log(json);
+	//console.log(keys);
+	//console.log(keys[0]);
+	// If this is the last level of keys, return the object
+	if (keys.length == 1 || typeof(json) == undefined) {
+		//console.log("the last level");
+		//console.log(json[keys[0]]);
+		return json[keys[0]];
+	} else {
+		// Get the next level of json values
+		json = json[keys[0]];
+		
+		// Remove the first element of the keys since we are now past that level
+		keys.shift();
+		
+		// Recursive...get the JSON object at the next level of keys
+		return getJSONVal(json, keys);
+	}
+}
+
+function flipQuotes(str) {
+  var result = [], i = 0, lim = str.length, c;
+
+  for (; i < lim; i += 1) {
+    c = str.charAt(i);
+    switch(c) {
+      case '"':
+        result.push("'");
+        break;
+
+      case "'":
+        result.push('"');
+        break;
+
+      default:
+        result.push(c);
+    }
+  }
+
+  return result.join('');
+}
+
 $(function() {
 
 $ajaxGlobalFields = $("[data-ajax-global-update]");
@@ -72,8 +115,6 @@ $("form[type='ajax']").on("submit", function(e) {
     // First get the submit button
     var $button = $(this).find('[type="submit"]');
     var $form = $(this);
-    var surfPk = $(this).find('[name="surf"]').val();
-    console.log(surfPk);
     
     // Disable the button and add a flash animation (in css)
     $button.addClass("disabled");
@@ -106,12 +147,46 @@ $("form[type='ajax']").on("submit", function(e) {
 			$form.find("select[data-ajax-clear]").prop("selectedIndex", 0);
 			
 			// (MOVE TO SEPARATE FUNCTION) Update all ajax fields
-			var field;
-			var getData = {"surf": surfPk};
-			$.getJSON("/ajax/get-surf", getData)
+			var getData = $.parseJSON($form.attr("data-ajax-get"));
+			var $fields = $("[data-ajax-update=" + $form.attr("data-ajax-update-target") + "]");
+			var fields = {};
+			$fields.each(function() {
+				var key = $(this);
+			});
+			console.log(window.location.pathname + $form.attr("data-ajax-action"));
+			$.getJSON(window.location.pathname + $form.attr("data-ajax-action"), getData)
 				.done(function(data) {
-					console.log(data.description);
-					console.log($form);
+					//console.log(data.description);
+					//console.log($form);
+					//console.log(data);
+					//console.log(dataToBeParsed);
+					//data = $.parseJSON(data);
+					//console.log(data);
+					//data = data[0].fields;
+					//console.log(data);
+					if (data.data) {
+						// First make sure there are quotes around all keys and values
+						data.data = data.data.replace(/(['"])?([a-zA-Z0-9]+)(['"])?:/g, '"$2":');
+						
+						// Make sure all quotes are double quotes and that the normal
+						// JSON format is in place
+						data.data = "{" + data.data.replace(/\'/g, '"').replace(/\n/g, "") + "}";
+						
+						// Parse the JSON so we can use it as an object!
+						data.data = $.parseJSON(data.data);
+					}
+					console.log(data);
+					$fields.each(function() {
+						var attribute = $(this).attr("data-ajax-content");
+						//console.log(attribute);
+						
+						var attributes = attribute.split('.');
+						var value = getJSONVal(data, attributes);
+						//console.log(value);
+						
+						$(this).val(value).text(value);
+					});
+					/*
 					$($form.attr("data-ajax-parent")).find("[data-ajax-update]").each(function() {
 						console.log(this);
  						switch($(this).attr("data-ajax-update")) {
@@ -123,6 +198,7 @@ $("form[type='ajax']").on("submit", function(e) {
  						}
  						
  					});
+ 					*/
 				})
 				.fail(function(data) {
 					

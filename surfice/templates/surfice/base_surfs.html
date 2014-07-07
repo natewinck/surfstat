@@ -88,7 +88,7 @@
 								
 								<div class="col-sm-4">
 									<h4>Description</h4>
-									<p data-ajax-update="description">{{ surf.description }}</p>
+									<p data-ajax-update="surf-{{ surf.name|slugify }}" data-ajax-content="description">{{ surf.description }}</p>
 								</div>
 							</div>
 <!-- Row: Current Surfices-->
@@ -163,7 +163,7 @@
 							<hr class="divider-accordian">
 							
 							<h3>Edit {{ surf.name }}</h3>
-							<form type="ajax" action="ajax/update-surf" data-ajax-parent="#surf-{{ surf.name|slugify }}" data-ajax-update method="post">
+							<form type="ajax" action="ajax/update-surf" data-ajax-update-target="surf-{{ surf.name|slugify }}" data-ajax-action="ajax/get-surf" data-ajax-get='{"surf": {{ surf.id }} }' method="post">
 								{# To prevent cross-site forgery, include the following required tag #}
 								{% csrf_token %}
 								<input type="hidden" name="surf" value="{{ surf.id }}">
