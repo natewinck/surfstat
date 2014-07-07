@@ -1,5 +1,14 @@
 $(function() {
 
+$ajaxGlobalFields = $("[data-ajax-global-update]");
+$ajaxLocalFields = $("[data-ajax-update]");
+$ajaxSurfices = $ajaxGlobalFields.is("[data-ajax-surfices]");
+$ajaxSurfs = $ajaxGlobalFields.is("[data-ajax-surfs]");
+$ajaxStatuses = $ajaxGlobalFields.is("[data-ajax-statuses]");
+$ajaxSurfSurfices = $ajaxGlobalFields.is("[data-ajax-surfsurfices]");
+$ajaxNotSurfSurfices = $ajaxGlobalFields.is("[data-ajax-notsurfsurfices]");
+
+
 /* FORM SUBMIT
 ------------------------------ 
 *  Automatically converts all data-name inputs into a JSON string.
@@ -61,7 +70,10 @@ $("form[type='ajax']").on("submit", function(e) {
     
     // Give some feedback to the user
     // First get the submit button
-    var $button = $(this).find('[type="submit"]')
+    var $button = $(this).find('[type="submit"]');
+    var $form = $(this);
+    var surfPk = $(this).find('[name="surf"]').val();
+    console.log(surfPk);
     
     // Disable the button and add a flash animation (in css)
     $button.addClass("disabled");
@@ -69,7 +81,11 @@ $("form[type='ajax']").on("submit", function(e) {
 	
 	// Get the button text so we can replace it later
 	$buttonText = $button.text();
-	$button.text("Saving...");
+	if ($button.attr("data-value-processing")) {
+		$button.text($button.attr("data-value-processing"));
+	} else {
+		$button.text("Saving...");
+	}
     
     // Serialize all the data in the form so that it can be passed
     var data = $(this).serialize();
@@ -79,7 +95,44 @@ $("form[type='ajax']").on("submit", function(e) {
     	function(data, textStatus, jqXHR) {
     		
     		// If the submit succeeded
-    		$button.text("Saved");
+    		if ($button.attr("data-value-success")) {
+    			$button.text($button.attr("data-value-success"));
+    		} else {
+				$button.text("Saved");
+			}
+			
+			// Clear the fields labeled to be cleared
+			$form.find("input[data-ajax-clear], textarea[data-ajax-clear]").val("").text("");
+			$form.find("select[data-ajax-clear]").prop("selectedIndex", 0);
+			
+			// (MOVE TO SEPARATE FUNCTION) Update all ajax fields
+			var field;
+			var getData = {"surf": surfPk};
+			$.getJSON("/ajax/get-surf", getData)
+				.done(function(data) {
+					console.log(data.description);
+					console.log($form);
+					$($form.attr("data-ajax-parent")).find("[data-ajax-update]").each(function() {
+						console.log(this);
+ 						switch($(this).attr("data-ajax-update")) {
+ 							case "description":
+ 								$(this).text(data.description);
+ 								break;
+ 							default:
+ 								break;
+ 						}
+ 						
+ 					});
+				})
+				.fail(function(data) {
+					
+				});
+			field = $(this).attr("[data-ajax-update]");
+			// $form.find("[data-ajax-update]").each(function() {
+// 				
+// 				
+// 			});
+			
 			$button.removeClass("flash");
 			setTimeout(function() {
 				$button.removeClass("disabled");
@@ -92,7 +145,12 @@ $("form[type='ajax']").on("submit", function(e) {
 		})
 		.fail(function() {
 			
-			$button.text("Failed");
+			if ($button.attr("data-value-fail")) {
+    			$button.text($button.attr("data-value-fail"));
+    		} else {
+				$button.text("Failed");
+			}
+			
 			$button.removeClass("flash");
 			
 			setTimeout(function() {
@@ -134,9 +192,9 @@ $('.modal [type="submit"]').click(function(e) {
 /* VALIDATION
 ------------------------------- */
 $(function(){
-var textfield = $("input[name=user]");
+var textfield = $("input[name=username]");
 
-$('button[type="submit"]').click(function(e) {
+$('button.login[type="submit"]').click(function(e) {
 	//e.preventDefault();
 	//little validation just to check username
 	if (textfield.val() != "") {
@@ -144,21 +202,21 @@ $('button[type="submit"]').click(function(e) {
 		$("#output").addClass("alert alert-success animated fadeInUp").html("Welcome back " + "<span style='text-transform:uppercase'>" + textfield.val() + "</span>");
 		$("#output").removeClass(' alert-danger');
 		$("input").css({
-		"height":"0",
-		"padding":"0",
-		"margin":"0",
-		"opacity":"0"
+			"height":"0",
+			"padding":"0",
+			"margin":"0",
+			"opacity":"0"
 		});
 		//change button text 
 		$('button[type="submit"]')//.html("continue")
-		.removeClass("btn-info")
-		.addClass("btn-default").click(function(){
-		$("input").css({
-		"height":"auto",
-		"padding":"10px",
-		"opacity":"1"
-		}).val("");
-		});
+			.removeClass("btn-info")
+			.addClass("btn-default").click(function(){
+				$("input").css({
+					"height":"auto",
+					"padding":"10px",
+					"opacity":"1"
+				}).val("");
+			});
 		
 		//show avatar
 		//$(".avatar").css({

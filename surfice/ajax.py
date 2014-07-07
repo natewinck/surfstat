@@ -3,6 +3,7 @@ from django.http import HttpResponse
 from django.core.exceptions import ValidationError
 from django.core.validators import validate_email
 import json
+from django.forms.models import model_to_dict
 
 # -----------------------------------------
 # set_status(request)
@@ -335,6 +336,36 @@ def submit_ding(request):
 	return errors
 
 # -----------------------------------------
+# get_surf(request)
+#
+# Sets the surf of a surfice
+# If no surf or surfice is in request, nothing happens
+#
+# INPUT
+# request		A request object
+#	- surf		The pk of the surf
+#
+# RETURNS
+# Surf
+# -----------------------------------------
+def get_surf(request):
+	surf = {}
+	
+	# Both surf and surfice need to be in request
+	if 'surf' in request.GET:
+		# Get the surf object from the database
+		surf = Surf.get_surf(pk=request.GET['surf'])
+		
+		# Convert the surf to a dictionary so that we can pass it back as JSON
+		surf = model_to_dict(surf)
+	
+	# If surf was not in the request, throw an error
+	else:
+		surf.append("A Surf was not passed")
+	
+	return surf
+
+# -----------------------------------------
 # dispatch(request, action)
 #
 # Fires functions based on the action passed.
@@ -356,36 +387,40 @@ def submit_ding(request):
 # -----------------------------------------
 def dispatch(request, action=''):
 	print "hello?"
-	errors = {}
+	response = {}
 	
 	# Set the status of a surfice
 	if action == 'set-status':
-		errors = set_status(request)
+		response = set_status(request)
 	
 	# Set all surfices in a surf to a status
 	elif action == 'set-surf-status':
-		errors = set_surf_status(request)
+		response = set_surf_status(request)
 	
 	# Set the surf of a surfice
 	elif action == 'set-surf':
-		errors = set_surf(request)
+		response = set_surf(request)
 	
 	# Update the surf's name and description
 	elif action == 'update-surf':
-		errors = update_surf(request)
+		response = update_surf(request)
 	
 	# Update the surfice's name, description, and surf
 	elif action == 'update-surfice':
-		errors = update_surfice(request)
+		response = update_surfice(request)
 	
 	# Update the status's name, description, and color
 	elif action == 'update-status':
-		errors = update_status(request)
+		response = update_status(request)
 	
 	elif action == 'submit-ding':
-		errors = submit_ding(request)
+		response = submit_ding(request)
+	
+	elif action == 'get-surf':
+		print "getting it"
+		response = get_surf(request)
 	
 	else:
-		errors = ["No action called " + action]
+		response = ["No action called " + action]
 	
-	return HttpResponse(json.dumps(errors), content_type='application/json')
+	return HttpResponse(json.dumps(response), content_type='application/json')
