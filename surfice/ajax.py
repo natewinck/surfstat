@@ -6,6 +6,9 @@ import json
 from django.forms.models import model_to_dict
 from django.core import serializers
 
+from surfice.serializers import *
+from rest_framework.renderers import JSONRenderer
+
 # -----------------------------------------
 # set_status(request)
 #
@@ -366,6 +369,43 @@ def get_surf(request):
 	return surf
 
 # -----------------------------------------
+# get_surfice(request)
+#
+# Gets surfices based on the whichever parameter is passed
+#
+# INPUT
+# request		A request object
+#	- ***		The pk of the surf
+#
+# RETURNS
+# Surf
+# -----------------------------------------
+def get_surfices(request):
+	surfices = {}
+	
+	# Both surf and surfice need to be in request
+	if 'surf' in request.GET:
+		# Get the surf object from the database
+		surf = Surf.get_surf(pk=request.GET['surf'])
+		
+		# Get all the surfices within that Surf
+		surfices = surf.get_surfices()
+		
+		# Convert the surf to a dictionary so that we can pass it back as JSON
+		#surfices = model_to_dict(surfices)
+		#print surfices[0].status.data.color
+		surfices = SurficeSerializer(surfices)
+		surfices = JSONRenderer().render(surfices.data)
+	
+	# If surf was not in the request, throw an error
+	else:
+		surfices = Surfice.get_surfices()
+		surfices = SurficeSerializer(surfices)
+		surfices = JSONRenderer().render(surfices.data)
+	
+	return surfices
+
+# -----------------------------------------
 # get_status(request)
 #
 # Gets a status based on the id/pk passed
@@ -421,36 +461,40 @@ def dispatch(request, action=''):
 	
 	# Set the status of a surfice
 	if action == 'set-status':
-		response = set_status(request)
+		response = json.dumps(set_status(request))
 	
 	# Set all surfices in a surf to a status
 	elif action == 'set-surf-status':
-		response = set_surf_status(request)
+		response = json.dumps(set_surf_status(request))
 	
 	# Set the surf of a surfice
 	elif action == 'set-surf':
-		response = set_surf(request)
+		response = json.dumps(set_surf(request))
 	
 	# Update the surf's name and description
 	elif action == 'update-surf':
-		response = update_surf(request)
+		response = json.dumps(update_surf(request))
 	
 	# Update the surfice's name, description, and surf
 	elif action == 'update-surfice':
-		response = update_surfice(request)
+		response = json.dumps(update_surfice(request))
 	
 	# Update the status's name, description, and color
 	elif action == 'update-status':
-		response = update_status(request)
+		response = json.dumps(update_status(request))
 	
 	# Submit a ding from the user
 	elif action == 'submit-ding':
-		response = submit_ding(request)
+		response = json.dumps(submit_ding(request))
 	
 	# Get a single surf
 	elif action == 'get-surf':
 		print "getting it"
 		response = get_surf(request)
+	
+	# Get a set of surfices
+	elif action == 'get-surfices':
+		response = get_surfices(request)
 	
 	# Get a single status
 	elif action == 'get-status':
@@ -459,4 +503,4 @@ def dispatch(request, action=''):
 	else:
 		response = ["No action called " + action]
 	
-	return HttpResponse(json.dumps(response), content_type='application/json')
+	return HttpResponse(response, content_type='application/json')

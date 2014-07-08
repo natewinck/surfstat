@@ -1,3 +1,36 @@
+// bg color is in rgb format "rgb(255, 255, 255)"
+function getDynamicColor(rgb) {
+	// If they entered a hex code by accident...
+	if (rgb.indexOf("#") > -1) {
+		var hex = rgb;
+		var result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+		rgb = (result) ? [
+			parseInt(result[1], 16),
+			parseInt(result[2], 16),
+			parseInt(result[3], 16)
+		] : null;
+	
+	} else {
+		rgb = rgb.match(/^rgb\((\d+),\s*(\d+),\s*(\d+)\)$/);
+		rgb.shift();
+	}
+
+	var total = 0;
+	for (var i = 0; i < rgb.length; i++) {
+		total += parseInt(rgb[i]);
+	}
+	
+	var avg = total / 3.0;
+	
+	// If the average is less than halfway to dark
+	// change the color of the text to white
+	if (avg / 255 < 0.4) {
+		return "rgb(255, 255, 255)";
+	} else {
+		return "inherit";
+	}
+}
+
 $(function() {
 
 
@@ -295,8 +328,8 @@ $(".list-group.select .list-group-item").click(function(e) {
 // 				//$(this).addClass("in");
 // 			});
 // 		});
-		console.log($(old_id));
-		console.log($(new_id));
+		//console.log($(old_id));
+		//console.log($(new_id));
 		$(old_id).removeClass("active in");
 		$(new_id).addClass("active in");
 		
@@ -314,6 +347,13 @@ $(".navbar-nav a").click(function(e) {
 		console.log(html);
 		//window.history.pushState({"html": html},"A new one", $(this).attr("href"));
 	});
+});
+
+$(".dynamic-color").each(function() {
+	
+	// If the average is less than halfway to dark
+	// change the color of the text to white
+	$(this).css("color", getDynamicColor($(this).css("background-color")));
 });
 
 });

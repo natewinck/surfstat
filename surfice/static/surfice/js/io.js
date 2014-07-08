@@ -147,15 +147,27 @@ $("form[type='ajax']").on("submit", function(e) {
 			$form.find("select[data-ajax-clear]").prop("selectedIndex", 0);
 			
 			// (MOVE TO SEPARATE FUNCTION) Update all ajax fields
-			var getData = $.parseJSON($form.attr("data-ajax-get"));
-			var $fields = $("[data-ajax-update=" + $form.attr("data-ajax-update-target") + "]");
-			var fields = {};
-			$fields.each(function() {
-				var key = $(this);
-			});
-			console.log(window.location.pathname + $form.attr("data-ajax-action"));
+			getData = $form.attr("data-ajax-get");
+			if (getData)
+				getData = $.parseJSON(getData);
+			else
+				getData = "";
+			//var $fields = $("[data-ajax-update=" + $form.attr("data-ajax-update-target") + "]");
+			
+			//console.log(window.location.pathname + $form.attr("data-ajax-action"));
 			$.getJSON(window.location.pathname + $form.attr("data-ajax-action"), getData)
 				.done(function(data) {
+					console.log(data);
+					//$.map(data, function(val, json) {
+						//console.log(val);
+						//console.log(json);
+						//if(json.data) {
+							//console.log(json.data);
+						//}
+					//});
+					//$.each(data function(key, val) {
+						
+					//});
 					//console.log(data.description);
 					//console.log($form);
 					//console.log(data);
@@ -164,6 +176,7 @@ $("form[type='ajax']").on("submit", function(e) {
 					//console.log(data);
 					//data = data[0].fields;
 					//console.log(data);
+					/*
 					if (data.data) {
 						// First make sure there are quotes around all keys and values
 						data.data = data.data.replace(/(['"])?([a-zA-Z0-9]+)(['"])?:/g, '"$2":');
@@ -175,7 +188,10 @@ $("form[type='ajax']").on("submit", function(e) {
 						// Parse the JSON so we can use it as an object!
 						data.data = $.parseJSON(data.data);
 					}
-					console.log(data);
+					*/
+					refreshAJAXPage($form, data);
+					//console.log(data);
+					/*
 					$fields.each(function() {
 						var attribute = $(this).attr("data-ajax-content");
 						//console.log(attribute);
@@ -186,6 +202,7 @@ $("form[type='ajax']").on("submit", function(e) {
 						
 						$(this).val(value).text(value);
 					});
+					*/
 					/*
 					$($form.attr("data-ajax-parent")).find("[data-ajax-update]").each(function() {
 						console.log(this);
