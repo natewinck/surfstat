@@ -30,7 +30,7 @@
 		<div class="list-group select">
 			<a href="#new" class="list-group-item list-group-item-success">Create New Surf<span class="glyphicon glyphicon-plus pull-right"</span></a>
 			{% for surf in surfs %}
-			<a href="#surf-{{ surf.name|slugify }}" data-ajax-update="surf-name-{{ surf.name|slugify }}" class="list-group-item {% if forloop.first %}active{% endif %}">{{ surf.name }}<span class="glyphicon glyphicon-chevron-right pull-right"></span></a>
+			<a href="#surf-{{ surf.name|slugify }}" data-ajax-update="surf-name-{{ surf.id }}" class="list-group-item {% if forloop.first %}active{% endif %}">{{ surf.name }}<span class="glyphicon glyphicon-chevron-right pull-right"></span></a>
 			{% endfor %}
 		</div>
 	</div>
@@ -44,17 +44,21 @@
 						{% csrf_token %}
 						<h3>Create a Surf</h3>
 						<div class="row">
-							<div class="col-xs-6 ">
-								<p>New Surf Name</p>
-								<input type="text" name="surf" class="form-control" placeholder="Surf Name">
+							<div class="col-sm-6 ">
+								<div class="form-group">
+									<label>New Surf Name</label>
+									<input type="text" name="surf" class="form-control" placeholder="Surf Name">
+								</div>
 							</div>
-							<div class="col-xs-6">
-								<p>New Surf Description</p>
-								<textarea class="form-control" name="description" rows="3" placeholder="Update Description here.."></textarea>
+							<div class="col-sm-6">
+								<div class="form-group">
+									<label>New Surf Description</label>
+									<textarea class="form-control" name="description" rows="3" placeholder="Update Description here.."></textarea>
+								</div>
 							</div>
 						</div>
 						<div class="row">
-							<div class="col-xs-offset-10 col-xs-1 button-accordian">
+							<div class="col-xs-offset-10 col-xs-2 button-accordian">
 								<button type="submit" class="btn btn-success">Submit</button>
 							</div>
 						</div>
@@ -71,8 +75,8 @@
 <!--Row: Current Information on the Surf-->
 							<div class="row">
 								<div class="col-sm-8">
-									<h4>All Surfices in <span data-ajax-update="surf-name-{{ surf.name|slugify }}">{{ surf.name }}</span></h4>
-									<table class="table" data-ajax-update="surf-surfices" data-ajax-id="surf-{{ surf.name|slugify }}">
+									<h4>All Surfices in <span data-ajax-update="surf-name-{{ surf.id }}">{{ surf.name }}</span></h4>
+									<table class="table" data-ajax-update="surf-surfices" data-ajax-id="surf-{{ surf.id }}">
 										{% for surfice in surf.surfices %}
 										<tr class="dynamic-color" style="background-color:{{ surfice.status.data.color }}">
 											<td>{{ surfice.name }}</td>
@@ -88,7 +92,7 @@
 								
 								<div class="col-sm-4">
 									<h4>Description</h4>
-									<p data-ajax-update="surf-description-{{ surf.name|slugify }}">{{ surf.description }}</p>
+									<p data-ajax-update="surf-description-{{ surf.id }}">{{ surf.description }}</p>
 								</div>
 							</div>
 <!-- Row: Current Surfices-->
@@ -113,13 +117,13 @@
 							</div>-->
 							<div class="row">
 								<div class="col-xs-12">
-									<form type="ajax" action="ajax/set-surf" method="post" role="form" data-ajax-action="ajax/get-surfices" data-ajax-update-target="surf-surfices surf-not-surfices">
+									<form type="ajax" action="ajax/set-surf" method="post" role="form" data-ajax-action="ajax/get-surfs-with-surfices" data-ajax-update-target="surf-surfices surf-not-surfices">
 										{# To prevent cross-site forgery, include the following required tag #}
 										{% csrf_token %}
 										<input type="hidden" name="surf" value="{{ surf.id }}">
 										<h3>Add a Surfice</h3>
 										<p>Use the dropdown to add an existing Surfice to the Surf</p>
-										<select data-ajax-remove data-ajax-update="surf-not-surfices" data-ajax-id="surf-{{ surf.name|slugify }}" data-ajax-surfices name="surfice" class="form-control">
+										<select data-ajax-remove data-ajax-update="surf-not-surfices" data-ajax-id="surf-{{ surf.id }}" data-ajax-surfices name="surfice" class="form-control">
 											{# Show surfices that are not already in the surf #}
 											{% for surfice in surfices %}
 												{% if surfice not in surf.surfices %}
@@ -134,23 +138,27 @@
 						   
 							<hr class="divider-accordian">
 							
-							<h3>Update <span data-ajax-update="surf-name-{{ surf.name|slugify }}">{{ surf.name }}</span>'s Status</h3>
+							<h3>Update <span data-ajax-update="surf-name-{{ surf.id }}">{{ surf.name }}</span>'s Status</h3>
 							<form type="ajax" action="ajax/set-surf-status" method="post" role="form">
 								<div class="row">
-									<div class="col-xs-6">
+									<div class="col-sm-6">
 										{# To prevent cross-site forgery, include the following required tag #}
 										{% csrf_token %}
 										<input type="hidden" name="surf" value="{{ surf.id }}">
-										<p>Select Status</p>
-										<select name="status" class="form-control">
-											{% for status in statuses %}
-											<option value="{{ status.id }}">{{ status.name }}</option>
-											{% endfor %}
-										</select>
+										<div class="form-group">
+											<label>Select Status</label>
+											<select name="status" class="form-control">
+												{% for status in statuses %}
+												<option value="{{ status.id }}">{{ status.name }}</option>
+												{% endfor %}
+											</select>
+										</div>
 									</div>
-									<div class="col-xs-6">
-										<p>Status Description</p>
-										<textarea name="description" class="form-control" data-ajax-clear="clear" rows="3" placeholder="(Optional) Add your status description..."></textarea>
+									<div class="col-sm-6">
+										<div class="form-group">
+											<label>Status Description</label>
+											<textarea name="description" class="form-control" data-ajax-clear="clear" rows="3" placeholder="(Optional) Add your status description..."></textarea>
+										</div>
 									</div>
 								</div>
 								<div class="row">
@@ -162,19 +170,23 @@
 							
 							<hr class="divider-accordian">
 							
-							<h3>Edit <span data-ajax-update="surf-name-{{ surf.name|slugify }}">{{ surf.name }}</span></h3>
-							<form type="ajax" action="ajax/update-surf" data-ajax-update-target="surf-name-{{ surf.name|slugify }} surf-description-{{ surf.name|slugify }} surfs" data-ajax-action="ajax/get-surf" data-ajax-get='{"surf": {{ surf.id }} }' method="post">
+							<h3>Edit <span data-ajax-update="surf-name-{{ surf.id }}">{{ surf.name }}</span></h3>
+							<form type="ajax" action="ajax/update-surf" data-ajax-update-target="surf-name-{{ surf.id }} surf-description-{{ surf.id }} surfs" data-ajax-action="ajax/get-surf" data-ajax-get='{"surf": {{ surf.id }} }' method="post">
 								{# To prevent cross-site forgery, include the following required tag #}
 								{% csrf_token %}
 								<input type="hidden" name="surf" value="{{ surf.id }}">
 								<div class="row">
-									<div class="col-xs-6 ">
-										<p>Update Surf Name</p>
-										<input type="text" name="name" class="form-control select-all" placeholder="Surf Name" value="{{ surf.name }}">
+									<div class="col-sm-6 ">
+										<div class="form-group">
+											<label>Update Surf Name</label>
+											<input type="text" name="name" class="form-control select-all" placeholder="Surf Name" value="{{ surf.name }}">
+										</div>
 									</div>
-									<div class="col-xs-6">
-										<p>Update Surf Description</p>
-										<textarea class="form-control select-all" name="description" rows="3" placeholder="Update Description here..">{{ surf.description }}</textarea>
+									<div class="col-sm-6">
+										<div class="form-group">
+											<label>Update Surf Description</label>
+											<textarea class="form-control select-all" name="description" rows="3" placeholder="Update Description here..">{{ surf.description }}</textarea>
+										</div>
 									</div>
 								</div>
 								<div class="row">
@@ -186,7 +198,7 @@
 							
 							<hr class="divider-accordian">
 							<div class="col-xs-12">
-								<h3>Delete <span data-ajax-update="surf-name-{{ surf.name|slugify }}">{{ surf.name }}</span></h3>
+								<h3>Delete <span data-ajax-update="surf-name-{{ surf.id }}">{{ surf.name }}</span></h3>
 								{# If there is more than one surf in the database #}
 								{# Allow them to be deleted #}
 								{% if surfs|length > 1 %}
@@ -220,21 +232,31 @@
 							<input type="hidden" name="delete" value="1">
 							
 							<div class="modal-body">
-								<p>Are you sure you want to delete {{ surf.name }}?
-								All surfices included in this surf will be pushed to another surf.</p>
-								<div class="form-group">
-									<label class="col-sm-4 control-label" for="new_surf">Reassign Surfices to...</label>
-									<div class="col-sm-6">
-										<select name="new_surf" class="form-control">
-											<option disabled selected>Select a surf...</option>
-											{% for new_surf in surfs %}
-												{% if new_surf != surf %}
-												<option value="{{ new_surf.id }}">{{ new_surf.name }}</option>
-												{% endif %}
-											{% endfor %}
-										</select>
+								<p>Are you sure you want to delete <span data-ajax-update="surf-name-{{ surf.id }}">{{ surf.name }}</span>?</p>
+								
+								<div data-ajax-update="surf-delete" data-ajax-id="surf-{{ surf.id }}">
+									{% if surf.surfices|length_is:"0" %}
+									<p>There aren't any surfices in <span data-ajax-update="surf-name-{{ surf.id }}">{{ surf.name }}</span>, so it will be deleted and nothing else will happen.</p>
+									<input name="is_empty" type="hidden">
+									{% else %}
+								
+									<p>All surfices included in this surf will be pushed to another surf.</p>
+									<div class="form-group">
+										<label class="col-sm-4 control-label" for="new_surf">Reassign Surfices to...</label>
+										<div class="col-sm-6">
+											<select name="new_surf" class="form-control">
+												<option disabled selected>Select a surf...</option>
+												{% for new_surf in surfs %}
+													{% if new_surf != surf %}
+													<option value="{{ new_surf.id }}">{{ new_surf.name }}</option>
+													{% endif %}
+												{% endfor %}
+											</select>
+										</div>
 									</div>
+									{% endif %}
 								</div>
+								
 							</div>
 							<div class="modal-footer">
 								<button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>

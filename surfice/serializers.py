@@ -61,5 +61,15 @@ class DingSerializer(serializers.ModelSerializer):
 		return obj.data
 	
 	class Meta:
-		model = Event
+		model = Ding
+
+class SurfWithSurficeSerializer(serializers.ModelSerializer):
+	surfices = serializers.SerializerMethodField('get_surfices_field')
+	
+	def get_surfices_field(self, obj):
+		# For each Surf, query for Surfices and add them to context_dict
+		return SurficeSerializer(obj.get_surfices()).data
+	
+	class Meta:
+		model = Surf
 		

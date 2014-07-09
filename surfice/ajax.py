@@ -360,7 +360,11 @@ def get_surf(request):
 		surf = Surf.get_surf(pk=request.GET['surf'])
 		
 		# Convert the surf to a dictionary so that we can pass it back as JSON
-		surf = model_to_dict(surf)
+		#surf = model_to_dict(surf)
+		
+		# Serialize the surf
+		surf = SurfSerializer(surf)
+		surf = JSONRenderer().render(surf.data)
 	
 	# If surf was not in the request, throw an error
 	else:
@@ -397,13 +401,70 @@ def get_surfices(request):
 		surfices = SurficeSerializer(surfices)
 		surfices = JSONRenderer().render(surfices.data)
 	
-	# If surf was not in the request, throw an error
+	# If surf was not in the request get all the surfices
 	else:
 		surfices = Surfice.get_surfices()
 		surfices = SurficeSerializer(surfices)
 		surfices = JSONRenderer().render(surfices.data)
 	
 	return surfices
+
+# -----------------------------------------
+# get_surfs_with_surfices(request)
+#
+# Gets surfices based on the whichever parameter is passed
+#
+# INPUT
+# request		A request object
+#	- ***		The pk of the surf
+#
+# RETURNS
+# Surf
+# -----------------------------------------
+def get_surfs_with_surfices(request):
+	#context_dict = {}
+	surfs = {}
+	
+	# Exactly the same as views.surfs()...
+	
+	# Query for surfs and add them to context_dict
+	surfs = Surf.get_surfs()
+	
+	# For each Surf, query for Surfices and add them to context_dict
+	#for i, surf in enumerate(surfs):
+		#surfs[i].surfices = SurficeSerializer(surf.get_surfices())
+		
+	
+	# Query all the Surfices and add them to context_dict
+	#surfice_list = Surfice.get_surfices()
+	#context_dict['surfices'] = SurficeSerializer(surfice_list)
+	
+	# Both surf and surfice need to be in request
+	# if False and 'surf' in request.GET:
+# 		# Get the surf object from the database
+# 		surf = Surf.get_surf(pk=request.GET['surf'])
+# 		
+# 		# Get all the surfices within that Surf
+# 		surfices = surf.get_surfices()
+# 		
+# 		# Convert the surf to a dictionary so that we can pass it back as JSON
+# 		#surfices = model_to_dict(surfices)
+# 		#print surfices[0].status.data.color
+# 		surfices = SurficeSerializer(surfices)
+# 		surfices = JSONRenderer().render(surfices.data)
+# 	
+# 	# If surf was not in the request get all the surfices
+# 	elif False:
+# 		surfices = Surfice.get_surfices()
+# 		surfices = SurficeSerializer(surfices)
+# 		surfices = JSONRenderer().render(surfices.data)
+	
+	surfs = SurfWithSurficeSerializer(surfs)
+	surfs = JSONRenderer().render(surfs.data)
+	
+	print surfs
+	
+	return surfs
 
 # -----------------------------------------
 # get_status(request)
@@ -495,6 +556,10 @@ def dispatch(request, action=''):
 	# Get a set of surfices
 	elif action == 'get-surfices':
 		response = get_surfices(request)
+	
+	# Get surfs with surfices in them
+	elif action == 'get-surfs-with-surfices':
+		response = get_surfs_with_surfices(request)
 	
 	# Get a single status
 	elif action == 'get-status':
