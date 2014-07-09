@@ -117,7 +117,7 @@
 							</div>-->
 							<div class="row">
 								<div class="col-xs-12">
-									<form type="ajax" action="ajax/set-surf" method="post" role="form" data-ajax-action="ajax/get-surfs-with-surfices" data-ajax-update-target="surf-surfices surf-not-surfices">
+									<form type="ajax" action="ajax/set-surf" method="post" role="form" data-ajax-action="ajax/get-surfs-with-surfices" data-ajax-update-target="surf-surfices surf-not-surfices surf-delete">
 										{# To prevent cross-site forgery, include the following required tag #}
 										{% csrf_token %}
 										<input type="hidden" name="surf" value="{{ surf.id }}">
@@ -248,7 +248,7 @@
 												<option disabled selected>Select a surf...</option>
 												{% for new_surf in surfs %}
 													{% if new_surf != surf %}
-													<option value="{{ new_surf.id }}">{{ new_surf.name }}</option>
+													<option value="{{ new_surf.id }}" data-ajax-update="surf-name={{ new_surf.id }}">{{ new_surf.name }}</option>
 													{% endif %}
 												{% endfor %}
 											</select>
