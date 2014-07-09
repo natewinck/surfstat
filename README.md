@@ -71,8 +71,14 @@ AJAX
 ----
 - AJAX check if name is already in database when creating/updating a Surf/Surfice/Status
 - AJAX function to update all AJAX get fields on a page
+  - ~~Surfs~~
+  - Surfices
+  - Statuses
+  - Settings
+  - Events
+  - Dings
 - ~~Change all AJAX functions to use id rather than name~~
-- Deleting a Surf only asks to move surfices to another surf if this surf has surfices.
+- ~~Deleting a Surf only asks to move surfices to another surf if this surf has surfices.~~
 
 Backend
 -------

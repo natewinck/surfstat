@@ -63,7 +63,7 @@ class Surf(models.Model):
 			surf = Surf()
 			
 			# Set the surf attributes
-			surf.name = name
+			surf.name = ' '.join(name.split())
 			surf.description = description
 			
 			# Set any generic data that might've been passed
@@ -208,10 +208,11 @@ class Surf(models.Model):
 		# with the same name (case insensitive), update the name
 		if	(
 				name != None 		and
-				name != self.name 	and
+				' '.join(name.split()) != self.name 	and
 				Surf.objects.filter(name__iexact='name').count() == 0
 			):
-			self.name = name
+			# Get rid of extra spaces in the name
+			self.name = ' '.join(name.split())
 		
 		# If description is set, change the description
 		if description != None:
@@ -240,13 +241,13 @@ class Surf(models.Model):
 		code = False
 		
 		# If you aren't changing the name, don't change it!
-		if name == self.name:
+		if ' '.join(name.split()) == self.name:
 			code = False
 		
 		# Check if new name already exists in database
 		# If new name doesn't exist, set this object to that name	
 		elif Surf.objects.filter(name__iexact='name').count() == 0:
-			self.name = name
+			self.name = ' '.join(name.split())
 			self.save()
 			code = True
 		return code
@@ -286,6 +287,7 @@ class Surf(models.Model):
 			flag = False
 		else:
 			# Call the real save() method
+			self.name = ' '.join(self.name.split())
 			super(Surf, self).save(*args, **kwargs)
 			flag = True
 		
@@ -309,7 +311,7 @@ class Surf(models.Model):
 	def is_saved(name=None, pk=None, surf=None):
 		exists = False
 		
-		if name != None and Surf.objects.filter(name__iexact=name).count() > 0:
+		if name != None and Surf.objects.filter(name__iexact=' '.join(name.split())).count() > 0:
 			exists = True
 		
 		elif pk != None and Surf.objects.filter(pk=pk).count() > 0:
@@ -388,12 +390,13 @@ class Surfice(models.Model):
 		
 		# Check to make sure a Surfice object with the same name
 		# isn't already in the database.
-		if Surfice.objects.filter(name__iexact=name).count() == 0:
+		if Surfice.is_saved(name=name):
 			# Create the Surfice object
 			surfice = Surfice()
 			
 			# Set the Surfice class variables
-			surfice.name = name
+			# Remove extra spaces from the name
+			surfice.name = ' '.join(name.split())
 			surfice.surf = surf
 			surfice.description = description
 			surfice.status = status
@@ -552,7 +555,7 @@ class Surfice(models.Model):
 				name != self.name 	and
 				Surf.objects.filter(name__iexact='name').count() == 0
 			):
-			self.name = name
+			self.name = ' '.join(name.split())
 		
 		# If surf is set and is in the database, update it
 		if	(
@@ -589,13 +592,13 @@ class Surfice(models.Model):
 		code = False
 		
 		# If you aren't changing the name, don't change it!
-		if name == self.name:
+		if ' '.join(name.split()) == self.name:
 			code = False
 		
 		# Check if new name already exists in database
 		# If new name doesn't exist, set this object to that name	
 		elif Surfice.objects.filter(name__iexact='name').count() == 0:
-			self.name = name
+			self.name = ' '.join(name.split())
 			self.save()
 			code = True
 		return code
@@ -671,6 +674,7 @@ class Surfice(models.Model):
 			flag = False
 		else:
 			# Call the real save() method
+			self.name = ' '.join(self.name.split())
 			super(Surfice, self).save(*args, **kwargs)
 			flag = True
 		
@@ -694,7 +698,7 @@ class Surfice(models.Model):
 	def is_saved(name=None, pk=None, surfice=None):
 		
 		# If name is set and the object is in the database
-		if name != None and Surfice.objects.filter(name__iexact=name).count() > 0:
+		if name != None and Surfice.objects.filter(name__iexact=' '.join(name.split())).count() > 0:
 			exists = True
 		
 		# If pk is set and the object is in the database
@@ -757,12 +761,13 @@ class Status(models.Model):
 		
 		# Check to make sure a Status object with the same name
 		# isn't already in the database.
-		if Status.objects.filter(name__iexact=name).count() == 0:
+		if Status.is_saved(name=name):
 			# Create the Status object
 			status = Status()
 			
 			# Set the Status class variables
-			status.name = name
+			# Remove extra spaces from the name
+			status.name = ' '.join(name.split())
 			status.description = description
 			
 			# Set a default color
@@ -875,10 +880,11 @@ class Status(models.Model):
 		# with the same name, update the name
 		if	(
 				name != None 		and
-				name != self.name 	and
+				' '.join(name.split()) != self.name 	and
 				Status.objects.filter(name__iexact='name').count() == 0
 			):
-			self.name = name
+			# Remove extra spaces from the name
+			self.name = ' '.join(name.split())
 		
 		# If description is set, change the description
 		if description != None:
@@ -908,13 +914,13 @@ class Status(models.Model):
 		code = False
 		
 		# If you aren't changing the name, don't change it!
-		if name == self.name:
+		if ' '.join(name.split()) == self.name:
 			code = False
 		
 		# Check if new name already exists in database
 		# If new name doesn't exist, set this object to that name	
 		elif Status.objects.filter(name__iexact='name').count() == 0:
-			self.name = name
+			self.name = ' '.join(name.split())
 			self.save()
 			code = True
 		
@@ -950,10 +956,10 @@ class Status(models.Model):
 	# False if Status object is not in database
 	# -------------------------------------
 	@staticmethod
-	def is_saved(name, pk, status):
+	def is_saved(name=None, pk=None, status=None):
 		
 		# If name is set and the object is in the database
-		if name != None and Status.objects.filter(name__iexact=name).count() > 0:
+		if name != None and Status.objects.filter(name__iexact=' '.join(name.split())).count() > 0:
 			exists = True
 		
 		# If pk is set and the object is in the database

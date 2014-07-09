@@ -117,7 +117,7 @@
 							</div>-->
 							<div class="row">
 								<div class="col-xs-12">
-									<form type="ajax" action="ajax/set-surf" method="post" role="form" data-ajax-action="ajax/get-surfs-with-surfices" data-ajax-update-target="surf-surfices surf-not-surfices surf-delete">
+									<form type="ajax" action="ajax/set-surf" method="post" role="form" data-ajax-action="get-surfs-with-surfices" data-ajax-update-target="surf-surfices surf-not-surfices surf-delete">
 										{# To prevent cross-site forgery, include the following required tag #}
 										{% csrf_token %}
 										<input type="hidden" name="surf" value="{{ surf.id }}">
@@ -171,7 +171,7 @@
 							<hr class="divider-accordian">
 							
 							<h3>Edit <span data-ajax-update="surf-name-{{ surf.id }}">{{ surf.name }}</span></h3>
-							<form type="ajax" action="ajax/update-surf" data-ajax-update-target="surf-name-{{ surf.id }} surf-description-{{ surf.id }} surfs" data-ajax-action="ajax/get-surf" data-ajax-get='{"surf": {{ surf.id }} }' method="post">
+							<form type="ajax" action="ajax/update-surf" data-ajax-update-target="surf-name-{{ surf.id }} surf-description-{{ surf.id }} surfs" data-ajax-action="get-surf" data-ajax-get='{"surf": {{ surf.id }} }' method="post">
 								{# To prevent cross-site forgery, include the following required tag #}
 								{% csrf_token %}
 								<input type="hidden" name="surf" value="{{ surf.id }}">
@@ -179,7 +179,7 @@
 									<div class="col-sm-6 ">
 										<div class="form-group">
 											<label>Update Surf Name</label>
-											<input type="text" name="name" class="form-control select-all" placeholder="Surf Name" value="{{ surf.name }}">
+											<input type="text" name="name" class="form-control select-all" placeholder="Surf Name" value="{{ surf.name }}" data-ajax-update="surf-name-{{ surf.id }}">
 										</div>
 									</div>
 									<div class="col-sm-6">

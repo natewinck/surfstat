@@ -373,6 +373,29 @@ def get_surf(request):
 	return surf
 
 # -----------------------------------------
+# get_surfs(request)
+#
+# Gets all surfs from the database
+#
+# INPUT
+# request		A request object
+# 
+# RETURNS
+# *Surf
+# -----------------------------------------
+def get_surfs(request):
+	surfs = {}
+	
+	# Get the surf object from the database
+	surfs = Surf.get_surfs()
+	
+	# Serialize the surf
+	surfs = SurfSerializer(surfs)
+	surfs = JSONRenderer().render(surfs.data)
+	
+	return surfs
+
+# -----------------------------------------
 # get_surfice(request)
 #
 # Gets surfices based on the whichever parameter is passed
@@ -550,8 +573,11 @@ def dispatch(request, action=''):
 	
 	# Get a single surf
 	elif action == 'get-surf':
-		print "getting it"
 		response = get_surf(request)
+	
+	# Get all surfs
+	elif action == 'get-surfs':
+		response = get_surfs(request)
 	
 	# Get a set of surfices
 	elif action == 'get-surfices':

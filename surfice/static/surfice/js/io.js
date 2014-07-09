@@ -1,3 +1,15 @@
+/* iequals
+------------------------------
+*  Checks if two strings are equal to each other (case insensitive).
+*
+*  Example: "A cool Surf" turns into "a-cool-surf"
+*
+*  RETURNS
+*  bool
+*  
+------------------------------ */
+if (typeof String.prototype.iequals === 'undefined') String.prototype.iequals = function(string) { return this.toLowerCase() === string.toLowerCase(); };
+
 function getJSONVal(json, keys) {
 	//console.log(json);
 	//console.log(keys);
@@ -147,80 +159,31 @@ $("form[type='ajax']").on("submit", function(e) {
 			$form.find("select[data-ajax-clear]").prop("selectedIndex", 0);
 			
 			// (MOVE TO SEPARATE FUNCTION) Update all ajax fields
-			getData = $form.attr("data-ajax-get");
-			if (getData)
-				getData = $.parseJSON(getData);
-			else
-				getData = "";
+			
 			//var $fields = $("[data-ajax-update=" + $form.attr("data-ajax-update-target") + "]");
 			
+			// Since new data has been added, refresh the ss object
+			//ss.getSurfs();
+			
+			
+			//refreshAJAXPage($form, $form.attr("data-ajax-action"), getData)
 			//console.log(window.location.pathname + $form.attr("data-ajax-action"));
+			
+			refreshAJAXPage($form);
+			/*
 			$.getJSON(window.location.pathname + $form.attr("data-ajax-action"), getData)
 				.done(function(data) {
 					console.log(data);
-					//$.map(data, function(val, json) {
-						//console.log(val);
-						//console.log(json);
-						//if(json.data) {
-							//console.log(json.data);
-						//}
-					//});
-					//$.each(data function(key, val) {
-						
-					//});
-					//console.log(data.description);
-					//console.log($form);
-					//console.log(data);
-					//console.log(dataToBeParsed);
-					//data = $.parseJSON(data);
-					//console.log(data);
-					//data = data[0].fields;
-					//console.log(data);
-					/*
-					if (data.data) {
-						// First make sure there are quotes around all keys and values
-						data.data = data.data.replace(/(['"])?([a-zA-Z0-9]+)(['"])?:/g, '"$2":');
-						
-						// Make sure all quotes are double quotes and that the normal
-						// JSON format is in place
-						data.data = "{" + data.data.replace(/\'/g, '"').replace(/\n/g, "") + "}";
-						
-						// Parse the JSON so we can use it as an object!
-						data.data = $.parseJSON(data.data);
-					}
-					*/
+					
+					// Refresh the page with the JSON data
 					refreshAJAXPage($form, data);
-					//console.log(data);
-					/*
-					$fields.each(function() {
-						var attribute = $(this).attr("data-ajax-content");
-						//console.log(attribute);
-						
-						var attributes = attribute.split('.');
-						var value = getJSONVal(data, attributes);
-						//console.log(value);
-						
-						$(this).val(value).text(value);
-					});
-					*/
-					/*
-					$($form.attr("data-ajax-parent")).find("[data-ajax-update]").each(function() {
-						console.log(this);
- 						switch($(this).attr("data-ajax-update")) {
- 							case "description":
- 								$(this).text(data.description);
- 								break;
- 							default:
- 								break;
- 						}
- 						
- 					});
- 					*/
+					
 				})
 				.fail(function(data) {
 					
 				});
-			field = $(this).attr("[data-ajax-update]");
+			*/
+			//field = $(this).attr("[data-ajax-update]");
 			// $form.find("[data-ajax-update]").each(function() {
 // 				
 // 				
@@ -284,7 +247,40 @@ $('.modal [type="submit"]').click(function(e) {
 
 /* VALIDATION
 ------------------------------- */
-$(function(){
+function surfNameField($input) {
+	
+	var surfId = $input.closest("form").find('input[name="surf"]').val();
+	// Loop through all the surfs to find a match
+	// not including this current surf
+	$.each(ss.surfs, function(key, surf) {
+		//console.log($input.val().replace(/^\s+|\s+$/gm,'') + " - " + surf.name);
+		//console.log($input.val().replace(/^\s+|\s+$/gm,'').iequals(surf.name));
+		var val = $input.val().toString();
+		if (surfId != surf.id && $input.val().replace(/\s+/gm," ").trim().iequals(surf.name)) {
+			$input.closest(".form-group").removeClass("has-success").addClass("has-error");
+			return false;
+		} else {
+			$input.closest(".form-group").removeClass("has-error").addClass("has-success");
+		}
+	});
+}
+
+$('input[name="name"]').keyup(function(e) {
+	$input = $(this);
+	console.log("keyup");
+	// If the surfs array already exists, just fire the function without getting all the info
+	// If surfs is empty, however, get the new data
+	if (ss.surfs.length == 0) {
+		console.log("getting new surfs");
+		ss.getSurfs(function(data) {
+			surfNameField($input);
+		});
+		
+	} else {
+		surfNameField($input);
+	}
+});
+
 var textfield = $("input[name=username]");
 
 $('button.login[type="submit"]').click(function(e) {
@@ -324,7 +320,6 @@ $('button.login[type="submit"]').click(function(e) {
 
 });
 
-});
 
 
 
