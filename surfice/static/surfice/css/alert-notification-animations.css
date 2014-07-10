@@ -1,0 +1,61 @@
+/* ## Notification Keyframe Animations
+ *
+ * ## Usage
+ *
+ * ```css
+ *  -webkit-animation: notification .75s linear;
+ *  -moz-animation: notification .75s linear;
+ *  -ms-animation: notification .75s linear;
+ *  -o-animation: notification .75s linear;
+ *  animation: notification .75s linear;
+ * ```
+ */
+
+.notifications {
+	perspective:200px;
+	-webkit-perspective:200px; /* Chrome, Safari, Opera  */
+}
+
+.notifications > div {
+}
+
+@-webkit-keyframes notification {
+  0% { -webkit-transform: rotateX(90deg); opacity: 0; }
+  100% { -webkit-transform: rotateX(0deg); opacity: 1; }
+}
+
+@-moz-keyframes notification {
+  0% { opacity: 0; }
+  70% { opacity: .8; }
+  90% { opacity: 1; }
+  100% { opacity: 1; }
+}
+
+@-ms-keyframes notification {
+  0% { opacity: 0; }
+  70% { opacity: .8; }
+  90% { opacity: 1; }
+  100% {  opacity: 1; }
+}
+
+@-o-keyframes notification {
+  0% { -o-transform: opacity: 0; }
+  70% { -o-transform: opacity: .8; }
+  90% { -o-transform: opacity: 1; }
+  100% { -o-transform: opacity: 1; }
+}
+
+keyframes notification {
+  0% { transform: rotateX(-90deg); opacity: 0; }
+  70% { transform: rotateX(20deg); opacity: .8; }
+  90% { transform: rotateX(-10deg); opacity: 1; }
+  100% { transform: rotateX(-0deg); opacity: 1; }
+}
+
+.notifications > div {
+  -webkit-animation: notification .2s linear;
+  -moz-animation: notification .75s linear;
+  -ms-animation: notification .75s linear;
+  -o-animation: notification .75s linear;
+  animation: notification .75s linear;
+}

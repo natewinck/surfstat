@@ -36,7 +36,7 @@
 		<div class="list-group select">
 			<a href="#new" class="list-group-item list-group-item-success">Create New Surfice<span class="glyphicon glyphicon-plus pull-right"></span></a>
 			{% for surfice in surfices %}
-			<a href="#surfice-{{ surfice.name|slugify }}" class="list-group-item {% if forloop.first %}active{% endif %}">{{ surfice.name }}<span class="glyphicon glyphicon-chevron-right pull-right"></span></a>
+			<a href="#surfice-{{ surfice.name|slugify }}" data-ajax-update="surfice-name-{{ surfice.id }}" class="list-group-item {% if forloop.first %}active{% endif %}">{{ surfice.name }}<span class="glyphicon glyphicon-chevron-right pull-right"></span></a>
 			{% endfor %}
 		</div>
 	</div>
@@ -105,7 +105,7 @@
 					</div>
 					<div class="col-xs-4">
 						<h4>Description</h4>
-						<p>{{ surfice.description }}</p>
+						<p data-ajax-update="surfice-description-{{ surfice.id }}">{{ surfice.description }}</p>
 					</div>
 					<div class="col-xs-4">
 						<h4>Current Surf</h4>
@@ -115,7 +115,7 @@
 			
 				<hr class="divider-accordian">
 			
-				<h3>Update {{ surfice.name }}'s Status</h3>
+				<h3>Update <span data-ajax-update="surfice-name-{{ surfice.id }}">{{ surfice.name }}</span>'s Status</h3>
 				<form type="ajax" action="ajax/set-status" method="post" role="form" id="status-surfice">
 					{# To prevent cross-site forgery, include the following required tag #}
 					{% csrf_token %}
@@ -143,15 +143,18 @@
 			
 				<hr class="divider-accordian">
 			
-				<h3>Edit {{ surfice.name }}</h3>
-				<form type="ajax" action="ajax/update-surfice" method="post" role="form" id="update-surfice">
+				<h3>Edit <span data-ajax-update="surfice-name-{{ surfice.id }}">{{ surfice.name }}</span></h3>
+				<form type="ajax" action="ajax/update-surfice" method="post" role="form"
+					data-ajax-action="get-surfice"
+					data-ajax-update-target="surfice-name-{{ surfice.id }} surfice-description-{{ surfice.id }}"
+					data-ajax-get='{"surfice": {{ surfice.id }}}'>
 					{# To prevent cross-site forgery, include the following required tag #}
 					{% csrf_token %}
 					<input type="hidden" name="surfice" value="{{ surfice.id }}">
 					<div class="row">
 						<div class="col-xs-6 ">
 							<p>Update Surfice Name</p>
-							<input name="name" type="text" class="form-control" id="update-surfice-name" value="{{ surfice.name }}" placeholder="Surfice Name">
+							<input name="name" type="text" class="form-control" value="{{ surfice.name }}" placeholder="Surfice Name">
 					
 							<p style="padding-top:10px">Assigned Surf</p>
 							<select name="surf" class="form-control" id="surfice-surf-new">
@@ -176,7 +179,7 @@
 				<hr class="divider-accordian">
 				<div class="row">
 					<div class="col-xs-12">
-						<h3>Delete {{ surfice.name }}</h3>
+						<h3>Delete <span data-ajax-update="surfice-name-{{ surfice.id }}">{{ surfice.name }}</span></h3>
 						<button type="button" class="btn btn-danger button-accordian" data-toggle="modal" data-target="#confirm-delete-surfice-{{ surfice.id }}">Delete</button>
 					</div>
 				</div>
@@ -189,7 +192,7 @@
 							<h4 class="modal-title">Confirm Delete</h4>
 						</div>
 						<div class="modal-body">
-							Are you sure you want to delete {{ surfice.name }}?
+							Are you sure you want to delete <span data-ajax-update="surfice-name-{{ surfice.id }}">{{ surfice.name }}</span>?
 							All data related to this surfice including all events and dings assigned to it will be deleted!
 						</div>
 						<div class="modal-footer">

@@ -47,7 +47,7 @@
 							<div class="col-sm-6 ">
 								<div class="form-group">
 									<label>New Surf Name</label>
-									<input type="text" name="surf" class="form-control" placeholder="Surf Name">
+									<input type="text" name="name" class="form-control" placeholder="Surf Name">
 								</div>
 							</div>
 							<div class="col-sm-6">
@@ -76,7 +76,7 @@
 							<div class="row">
 								<div class="col-sm-8">
 									<h4>All Surfices in <span data-ajax-update="surf-name-{{ surf.id }}">{{ surf.name }}</span></h4>
-									<table class="table" data-ajax-update="surf-surfices" data-ajax-id="surf-{{ surf.id }}">
+									<table class="table" data-ajax-update="surfs-surfices surf-surfices" data-ajax-id="surf-{{ surf.id }}">
 										{% for surfice in surf.surfices %}
 										<tr class="dynamic-color" style="background-color:{{ surfice.status.data.color }}">
 											<td>{{ surfice.name }}</td>
@@ -117,7 +117,11 @@
 							</div>-->
 							<div class="row">
 								<div class="col-xs-12">
-									<form type="ajax" action="ajax/set-surf" method="post" role="form" data-ajax-action="get-surfs-with-surfices" data-ajax-update-target="surf-surfices surf-not-surfices surf-delete">
+									<form type="ajax" action="ajax/set-surf" method="post" role="form"
+									data-ajax-action="get-surfs-with-surfices"
+									data-ajax-update-target="surfs-surfices surf-not-surfices surf-delete"
+									data-ajax-success="Surfice successfully added."
+									data-ajax-id="{{ surf.id }}">
 										{# To prevent cross-site forgery, include the following required tag #}
 										{% csrf_token %}
 										<input type="hidden" name="surf" value="{{ surf.id }}">
@@ -139,7 +143,11 @@
 							<hr class="divider-accordian">
 							
 							<h3>Update <span data-ajax-update="surf-name-{{ surf.id }}">{{ surf.name }}</span>'s Status</h3>
-							<form type="ajax" action="ajax/set-surf-status" method="post" role="form">
+							<form type="ajax" action="ajax/set-surf-status" method="post" role="form"
+								data-ajax-action="get-surfices"
+								data-ajax-get='{"surf": {{ surf.id }}}'
+								data-ajax-update-target="surf-surfices"
+								data-ajax-id="surf-{{ surf.id }}">
 								<div class="row">
 									<div class="col-sm-6">
 										{# To prevent cross-site forgery, include the following required tag #}
@@ -171,20 +179,27 @@
 							<hr class="divider-accordian">
 							
 							<h3>Edit <span data-ajax-update="surf-name-{{ surf.id }}">{{ surf.name }}</span></h3>
-							<form type="ajax" action="ajax/update-surf" data-ajax-update-target="surf-name-{{ surf.id }} surf-description-{{ surf.id }} surfs" data-ajax-action="get-surf" data-ajax-get='{"surf": {{ surf.id }} }' method="post">
+							<form type="ajax" action="ajax/update-surf"
+								data-ajax-update-target="surf-name-{{ surf.id }} surf-description-{{ surf.id }} surfs"
+								data-ajax-action="get-surf"
+								data-ajax-get='{"surf": {{ surf.id }} }'
+								data-ajax-success="{{ surf.name }}'s name and description were successfully updated."
+								data-ajax-fail="{{ surf.name }}'s name and description were unable to be updated."
+								method="post">
+								
 								{# To prevent cross-site forgery, include the following required tag #}
 								{% csrf_token %}
 								<input type="hidden" name="surf" value="{{ surf.id }}">
 								<div class="row">
 									<div class="col-sm-6 ">
 										<div class="form-group">
-											<label>Update Surf Name</label>
+											<label class="control-label">Update Surf Name</label>
 											<input type="text" name="name" class="form-control select-all" placeholder="Surf Name" value="{{ surf.name }}" data-ajax-update="surf-name-{{ surf.id }}">
 										</div>
 									</div>
 									<div class="col-sm-6">
 										<div class="form-group">
-											<label>Update Surf Description</label>
+											<label class="control-label">Update Surf Description</label>
 											<textarea class="form-control select-all" name="description" rows="3" placeholder="Update Description here..">{{ surf.description }}</textarea>
 										</div>
 									</div>
@@ -279,7 +294,7 @@
 
 <hr class="featurette-divider">
 <!-- /END THE FEATURETTES -->
-
+<div class='notifications top-center'></div>
 {% endblock content %}
 
 {% block scripts %}

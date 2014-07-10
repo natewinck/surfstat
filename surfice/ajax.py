@@ -398,6 +398,36 @@ def get_surfs(request):
 # -----------------------------------------
 # get_surfice(request)
 #
+# Gets a surfice based on the id/pk passed
+#
+# INPUT
+# request		A request object
+#	- surfice	The pk of the surf
+#
+# RETURNS
+# Surfice
+# -----------------------------------------
+def get_surfice(request):
+	surfice = {}
+	
+	# Surfice needs to be in request
+	if 'surfice' in request.GET:
+		# Get the surfice object from the database
+		surfice = Surfice.get_surfice(pk=request.GET['surfice'])
+		
+		# Serialize the surfice
+		surfice = SurficeSerializer(surfice)
+		surfice = JSONRenderer().render(surfice.data)
+	
+	# If surf was not in the request, throw an error
+	else:
+		surfice.append("A Surf was not passed")
+	
+	return surfice
+
+# -----------------------------------------
+# get_surfice(request)
+#
 # Gets surfices based on the whichever parameter is passed
 #
 # INPUT
@@ -578,6 +608,10 @@ def dispatch(request, action=''):
 	# Get all surfs
 	elif action == 'get-surfs':
 		response = get_surfs(request)
+	
+	# Get a single surfice
+	elif action == 'get-surfice':
+		response = get_surfice(request)
 	
 	# Get a set of surfices
 	elif action == 'get-surfices':

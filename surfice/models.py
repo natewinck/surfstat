@@ -58,7 +58,7 @@ class Surf(models.Model):
 		
 		# Check to make sure another Surf object with the same name isn't
 		# already in the database
-		if not Surf.is_saved(name=name):
+		if not Surf.is_saved(name=name) and name.strip() != '':
 			# Create the Surf object
 			surf = Surf()
 			
@@ -204,10 +204,11 @@ class Surf(models.Model):
 	# -------------------------------------
 	def set(self, name=None, description=None, **kwargs):
 		
-		# If name is set, name hasn't changed, and there isn't another object
+		# If name is set, name hasn't changed, name isn't blank, and there isn't another object
 		# with the same name (case insensitive), update the name
 		if	(
-				name != None 		and
+				name != None 							and
+				name.strip() != ''						and
 				' '.join(name.split()) != self.name 	and
 				Surf.objects.filter(name__iexact='name').count() == 0
 			):
@@ -246,7 +247,7 @@ class Surf(models.Model):
 		
 		# Check if new name already exists in database
 		# If new name doesn't exist, set this object to that name	
-		elif Surf.objects.filter(name__iexact='name').count() == 0:
+		elif not Surf.is_saved(name=name) and name.strip() != '':
 			self.name = ' '.join(name.split())
 			self.save()
 			code = True
@@ -285,7 +286,7 @@ class Surf(models.Model):
 		if Surf.is_saved(name=self.name):
 			# Do nothing
 			flag = False
-		else:
+		elif name.strip() != '':
 			# Call the real save() method
 			self.name = ' '.join(self.name.split())
 			super(Surf, self).save(*args, **kwargs)
@@ -390,7 +391,9 @@ class Surfice(models.Model):
 		
 		# Check to make sure a Surfice object with the same name
 		# isn't already in the database.
-		if Surfice.is_saved(name=name):
+		print "here"
+		if not Surfice.is_saved(name=name) and name.strip() != '':
+			print "inside"
 			# Create the Surfice object
 			surfice = Surfice()
 			
@@ -548,11 +551,12 @@ class Surfice(models.Model):
 	# -------------------------------------
 	def set(self, name=None, surf=None, description=None, **kwargs):
 		
-		# If name is set, name hasn't changed, and there isn't another object
+		# If name is set, name hasn't changed, name isn't blank, and there isn't another object
 		# with the same name (case insensitive), update the name
 		if	(
-				name != None 		and
-				name != self.name 	and
+				name != None 							and
+				name.strip() != ''						and
+				' '.join(name.split()) != self.name 	and
 				Surf.objects.filter(name__iexact='name').count() == 0
 			):
 			self.name = ' '.join(name.split())
@@ -596,8 +600,8 @@ class Surfice(models.Model):
 			code = False
 		
 		# Check if new name already exists in database
-		# If new name doesn't exist, set this object to that name	
-		elif Surfice.objects.filter(name__iexact='name').count() == 0:
+		# If new name doesn't exist and isn't blank, set this object to that name	
+		elif not Surfice.is_saved(name=name)  and name.strip() != '':
 			self.name = ' '.join(name.split())
 			self.save()
 			code = True
@@ -696,9 +700,10 @@ class Surfice(models.Model):
 	# -------------------------------------
 	@staticmethod
 	def is_saved(name=None, pk=None, surfice=None):
-		
+		exists = False
+		print Surfice.objects.filter(name__iexact=' '.join( name.split() )).count() > 0
 		# If name is set and the object is in the database
-		if name != None and Surfice.objects.filter(name__iexact=' '.join(name.split())).count() > 0:
+		if name != None and Surfice.objects.filter(name__iexact=' '.join( name.split() )).count() > 0:
 			exists = True
 		
 		# If pk is set and the object is in the database
@@ -761,7 +766,7 @@ class Status(models.Model):
 		
 		# Check to make sure a Status object with the same name
 		# isn't already in the database.
-		if Status.is_saved(name=name):
+		if not Status.is_saved(name=name) and name.strip() != '':
 			# Create the Status object
 			status = Status()
 			
@@ -879,7 +884,8 @@ class Status(models.Model):
 		# If name is set, name hasn't changed, and there isn't another object
 		# with the same name, update the name
 		if	(
-				name != None 		and
+				name != None 							and
+				name.strip() != ''						and
 				' '.join(name.split()) != self.name 	and
 				Status.objects.filter(name__iexact='name').count() == 0
 			):
@@ -918,8 +924,8 @@ class Status(models.Model):
 			code = False
 		
 		# Check if new name already exists in database
-		# If new name doesn't exist, set this object to that name	
-		elif Status.objects.filter(name__iexact='name').count() == 0:
+		# If new name doesn't exist and isn't blank, set this object to that name	
+		elif not Status.is_saved(name=name) and name.strip() != '':
 			self.name = ' '.join(name.split())
 			self.save()
 			code = True
@@ -957,6 +963,7 @@ class Status(models.Model):
 	# -------------------------------------
 	@staticmethod
 	def is_saved(name=None, pk=None, status=None):
+		exists = False
 		
 		# If name is set and the object is in the database
 		if name != None and Status.objects.filter(name__iexact=' '.join(name.split())).count() > 0:

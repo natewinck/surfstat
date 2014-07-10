@@ -15,7 +15,7 @@
 * 
 *  INPUT
 *  $form			The jQuery form that submitted the AJAX request
-*  data				The JSON data returned from the $.getJSON request
+***  data				The JSON data returned from the $.getJSON request **
 *  
 ------------------------------ */
 function refreshAJAXPage($form) {
@@ -23,16 +23,25 @@ function refreshAJAXPage($form) {
 	// Get the getData
 	var getData = ($form.attr("data-ajax-get")) ? $.parseJSON($form.attr("data-ajax-get")) : "";
 	
+	// Clear the fields labeled to be cleared
+	$form.find("input[data-ajax-clear], textarea[data-ajax-clear]").val("").text("");
+	$form.find("select[data-ajax-clear]").prop("selectedIndex", 0);
+	
+	// Get new data from the database and then once it gets it
+	// refresh the page with the new data
+	// TO DO: Stop using the data passed to this function and start using ss
 	ss.get($form.attr("data-ajax-action"), getData, function(data) {
 		console.log(data);
+		
 		// Get the selectors and split them into an array
 		var selectors = $form.attr("data-ajax-update-target").split(' ');
-	
+		
 		// Now loop through the selectors and fire a separate methods for each one
 		$.each(selectors, function(key, selector) {
-		
-			// First get the element(s) that match this selector
-			$elements = $("[data-ajax-update=\"" + selector + "\"]");
+			
+			// First get the element(s) that contain this whole selector
+			//$elements = $("[data-ajax-update=\"" + selector + "\"]");
+			$elements = $("[data-ajax-update~=\"" + selector + "\"]");
 		
 			// If there are no elements to match, continue onto the next loop
 			if (!$elements.length) return;
@@ -40,6 +49,10 @@ function refreshAJAXPage($form) {
 			// If surf-name is set, change the contents of the
 			// element to the data.name variable
 			if (selector.contains("surf-name")) {
+				// First change the form element's success notify text
+				// for future notifications
+				$form.attr("data-ajax-success", data.name + "'s name and description were successfully updated.");
+				$form.attr("data-ajax-fail", data.name + "'s name and description were unable to be updated.");
 				
 				// Loop through these elements
 				$elements.each(function() {
@@ -54,7 +67,7 @@ function refreshAJAXPage($form) {
 			
 					// If an anchor is updated, don't forget to update it's #href
 					if ($element.is("a"))
-						console.log(data.name);
+						//console.log(data.name);
 						$element.attr("href", "#surf-" + data.name.slugify());
 			
 					// If the form is in a tab, update its id so that it matches the
@@ -65,7 +78,7 @@ function refreshAJAXPage($form) {
 			}
 		
 			// Change the contents to description
-			else if (selector.contains("surf-description")) {
+			else if (selector.contains("surf-description") || selector.contains("surfice-description")) {
 			
 				$elements.each(function() {
 					$element = $(this);
@@ -77,7 +90,7 @@ function refreshAJAXPage($form) {
 			}
 		
 			// Change the contents of ALL the surfices tables
-			else if (selector.contains("surf-surfices")) {
+			else if (selector.contains("surfs-surfices")) {
 			
 				// Create a copy of the data variable so that we can splice it as we go through
 				// When we display a surfice, it should be removed from the data
@@ -86,6 +99,7 @@ function refreshAJAXPage($form) {
 			
 				$elements.each(function() {
 					$element = $(this);
+					console.log($element);
 				
 					// Empty the table first
 					$element.html("");
@@ -105,14 +119,8 @@ function refreshAJAXPage($form) {
 							// Loop through this surf's surfices and put them in the table
 							$.each(tempData[i].surfices, function(key, surfice) {
 								// If there's a match for this piece of data, add it to the table
-								var $row = $("<tr class=\"dynamic-color\" style=\"background-color:" + surfice.status.data.color +"; color: " + getDynamicColor(surfice.status.data.color) + ";\">");
-								$row.append("<td>" + surfice.name + "</td>");
-								$row.append("<td>" + surfice.status.name + "</td>");
-						
-								// Since we're going backwards through the array
-								// add this to the beginning of the element instead of the end
-								$element.append($row);
-							
+								addSurficeRowToSurf($element, surfice);
+								
 								// We added a row so the table isn't empty
 								empty = false;
 							});
@@ -135,10 +143,10 @@ function refreshAJAXPage($form) {
 				});
 			
 			}
-		
+			
 			// Update the selectors to reflect addition or removal of surfices from surfs
 			else if (selector.contains("surf-not-surfices")) {
-			
+				
 				$elements.each(function() {
 					$element = $(this);
 				
@@ -245,12 +253,72 @@ function refreshAJAXPage($form) {
 				
 				});
 			}
-		
-		
+			
+			// Update this surf's surfices (usually because the status was updated)
+			else if (selector.contains("surf-surfices")) {
+				console.log("here");
+				// There should be only one table that has this id, so loop through
+				// all the elements that have surf-surfice and check for the id
+				console.log("[data-ajax-id=\"" + $form.attr("data-ajax-id") + "\"]");
+				console.log($elements);
+				$elements.filter("[data-ajax-id=\"" + $form.attr("data-ajax-id") + "\"]").each(function() {
+					$element = $(this);
+					
+					// Empty the table
+					$element.html("");
+					
+					// Loop through the surfices we just got and add them to the table
+					$.each(data, function(key, surfice) {
+						addSurficeRowToSurf($element, surfice);
+					});
+				});
+			}
+			
+			// -------------
+			// SURFICES PAGE
+			// -------------
+			
+			// Update all the surfice names
+			else if (selector.contains("surfice-name")) {
+				// First change the form element's success notify text
+				// for future notifications
+				//$form.attr("data-ajax-success", data.name + "'s name and description were successfully updated.");
+				//$form.attr("data-ajax-fail", data.name + "'s name and description were unable to be updated.");
+				
+				// Loop through these elements
+				$elements.each(function() {
+					$element = $(this);
+				
+					// First change the contents of the element to the name
+					$element.text(data.name).val(data.name);
+			
+					// If a list-group-item is updated, don't forget to add the right-arrow
+					if ($element.hasClass("list-group-item"))
+						$element.append("<span class=\"glyphicon glyphicon-chevron-right pull-right\"></span>");
+			
+					// If an anchor is updated, don't forget to update it's #href
+					if ($element.is("a"))
+						//console.log(data.name);
+						$element.attr("href", "#surfice-" + data.name.slugify());
+			
+					// If the form is in a tab, update its id so that it matches the
+					// previously mentioned #href
+					$form.closest(".tab-pane").attr("id", "surfice-" + data.name.slugify());
+				
+				});
+			}
+			
 		});
 	});
 	
-	
-	
-	
+}
+
+function addSurficeRowToSurf($table, surfice) {
+	var $row = $("<tr class=\"dynamic-color\" style=\"background-color:" + surfice.status.data.color +"; color: " + getDynamicColor(surfice.status.data.color) + ";\">");
+	$row.append("<td>" + surfice.name + "</td>");
+	$row.append("<td>" + surfice.status.name + "</td>");
+
+	// Since we're going backwards through the array
+	// add this to the beginning of the element instead of the end
+	$table.append($row);
 }

@@ -79,6 +79,7 @@ AJAX
   - Dings
 - ~~Change all AJAX functions to use id rather than name~~
 - ~~Deleting a Surf only asks to move surfices to another surf if this surf has surfices.~~
+- ~~Add notification system that pops up whenever changes are made~~
 
 Backend
 -------

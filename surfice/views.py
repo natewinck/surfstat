@@ -332,8 +332,8 @@ def surfs(request):
 					pass
 		
 		# Is the admin trying to create a surf?
-		elif 'surf' in request.POST and 'description' in request.POST:
-			surf = Surf.create(request.POST['surf'], request.POST['description'])
+		elif 'name' in request.POST and 'description' in request.POST:
+			surf = Surf.create(request.POST['name'], request.POST['description'])
 			if surf == None:
 				flag = True
 		

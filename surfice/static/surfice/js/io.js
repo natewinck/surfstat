@@ -154,10 +154,6 @@ $("form[type='ajax']").on("submit", function(e) {
 				$button.text("Saved");
 			}
 			
-			// Clear the fields labeled to be cleared
-			$form.find("input[data-ajax-clear], textarea[data-ajax-clear]").val("").text("");
-			$form.find("select[data-ajax-clear]").prop("selectedIndex", 0);
-			
 			// (MOVE TO SEPARATE FUNCTION) Update all ajax fields
 			
 			//var $fields = $("[data-ajax-update=" + $form.attr("data-ajax-update-target") + "]");
@@ -168,6 +164,20 @@ $("form[type='ajax']").on("submit", function(e) {
 			
 			//refreshAJAXPage($form, $form.attr("data-ajax-action"), getData)
 			//console.log(window.location.pathname + $form.attr("data-ajax-action"));
+			
+			// For testing purposes:
+			// set the message to display: none to fade it in later.
+			// var message = $('<div class="alert alert-error errormessage" style="display: none;">');
+// 			// a close button
+// 			var close = $('<button type="button" class="close" data dismiss="alert">&times</button>');
+// 			message.append(close); // adding the close button to the message
+// 			message.append(data); // adding the error response to the message
+// 			// add the message element to the body, fadein, wait 3secs, fadeout
+// 			message.appendTo($('body')).fadeIn(300).delay(3000).fadeOut(500);
+			
+			var notification = $form.attr("data-ajax-success");
+			if (notification == "" || typeof notification === "undefined") notification = "Save successful."
+			ss.notify("success", notification);
 			
 			refreshAJAXPage($form);
 			/*
@@ -207,10 +217,17 @@ $("form[type='ajax']").on("submit", function(e) {
 				$button.text("Failed");
 			}
 			
+			$button.addClass("btn-danger").removeClass("btn-success");
 			$button.removeClass("flash");
+			
+			var notification = $form.attr("data-ajax-fail");
+			console.log(notification);
+			if (notification == "" || typeof notification === "undefined") notification = "Save failed."
+			ss.notify("danger", notification);
 			
 			setTimeout(function() {
 				$button.removeClass("disabled");
+				$button.removeClass("btn-danger").addClass("btn-success");
     			$button.text($buttonText);
 			}, 750);
 			
@@ -250,35 +267,42 @@ $('.modal [type="submit"]').click(function(e) {
 function surfNameField($input) {
 	
 	var surfId = $input.closest("form").find('input[name="surf"]').val();
-	// Loop through all the surfs to find a match
-	// not including this current surf
-	$.each(ss.surfs, function(key, surf) {
-		//console.log($input.val().replace(/^\s+|\s+$/gm,'') + " - " + surf.name);
-		//console.log($input.val().replace(/^\s+|\s+$/gm,'').iequals(surf.name));
-		var val = $input.val().toString();
-		if (surfId != surf.id && $input.val().replace(/\s+/gm," ").trim().iequals(surf.name)) {
-			$input.closest(".form-group").removeClass("has-success").addClass("has-error");
-			return false;
-		} else {
-			$input.closest(".form-group").removeClass("has-error").addClass("has-success");
-		}
-	});
-}
-
-$('input[name="name"]').keyup(function(e) {
-	$input = $(this);
-	console.log("keyup");
+	
 	// If the surfs array already exists, just fire the function without getting all the info
 	// If surfs is empty, however, get the new data
 	if (ss.surfs.length == 0) {
 		console.log("getting new surfs");
 		ss.getSurfs(function(data) {
-			surfNameField($input);
+			checkField();
 		});
 		
 	} else {
-		surfNameField($input);
+		checkField();
 	}
+	
+	// Create a closure for checking the field to comply with DRY programming
+	function checkField() {
+		// Loop through all the surfs to find a match
+		// not including this current surf
+		$.each(ss.surfs, function(key, surf) {
+			//console.log($input.val().replace(/^\s+|\s+$/gm,'') + " - " + surf.name);
+			//console.log($input.val().replace(/^\s+|\s+$/gm,'').iequals(surf.name));
+			var val = $input.val().toString();
+			if (surfId != surf.id && $input.val().replace(/\s+/gm," ").trim().iequals(surf.name)) {
+				$input.closest(".form-group").removeClass("has-success").addClass("has-error");
+				return false;
+			} else {
+				$input.closest(".form-group").removeClass("has-error").addClass("has-success");
+			}
+		});
+	}
+}
+
+$('input[name="name"]').keyup(function(e) {
+	$input = $(this);
+	console.log("keyup");
+	
+	surfNameField($input)
 });
 
 var textfield = $("input[name=username]");

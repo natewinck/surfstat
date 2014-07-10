@@ -77,11 +77,13 @@ Surfstat.prototype.get = function(action, getData, callbackSuccess, callbackFail
 		
 		// Get a single surf
 		if (action == "get-surf") {
+			console.log("get-surf");
+			console.log(data);
 			$.each(s.surfs, function(key, surf) {
 				console.log(surf);
 				if (surf.id == data.id) {
 					console.log("Found!!");
-					s.surfs[key] = surf;
+					s.surfs[key] = data;
 					return false;
 				}
 			});
@@ -109,6 +111,7 @@ Surfstat.prototype.get = function(action, getData, callbackSuccess, callbackFail
 		
 		// For getting ALL surfices (need to add specificity later)
 		else if (action == "get-surfices") {
+			// This is wrong...especially if I only get a few surfices
 			s.surfices = data;
 		}
 		
@@ -116,8 +119,32 @@ Surfstat.prototype.get = function(action, getData, callbackSuccess, callbackFail
 		callbackSuccess(data);
 	},
 	function(data) {
-		callbackFail(data);
+		if (typeof callbackFail === 'function')
+			callbackFail(data);
 	});
+}
+
+// Get a surf based on the id provided
+Surfstat.prototype.surf = function(id) {
+	for (var key in this.surfs) {
+		if (this.surfs[key].id == id) {
+			return this.surfs[key];
+		}
+	}
+}
+
+Surfstat.prototype.notify = function(type, text) {
+	$('.notifications').notify({
+		type: type,
+		message: { text: text },
+		transition: '',
+		fadeOut: { enabled: true, delay: 3000 },
+		// onClose overrides fadeOut (custom)
+		onClose: function(element) {
+			$(element).removeClass("fade in");
+			$(element).stop(true).fadeSlide(200, "swing");
+		}
+	}).show(); // for the ones that aren't closable and don't fade out there is a .hide() function.
 }
 
 ss = new Surfstat();
