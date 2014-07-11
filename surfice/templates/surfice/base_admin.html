@@ -20,7 +20,8 @@
 {% csrf_token %}
 	<div class="col-xs-12">
 		<div class="input-group input-group-lg">
-		  <input type="text" name="description" class="form-control" placeholder="Feed me an update...">
+		  <input type="text" name="description" class="form-control" placeholder="Feed me an update..."
+		  		data-ajax-clear>
 		  <div class="input-group-btn dropdown-select">
 			  <input type="hidden" name="surfice">
 			<button type="button" class="btn btn-straight btn-default dropdown-toggle form-control" data-toggle="dropdown" tabindex="-1"><span data-bind="label">Surfice</span>

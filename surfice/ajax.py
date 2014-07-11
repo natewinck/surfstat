@@ -285,6 +285,71 @@ def update_status(request):
 	return errors
 
 # -----------------------------------------
+# update_event(request)
+#
+# Update an event's surfice, description, status, and data based on what's in request
+# If no event is in request, nothing happens
+#
+# INPUT
+# request						A request object
+#	- pk						The pk of an event
+#	- surfice (optional)		New name of the event
+#	- description (optional)	New description of the event
+#	- status (optional)			New status for the event
+#	- data (optional)			JSON data for general data of the event
+#
+# RETURNS
+# *errors
+# -----------------------------------------
+def update_event(request):
+	errors = []
+	
+	# If status is set, go ahead and edit it
+	if 'pk' in request.POST:
+		post = {}
+		
+		# If using x-editable on the front side, convert the
+		# confounded "name" attribute into the real one
+		if 'name' in request.POST:
+			post[request.POST['name']] = request.POST['value']
+		else:
+			post = request.POST
+		
+		# Get the status object
+		event = Event.get_event(pk=request.POST['pk'])
+		print post
+		# If name is in request, give this status a new name
+		# Returns a False flag when another status already has this new name
+		if 'surfice' in post:
+			flag = event.set( surfice=Surfice.get_surfice(pk=post['surfice']) )
+			if not flag:
+				errors.append("That surfice doesn't exist.")
+		
+		# If description is in request, set the description to this new description
+		if 'description' in post:
+			event.set(description=post['description'])
+		
+		if 'status' in post:
+			flag = event.set(status=Status.get_status(pk=post['status']))
+			if not flag:
+				errors.append("That status doesn't exist.")
+		
+		# If data is in request, set the general data
+		if 'data' in post:
+			# Get the JSON data from POST
+			data = json.loads(post['data'])
+			
+			# Set the general data by passing in data as keyword arguments
+			event.set(**data)
+		
+	
+	# If no status is set, throw an error
+	else:
+		errors.append("It's usually good to have a event to edit.")
+	
+	return errors
+
+# -----------------------------------------
 # submit_ding(request)
 #
 # Submit a ding based on the surfice, email, and state passed to it
@@ -626,6 +691,11 @@ def dispatch(request, action=''):
 	# Update the status's name, description, and color
 	elif action == 'update-status':
 		response = json.dumps(update_status(request))
+	
+	# Update event's surfice, description, or status
+	elif action == 'update-event':
+		response = json.dumps(update_event(request))
+		print response
 	
 	# Submit a ding from the user
 	elif action == 'submit-ding':

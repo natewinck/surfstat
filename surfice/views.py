@@ -436,6 +436,30 @@ def surfices(request):
 	return render(request, 'surfice/base_surfices.html', context_dict)
 
 @login_required
+def events(request):
+	context_dict = {}
+	
+	# Query for events and add them to context_dict
+	event_list = Event.get_events()
+	context_dict['events'] = event_list
+	
+	# Query all the Surfices and add them to context_dict
+	surfice_list = Surfice.get_surfices()
+	context_dict['surfices'] = surfice_list
+	
+	# Query all the Statuses and add them to context_dict
+	status_list = Status.get_statuses()
+	context_dict['statuses'] = status_list
+	
+	return render(request, 'surfice/base_events.html', context_dict)
+
+@login_required
+def dings(request):
+	context_dict = {}
+	
+	return render(request, 'surfice/base_dings.html', context_dict)
+
+@login_required
 def settings(request):
 	context_dict = {}
 	

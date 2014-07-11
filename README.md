@@ -67,6 +67,7 @@ UI
 - Email to Groups
 - Make sure UX is excellent
 - Choose a surf (or multiple surfs) to show on homepage (admin settings page)
+- Update individual surfices in a surf
 
 AJAX
 ----
@@ -100,7 +101,7 @@ Backend
 Data
 ----
 - ~~Add generic JSON columns for every data model~~
-- [Possible — destroys group model] One Surfice can be in multiple Surfs
+- One Surfice can be in multiple Surfs (category model)
 - Set up MySQL in addition to SQLite
 
 Testing

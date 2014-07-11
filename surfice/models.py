@@ -1365,7 +1365,7 @@ class Event(models.Model):
 		if	(
 				status != None and
 				type(status) is Status and
-				Status.objects.filter(pk=Status.pk).count() == 1
+				Status.objects.filter(pk=status.pk).count() == 1
 			):
 			self.status = status
 		
@@ -1373,7 +1373,7 @@ class Event(models.Model):
 		if	(
 				surfice != None and
 				type(surfice) is Surfice and
-				Surfice.objects.filter(pk=Surfice.pk).count() == 1
+				Surfice.objects.filter(pk=surfice.pk).count() == 1
 			):
 			self.surfice = surfice
 		
@@ -1387,4 +1387,6 @@ class Event(models.Model):
 		
 		# Save the object to the database
 		self.save()
+		
+		return True
 

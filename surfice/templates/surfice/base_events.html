@@ -1,0 +1,120 @@
+{% extends "surfice/base.html" %}
+
+{% block title %}Admin | Events{% endblock %}
+
+{% load static %}
+{% load humanize %}
+{% load slugify %}
+
+{% block css %}
+<!-- x-editable (bootstrap version) -->
+<link href="{% static 'surfice/css/bootstrap-editable.css' %}" rel="stylesheet">
+{% endblock %}
+
+{% block body_class %}admin{% endblock %}
+
+
+{% block nav %}
+	{% include "surfice/admin_nav.html" %}
+{% endblock %}
+
+
+{% block heading %}
+<!-- JUMBOTRON HEADER
+================================================== -->
+<div class="container">
+	<div class="jumbotron jumbotron-admin">
+		<h1>Update your Statuses</h1>
+
+		<div class="container">
+			<p>Status (n): the position of affairs at a particular time</p>
+		</div>
+	</div>
+</div>
+{% endblock heading %} {% block content %} <!-- Start Edit Accordian
+==================================================
+Each of the <row> act as a different function of the Edit process
+-->
+<div class="container">
+	<!-- Create a Status Section, text details-->
+	
+	<div class="page-header">
+		<h2>Click on an Event's details to edit</h2>
+	</div>
+	
+	<table class="table table-striped">
+		<thead>
+			<tr>
+				<th>Time</th>
+				<th>Surfice</th>
+				<th>Description of Event</th>
+				<th>Status</th>
+				<th></th>
+			</tr>
+		</thead>
+		{% for event in events %}
+		<tr>
+			<td>{{ event.timestamp|naturaltime }}</td>
+			<td>
+				<a href="#" data-type="select" class="editable"
+					data-source='{
+					{% for surfice in surfices %}
+						"{{ surfice.id }}": "{{ surfice.name }}"
+						{% if not forloop.last %} , {% endif %}
+					{% endfor %}
+					 }'
+					data-pk="{{ event.id }}"
+					data-name="surfice"
+					data-title="Enter a new surfice"
+				>{{ event.surfice.name }}</a>
+			</td>
+			<td>
+				<a href="#" class="editable"
+					data-type="text"
+					data-pk="{{ event.id }}"
+					data-name="description"
+				>{{ event.description }}</a>
+			</td>
+			<td>
+				<a href="#" class="editable"
+					data-type="select"
+					data-source='{
+					{% for status in statuses %}
+						"{{ status.id }}": "{{ status.name }}"
+						{% if not forloop.last %} , {% endif %}
+					{% endfor %}
+					 }'
+					data-pk="{{ event.id }}"
+					data-name="status"
+					data-title="Enter a new status"
+				>{{ event.status }}</a>
+			</td>
+			<td><span class="glyphicon glyphicon-remove text-danger"></span></td>
+		</tr>
+		{% endfor %}
+	</table>
+</div>
+<hr class="featurette-divider">
+<!-- /END THE FEATURETTES -->
+
+{% endblock content %}
+
+{% block scripts %}
+<script src="{% static 'surfice/js/bootstrap-editable.min.js' %}"></script>
+<script>
+$(function() {
+	$.fn.editable.defaults.mode = 'popup';
+	$(".editable").editable({
+		url: "ajax/update-event",
+		params: {
+			csrfmiddlewaretoken: "{{ csrf_token }}"
+		},
+		error: function (response, newValue) {
+			console.log(response);
+			return response.msg;
+		}
+	});
+});
+</script>
+
+{% endblock %}

@@ -10,17 +10,18 @@
 
 {% block css %}
 <!-- x-editable (bootstrap version) -->
-<link href="//cdnjs.cloudflare.com/ajax/libs/x-editable/1.5.0/bootstrap3-editable/css/bootstrap-editable.css" rel="stylesheet"/>
 <link href="{% static 'surfice/css/bootstrap-editable.css' %}" rel="stylesheet">
 {% endblock %}
 
 {% block heading %}
 <!-- JUMBOTRON HEADER
-================================================== -->    
-<div class="jumbotron jumbotron-admin">
-		<h1>Surfstat Settings</h1>
-	<div class="container">
-		<p>Setting (n):  the place or type of surroundings where something is positioned or where an event takes place</p>
+================================================== -->   
+<div class="container"> 
+	<div class="jumbotron jumbotron-admin">
+			<h1>Surfstat Settings</h1>
+		<div class="container">
+			<p>Setting (n):  the place or type of surroundings where something is positioned or where an event takes place</p>
+		</div>
 	</div>
 </div>
 {% endblock %}
@@ -70,12 +71,11 @@
 {% endblock content %}
 
 {% block scripts %}
-<script src="//cdnjs.cloudflare.com/ajax/libs/x-editable/1.5.0/bootstrap3-editable/js/bootstrap-editable.min.js"></script>
-<script src="{% static 'surfice/js/bootstrap-editable.js' %}"></script>
+<script src="{% static 'surfice/js/bootstrap-editable.min.js' %}"></script>
 <script>
 $(function() {
 	$.fn.editable.defaults.mode = 'popup';
-	$(".editable").editable()
+	$(".editable").editable();
 });
 </script>
 
