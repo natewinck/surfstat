@@ -21,6 +21,22 @@ if (typeof String.prototype.contains === 'undefined') String.prototype.contains 
 ------------------------------ */
 if (typeof String.prototype.slugify === 'undefined') String.prototype.slugify = function() { return this.toLowerCase().replace(/ /g,'-').replace(/[^\w-]+/g,''); };
 
+/* Size
+------------------------------
+*  Find the size of an associative array.
+*
+*  RETURNS
+*  The size
+*  
+------------------------------ */
+if (typeof Object.size === 'undefined')
+	Object.size = function(obj) {
+		var size = 0, key;
+		for (key in obj) {
+			if (obj.hasOwnProperty(key)) size++;
+		}
+		return size;
+	};
 
 function Surfstat() {
 	this.surfs = [];
@@ -28,6 +44,11 @@ function Surfstat() {
 	this.statuses = [];
 	this.events = [];
 	this.dings = [];
+	// Ajax variable
+	this.ajax = {
+		// elements is a dictionary with selectors as the key
+		$elements: {}
+	};
 }
 
 Surfstat.prototype.getJSON = function(url, getData, callbackSuccess, callbackFail) {
@@ -73,7 +94,7 @@ Surfstat.prototype.getDings = function(callbackSuccess, callbackFail) {
 
 Surfstat.prototype.get = function(action, getData, callbackSuccess, callbackFail) {
 	var s = this;
-	this.getJSON("ajax/" + action, getData, function(data) {
+	this.getJSON(action, getData, function(data) {
 		
 		// Get a single surf
 		if (action == "get-surf") {
@@ -112,7 +133,19 @@ Surfstat.prototype.get = function(action, getData, callbackSuccess, callbackFail
 		// For getting ALL surfices (need to add specificity later)
 		else if (action == "get-surfices") {
 			// This is wrong...especially if I only get a few surfices
-			s.surfices = data;
+			// If I got ALL the surfices (there was no data passed for GET)
+			if (!getData)
+				s.surfices = data;
+		}
+		
+		// Get a single status and put it in the array
+		else if (action == "get-status") {
+			$.each(s.statuses, function(key, status) {
+				if (status.id == data.id) {
+					s.statuses[key] = status;
+					return false;
+				}
+			});
 		}
 		
 		// After everything, call the callback

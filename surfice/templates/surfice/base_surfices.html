@@ -51,15 +51,23 @@
 					<div class="row">
 						<div class="col-sm-8">
 							<div class="form-group">
-								<label>New Surfice Name</label>
+								<label class="control-label">New Surfice Name</label>
 								<input name="name" type="text" class="form-control"placeholder="Surfice Name">
+							</div>
+						</div>
+					</div>
+					<div class="row">
+						<div class="col-sm-8">
+							<div class="form-group">
+								<label class="control-label">New Surfice Description</label>
+								<textarea name="description" class="form-control" rows="4" placeholder="Update description here..."></textarea>
 							</div>
 						</div>
 					</div>
 					<div class="row">
 						<div class="col-sm-6">
 							<div class="form-group">
-								<label>Initial Status of Surfice</label>
+								<label class="control-label">Initial Status of Surfice</label>
 								<select name="status" class="form-control">
 									{% for status in statuses %}
 									<option value="{{ status.id }}">{{ status.name }}</option>
@@ -69,19 +77,13 @@
 						</div>
 						<div class="col-sm-6">
 							<div class="form-group">
-								<label>Assigned Surf</label>
+								<label class="control-label">Assigned Surf</label>
 								<select name="surf" class="form-control">
 									{% for surf in surfs %}
 									<option value="{{ surf.id }}">{{ surf.name }}</option>
 									{% endfor %}
 								</select>
 							</div>
-						</div>
-					</div>
-					<div class="row">
-						<div class="col-sm-8">
-							<label>New Surfice Description</label>
-							<textarea name="description" class="form-control" rows="4" placeholder="Update description here..."></textarea>
 						</div>
 					</div>
 					<div class="row">
@@ -95,43 +97,54 @@
 			
 			<!-- START EDIT SURFICES -->
 			{% for surfice in surfices %}
-			<div class="tab-pane fade {% if forloop.first %}in active{% endif %}" id="surfice-{{ surfice.name|slugify }}">
+			<div class="tab-pane fade {% if forloop.first %}in active{% endif %}" id="surfice-{{ surfice.name|slugify }}"
+				data-ajax-update="surfice-name-{{ surfice.id }}"
+			>
 <!--Start Panel {{ surfice.id }} of Accordian-->
 				<div class="row">
 <!--Row: Current Information on the Surf-->
-					<div class="col-xs-4">
+					<div class="col-sm-4 col-xs-6">
 						<h4>Status</h4>
-						<p>{{ surfice.status.name }}</p>
+						<p data-ajax-update="surfice-status-{{ surfice.id }}">{{ surfice.status.name }}</p>
 					</div>
-					<div class="col-xs-4">
+					<div class="col-sm-4 col-xs-6">
 						<h4>Description</h4>
 						<p data-ajax-update="surfice-description-{{ surfice.id }}">{{ surfice.description }}</p>
 					</div>
-					<div class="col-xs-4">
+					<div class="col-sm-4 col-xs-6">
 						<h4>Current Surf</h4>
-						<p>{{ surfice.surf.name }}</p>
+						<p data-ajax-update="surfice-surf-{{ surfice.id }}">{{ surfice.surf.name }}</p>
 					</div>
 				</div>
 			
 				<hr class="divider-accordian">
 			
 				<h3>Update <span data-ajax-update="surfice-name-{{ surfice.id }}">{{ surfice.name }}</span>'s Status</h3>
-				<form type="ajax" action="ajax/set-status" method="post" role="form" id="status-surfice">
+				<form type="ajax" action="ajax/set-status" method="post" role="form" id="status-surfice"
+					data-ajax-action="ajax/get-surfice"
+					data-ajax-get='{ "surfice": {{ surfice.id }} }'
+					data-ajax-update-target="surfice-status-{{ surfice.id }}"
+				>
 					{# To prevent cross-site forgery, include the following required tag #}
 					{% csrf_token %}
 					<input type="hidden" name="surfice" value="{{ surfice.id }}">
 					<div class="row">
-						<div class="col-xs-6">
-							<p>Select Status</p>
-							<select name="status" class="form-control" id="status-surfice-update">
-								{% for status in statuses %}
-								<option value="{{ status.id }}" {% if status == surfice.status %}selected="selected"{% endif %}>{{ status.name }}</option>
-								{% endfor %}
-							</select>
+						<div class="col-sm-6">
+							<div class="form-group">
+								<label class="control-label">Select Status</label>
+								<select name="status" class="form-control" id="status-surfice-update-{{surfice.id}}">
+									{% for status in statuses %}
+									<option value="{{ status.id }}" {% if status == surfice.status %}selected="selected"{% endif %}>{{ status.name }}</option>
+									{% endfor %}
+								</select>
+							</div>
 						</div>
-						<div class="col-xs-6">
-							<p>Status Description</p>
-							<textarea name="description" class="form-control" rows="3" id="status-surfice-description-update" placeholder="Add your status description..."></textarea>
+						<div class="col-sm-6">
+							<div class="form-group">
+								<label class="control-label">Status Description</label>
+								<textarea name="description" class="form-control" rows="3" id="status-surfice-description-update" placeholder="(Optional) Add your status description..."
+									data-ajax-clear></textarea>
+							</div>
 						</div>
 					</div>
 					<div class="row">
@@ -145,28 +158,37 @@
 			
 				<h3>Edit <span data-ajax-update="surfice-name-{{ surfice.id }}">{{ surfice.name }}</span></h3>
 				<form type="ajax" action="ajax/update-surfice" method="post" role="form"
-					data-ajax-action="get-surfice"
-					data-ajax-update-target="surfice-name-{{ surfice.id }} surfice-description-{{ surfice.id }}"
-					data-ajax-get='{"surfice": {{ surfice.id }}}'>
+					data-ajax-action="ajax/get-surfice"
+					data-ajax-get='{ "surfice": {{ surfice.id }} }'
+					data-ajax-update-target="surfice-name-{{ surfice.id }} surfice-description-{{ surfice.id }} surfice-surf-{{surfice.id}}"
+				>
 					{# To prevent cross-site forgery, include the following required tag #}
 					{% csrf_token %}
 					<input type="hidden" name="surfice" value="{{ surfice.id }}">
 					<div class="row">
-						<div class="col-xs-6 ">
-							<p>Update Surfice Name</p>
-							<input name="name" type="text" class="form-control" value="{{ surfice.name }}" placeholder="Surfice Name">
-					
-							<p style="padding-top:10px">Assigned Surf</p>
-							<select name="surf" class="form-control" id="surfice-surf-new">
-								{% for surf in surfs %}
+						<div class="col-sm-6 ">
+							<div class="form-group">
+								<label class="control-label">Update Surfice Name</label>
+								<input name="name" type="text" class="form-control" value="{{ surfice.name }}" placeholder="Surfice Name"
+									data-ajax-check="surfice-name"
+									data-ajax-update="surfice-name-{{ surfice.id }}"
+								>
+							</div>
+							<div class="form-group">
+								<label class="control-label">Assigned Surf</label>
+								<select name="surf" class="form-control">
+									{% for surf in surfs %}
 						
-								<option value="{{ surf.id }}" {% if surf == surfice.surf %}selected="selected"{% endif %}>{{ surf.name }}</option>
-								{% endfor %}
-							</select>
+									<option value="{{ surf.id }}" {% if surf == surfice.surf %}selected="selected"{% endif %}>{{ surf.name }}</option>
+									{% endfor %}
+								</select>
+							</div>
 						</div>
-						<div class="col-xs-6">
-							<p>Update Surfice Description</p>
-							<textarea name="description" class="form-control" rows="3" placeholder="Update Description here..." id="update-surfice-description">{{ surfice.description }}</textarea>
+						<div class="col-sm-6">
+							<div class="form-group">
+								<label class="control-label" for="update-surfice-description-{{ surfice.id }}">Update Surfice Description</label>
+								<textarea name="description" class="form-control" rows="3" placeholder="(Optional) Update Description here..." id="update-surfice-description-{{ surfice.id }}">{{ surfice.description }}</textarea>
+							</div>
 						</div>
 					</div>
 					<div class="row">

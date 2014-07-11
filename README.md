@@ -66,14 +66,15 @@ UI
 - Initial setup step-by-step process (and can choose MySQL, SQLite, or PostgreSQL)
 - Email to Groups
 - Make sure UX is excellent
+- Choose a surf (or multiple surfs) to show on homepage (admin settings page)
 
 AJAX
 ----
 - AJAX check if name is already in database when creating/updating a Surf/Surfice/Status
 - AJAX function to update all AJAX get fields on a page
   - ~~Surfs~~
-  - Surfices
-  - Statuses
+  - ~~Surfices~~
+  - ~~Statuses~~
   - Settings
   - Events
   - Dings

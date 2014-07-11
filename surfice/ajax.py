@@ -540,14 +540,44 @@ def get_status(request):
 		status = Status.get_status(pk=request.GET['status'])
 		
 		# Convert the surf to a dictionary so that we can pass it back as JSON
-		status = model_to_dict(status)
+		#status = model_to_dict(status)
 		#status = serializers.serialize("json", [status])
+		
+		status = StatusSerializer(status)
+		status = JSONRenderer().render(status.data)
 	
 	# If surf was not in the request, throw an error
 	else:
 		status.append("A Surf was not passed")
 	
 	return status
+
+# -----------------------------------------
+# get_statuses(request)
+#
+# Gets an array of all statuses
+#
+# INPUT
+# request		A request object
+#	- status	The status of the surf
+#
+# RETURNS
+# Status
+# -----------------------------------------
+def get_statuses(request):
+	statuses = {}
+	
+	# Get the surf object from the database
+	statuses = Status.get_statuses()
+	
+	# Convert the surf to a dictionary so that we can pass it back as JSON
+	#status = model_to_dict(status)
+	#status = serializers.serialize("json", [status])
+	
+	statuses = StatusSerializer(statuses)
+	statuses = JSONRenderer().render(statuses.data)
+	
+	return statuses
 
 # -----------------------------------------
 # dispatch(request, action)
@@ -624,6 +654,10 @@ def dispatch(request, action=''):
 	# Get a single status
 	elif action == 'get-status':
 		response = get_status(request)
+	
+	# Get all statuses
+	elif action == 'get-statuses':
+		response = get_statuses(request)
 	
 	else:
 		response = ["No action called " + action]
