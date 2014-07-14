@@ -41,6 +41,122 @@ jQuery.fn.fadeSlide = function(speed, easing, callback) {
     return this.fadeTo(speed, 0, easing).slideUp(speed, easing, callback);
   }
 };
+
+
+(function($) {
+var sR = {
+    defaults: {
+        slideSpeed: 400,
+        easing: false,
+        callback: false     
+    },
+    thisCallArgs: {
+        slideSpeed: 400,
+        easing: false,
+        callback: false
+    },
+    methods: {
+        up: function (arg1,arg2,arg3) {
+            if(typeof arg1 == 'object') {
+                for(p in arg1) {
+                    sR.thisCallArgs.eval(p) = arg1[p];
+                }
+            }else if(typeof arg1 != 'undefined' && (typeof arg1 == 'number' || arg1 == 'slow' || arg1 == 'fast')) {
+                sR.thisCallArgs.slideSpeed = arg1;
+            }else{
+                sR.thisCallArgs.slideSpeed = sR.defaults.slideSpeed;
+            }
+
+            if(typeof arg2 == 'string'){
+                sR.thisCallArgs.easing = arg2;
+            }else if(typeof arg2 == 'function'){
+                sR.thisCallArgs.callback = arg2;
+            }else if(typeof arg2 == 'undefined') {
+                sR.thisCallArgs.easing = sR.defaults.easing;    
+            }
+            if(typeof arg3 == 'function') {
+                sR.thisCallArgs.callback = arg3;
+            }else if(typeof arg3 == 'undefined' && typeof arg2 != 'function'){
+                sR.thisCallArgs.callback = sR.defaults.callback;    
+            }
+            var $cells = $(this).find('td');
+            $cells.wrapInner('<div class="slideRowUp" />');
+            var currentPadding = $cells.css('padding');
+            $cellContentWrappers = $(this).find('.slideRowUp');
+            $cellContentWrappers.slideUp(sR.thisCallArgs.slideSpeed,sR.thisCallArgs.easing).parent().animate({
+                                                                                                                paddingTop: '0px',
+                                                                                                                paddingBottom: '0px'},{
+                                                                                                                complete: function () {
+                                                                                                                    $(this).children('.slideRowUp').replaceWith($(this).children('.slideRowUp').contents());
+                                                                                                                    $(this).parent().css({'display':'none'});
+                                                                                                                    $(this).css({'padding': currentPadding});
+                                                                                                                }});
+            var wait = setInterval(function () {
+                if($cellContentWrappers.is(':animated') === false) {
+                    clearInterval(wait);
+                    if(typeof sR.thisCallArgs.callback == 'function') {
+                        sR.thisCallArgs.callback.call(this);
+                    }
+                }
+            }, 100);                                                                                                    
+            return $(this);
+        },
+        down: function (arg1,arg2,arg3) {
+            if(typeof arg1 == 'object') {
+                for(p in arg1) {
+                    sR.thisCallArgs.eval(p) = arg1[p];
+                }
+            }else if(typeof arg1 != 'undefined' && (typeof arg1 == 'number' || arg1 == 'slow' || arg1 == 'fast')) {
+                sR.thisCallArgs.slideSpeed = arg1;
+            }else{
+                sR.thisCallArgs.slideSpeed = sR.defaults.slideSpeed;
+            }
+
+            if(typeof arg2 == 'string'){
+                sR.thisCallArgs.easing = arg2;
+            }else if(typeof arg2 == 'function'){
+                sR.thisCallArgs.callback = arg2;
+            }else if(typeof arg2 == 'undefined') {
+                sR.thisCallArgs.easing = sR.defaults.easing;    
+            }
+            if(typeof arg3 == 'function') {
+                sR.thisCallArgs.callback = arg3;
+            }else if(typeof arg3 == 'undefined' && typeof arg2 != 'function'){
+                sR.thisCallArgs.callback = sR.defaults.callback;    
+            }
+            var $cells = $(this).find('td');
+            $cells.wrapInner('<div class="slideRowDown" style="display:none;" />');
+            $cellContentWrappers = $cells.find('.slideRowDown');
+            $(this).show();
+            $cellContentWrappers.slideDown(sR.thisCallArgs.slideSpeed, sR.thisCallArgs.easing, function() { $(this).replaceWith( $(this).contents()); });
+
+            var wait = setInterval(function () {
+                if($cellContentWrappers.is(':animated') === false) {
+                    clearInterval(wait);
+                    if(typeof sR.thisCallArgs.callback == 'function') {
+                        sR.thisCallArgs.callback.call(this);
+                    }
+                }
+            }, 100);
+            return $(this);
+        }
+    }
+};
+
+$.fn.slideRow = function(method,arg1,arg2,arg3) {
+    if(typeof method != 'undefined') {
+        if(sR.methods[method]) {
+            return sR.methods[method].apply(this, Array.prototype.slice.call(arguments,1));
+        }
+    }
+};
+})(jQuery);
+
+
+$(window).load(function() {
+	// Remove the class from body that prevents animations onload
+	$("body").removeClass("preload");
+});
     
     
 /* SMOOTH SCROLLING
@@ -354,6 +470,43 @@ $(".dynamic-color").each(function() {
 	// If the average is less than halfway to dark
 	// change the color of the text to white
 	$(this).css("color", getDynamicColor($(this).css("background-color")));
+});
+
+
+// Replace the info in the dialog box before showing the confirm-delete modal dialog
+$("#confirm-delete-event").on("show.bs.modal", function(e) {
+	var $deleteButton = $(e.relatedTarget);
+	var $row = $(e.relatedTarget).closest("tr");
+	var $modal = $(this);
+	
+	// Replace the text in the delete dialog box
+	$modal.find("[data-event-surfice]").text( $row.find('[data-name="surfice"]').text() );
+	$modal.find('input[name="event"]').val( $deleteButton.attr("data-event-id") );
+	
+	// When clicking submit, hide the modal
+	$modal.find('[type="submit"]').off().click(function() {
+		$modal.modal("hide");
+		
+		// Since it's been clicked
+		$(this).off();
+	});
+	
+	//$(this).wait(1000).trigger("hide.bs.modal");
+});
+
+$('#confirm-delete-event [type="submit"] .hahahahah').click(function() {
+	$("#confirm-delete-event").modal("hide");
+	$row = $(this).closest("tr");
+	$row.slideRow('up', 500, function() {
+		$row.remove();
+	});
+});
+
+$(".delete.deletemebecausethisisold").click(function() {
+	$row = $(this).closest("tr");
+	$row.slideRow('up', 500, function() {
+		$row.remove();
+	});
 });
 
 });

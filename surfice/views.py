@@ -11,6 +11,8 @@ import json
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import authenticate, login
 
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
+
 # Create your views here.
 
 def printv(obj, title=""): # Print your variables!
@@ -436,12 +438,24 @@ def surfices(request):
 	return render(request, 'surfice/base_surfices.html', context_dict)
 
 @login_required
-def events(request):
+def events(request, page):
 	context_dict = {}
 	
 	# Query for events and add them to context_dict
 	event_list = Event.get_events()
-	context_dict['events'] = event_list
+	
+	# Initialize paginator
+	paginator = Paginator(event_list, 10)
+	
+	# Fill the events array with the current page
+	try:
+		context_dict['events'] = paginator.page(page)
+	except PageNotAnInteger:
+		# If page is not an integer, deliver the first page
+		context_dict['events'] = paginator.page(1)
+	except EmptyPage:
+		# If page is out of range (e.g. 9999), deliver the last page of events
+		context_dict['events'] = paginator.page(paginator.num_pages)
 	
 	# Query all the Surfices and add them to context_dict
 	surfice_list = Surfice.get_surfices()

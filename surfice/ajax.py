@@ -9,6 +9,12 @@ from django.core import serializers
 from surfice.serializers import *
 from rest_framework.renderers import JSONRenderer
 
+import time
+from datetime import datetime
+
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
+
+
 # -----------------------------------------
 # set_status(request)
 #
@@ -334,6 +340,13 @@ def update_event(request):
 			if not flag:
 				errors.append("That status doesn't exist.")
 		
+		if 'timestamp' in post:
+			#time_string = "01/21/2012 14:30:59"
+			strp_time = time.strptime(post['timestamp'], "%m/%d/%Y %H:%M:%S")
+			date_django = datetime.fromtimestamp(time.mktime(strp_time))
+			event.set(timestamp=date_django)
+
+		
 		# If data is in request, set the general data
 		if 'data' in post:
 			# Get the JSON data from POST
@@ -345,7 +358,45 @@ def update_event(request):
 	
 	# If no status is set, throw an error
 	else:
-		errors.append("It's usually good to have a event to edit.")
+		errors.append("It's usually good to have an event to edit.")
+	
+	return errors
+
+# -----------------------------------------
+# delete_event(request)
+#
+# Update an event
+#
+# INPUT
+# request			A request object
+#	- event			The pk of an event
+#	- delete		The flag to let us know we're deleting
+#
+# RETURNS
+# *errors
+# -----------------------------------------
+def delete_event(request):
+	errors = []
+	
+	# If event and delete are set, go ahead and delete the event
+	if	(
+				'delete' in request.POST and
+				'event' in request.POST
+			):
+			
+			# Get the surfice that we're about to delete
+			event = Event.get_event(pk=request.POST['event'])
+			
+			# Django automatically deletes all related objects
+			# along with the surfice so go ahead and delete the surfice
+			if type(event) is Event:
+				event.delete()
+				pass
+		
+	
+	# If no status is set, throw an error
+	else:
+		errors.append("It's usually good to have an event to delete.")
 	
 	return errors
 
@@ -645,6 +696,99 @@ def get_statuses(request):
 	return statuses
 
 # -----------------------------------------
+# get_status(request)
+#
+# Gets a status based on the id/pk passed
+#
+# INPUT
+# request		A request object
+#	- status	The status of the surf
+#
+# RETURNS
+# Status
+# -----------------------------------------
+def get_status(request):
+	status = {}
+	
+	# Both surf and surfice need to be in request
+	if 'status' in request.GET:
+		# Get the surf object from the database
+		status = Status.get_status(pk=request.GET['status'])
+		
+		# Convert the surf to a dictionary so that we can pass it back as JSON
+		#status = model_to_dict(status)
+		#status = serializers.serialize("json", [status])
+		
+		status = StatusSerializer(status)
+		status = JSONRenderer().render(status.data)
+	
+	# If surf was not in the request, throw an error
+	else:
+		status.append("A Surf was not passed")
+	
+	return status
+
+# -----------------------------------------
+# get_event(request)
+#
+# Gets an event based on the id/pk or page passed
+#
+# INPUT
+# request			A request object
+#	- event			The pk of the event
+#	- page			The pagination page of the event
+#	- first, last	Get the first or last event on the page
+#
+# RETURNS
+# Status
+# -----------------------------------------
+def get_event(request):
+	event = {}
+	
+	# The event pk needs to be in request
+	if 'event' in request.GET:
+		# Get the event object from the database
+		event = Event.get_event(pk=request.GET['event'])
+		
+		event = EventSerializer(event)
+		event = JSONRenderer().render(event.data)
+	
+	elif 'page' in request.GET:
+		# For ease of use, get the page
+		page = request.GET['page']
+	
+		# Initialize paginator
+		# 10 per page references what is views.py
+		events = Event.get_events()
+		paginator = Paginator(events, 10)
+	
+		# Fill the events array with the current page
+		try:
+			events_page = paginator.page(page)
+		except PageNotAnInteger:
+			# If page is not an integer, deliver the first page
+			events_page = paginator.page(1)
+		except EmptyPage:
+			# If page is out of range (e.g. 9999), deliver the last page of events
+			events_page = paginator.page(paginator.num_pages)
+		
+		if 'first' in request.GET:
+			event = events[0]
+		elif 'last' in request.GET:
+			print events_page.end_index()
+			print events_page.end_index() - 1
+			event = events[events_page.end_index()-1]
+		
+		event = EventSerializer(event)
+		event = JSONRenderer().render(event.data)
+	
+	# If surf was not in the request, throw an error
+	else:
+		event.append("An event or page was not passed")
+	
+	return event
+
+# -----------------------------------------
 # dispatch(request, action)
 #
 # Fires functions based on the action passed.
@@ -695,7 +839,10 @@ def dispatch(request, action=''):
 	# Update event's surfice, description, or status
 	elif action == 'update-event':
 		response = json.dumps(update_event(request))
-		print response
+	
+	# Delete an event
+	elif action == 'delete-event':
+		response = json.dumps(delete_event(request))
 	
 	# Submit a ding from the user
 	elif action == 'submit-ding':
@@ -728,6 +875,10 @@ def dispatch(request, action=''):
 	# Get all statuses
 	elif action == 'get-statuses':
 		response = get_statuses(request)
+	
+	# Get a single event
+	elif action == 'get-event':
+		response = get_event(request)
 	
 	else:
 		response = ["No action called " + action]

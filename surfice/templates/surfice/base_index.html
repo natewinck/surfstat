@@ -1,6 +1,7 @@
 {% extends "surfice/base.html" %}
 
 {% load humanize %}
+{% load static %}
 
 {% block title %}Home{% endblock %}
 
@@ -113,13 +114,13 @@
 <hr class="featurette-divider">
 
 <div class="row featurette">
-	<div class="col-xs-12 events">
+	<div class="col-sm-8 col-sm-offset-2 col-xs-12 events">
 		<h2 class="featurette-heading text-center">What's happening lately?</h2>
 		
 		{% for event in events %}
 		<div class="row">
-			<div class="col-xs-2 col-xs-offset-2">{{ event.timestamp|naturaltime }}{# event.timestamp|date:'M n' #}</div>
-			<div class="col-xs-6">
+			<div class="col-xs-4">{{ event.timestamp|naturaltime }}{# event.timestamp|date:'M n' #}</div>
+			<div class="col-xs-8">
 			{% if event.description != "" %}
 				{{ event.description }}
 			{% else %}
@@ -186,4 +187,6 @@ chartData['online'] = {
 
 
 </script>
+
+<script src="{% static 'surfice/js/jquery.inview.min.js' %}"></script>
 {% endblock %}

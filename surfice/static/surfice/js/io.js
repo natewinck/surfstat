@@ -217,7 +217,17 @@ $("form[type='ajax']").on("submit", function(e) {
 				$button.text("Failed");
 			}
 			
-			$button.addClass("btn-danger").removeClass("btn-success");
+			// Get the button type so we can return to it after showing that it failed
+			var originalBtnType = "";
+			if ($button.hasClass("btn-danger")) originalBtnType = "btn-danger";
+			else if ($button.hasClass("btn-default")) originalBtnType = "btn-default";
+			else if ($button.hasClass("btn-primary")) originalBtnType = "btn-primary";
+			else if ($button.hasClass("btn-success")) originalBtnType = "btn-success";
+			else if ($button.hasClass("btn-info")) originalBtnType = "btn-info";
+			else if ($button.hasClass("btn-warning")) originalBtnType = "btn-warning";
+			else if ($button.hasClass("btn-link")) originalBtnType = "btn-link";
+			
+			$button.addClass("btn-danger").removeClass(originalBtnType);
 			$button.removeClass("flash");
 			
 			var notification = $form.attr("data-ajax-fail");
@@ -227,7 +237,7 @@ $("form[type='ajax']").on("submit", function(e) {
 			
 			setTimeout(function() {
 				$button.removeClass("disabled");
-				$button.removeClass("btn-danger").addClass("btn-success");
+				$button.removeClass("btn-danger").addClass(originalBtnType);
     			$button.text($buttonText);
 			}, 750);
 			

@@ -94,7 +94,12 @@ Surfstat.prototype.getDings = function(callbackSuccess, callbackFail) {
 
 Surfstat.prototype.get = function(action, getData, callbackSuccess, callbackFail) {
 	var s = this;
+	if (typeof action === 'undefined') action = "";
+	
 	this.getJSON(action, getData, function(data) {
+		
+		// Remove "ajax/" from the action if it exists
+		action = action.replace(/^(ajax\/)/gm, "");	
 		
 		// Get a single surf
 		if (action == "get-surf") {
@@ -146,6 +151,16 @@ Surfstat.prototype.get = function(action, getData, callbackSuccess, callbackFail
 					return false;
 				}
 			});
+		}
+		
+		else if (action == "get-event") {
+			console.log(data);
+			s.events[data.id] = data;
+		}
+		
+		// If action is empty or not available
+		else {
+			var data = (data) ? data : {};
 		}
 		
 		// After everything, call the callback

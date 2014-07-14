@@ -27,6 +27,13 @@ function refreshAJAXPage($form) {
 	$form.find("input[data-ajax-clear], textarea[data-ajax-clear]").val("").text("");
 	$form.find("select[data-ajax-clear]").prop("selectedIndex", 0);
 	
+	// Delete any rows from a table that were just deleted
+	if ($form.find('[name="delete"]').length)
+		var $row = $( "#tr-event-" + $form.find('[name="event"]').val() );
+		$row.slideRow('up', 500, function() {
+			$row.remove();
+		});
+	
 	// Get new data from the database and then once it gets it
 	// refresh the page with the new data
 	// TO DO: Stop using the data passed to this function and start using ss
@@ -34,7 +41,7 @@ function refreshAJAXPage($form) {
 		console.log(data);
 		
 		// Get the selectors and split them into an array
-		var selectors = $form.attr("data-ajax-update-target").split(' ');
+		var selectors = ($form.attr("data-ajax-update-target")) ? $form.attr("data-ajax-update-target").split(' ') : [];
 		
 		// Now loop through the selectors and fire a separate methods for each one
 		$.each(selectors, function(key, selector) {
@@ -478,6 +485,71 @@ function refreshStatusColor($elements, data) {
 }
 
 /* -----------------------------------------
+*  refreshEventRow($elements, data)
+*
+*  Update the event row by adding a new row when deleting a row
+*
+*  INPUT
+*  $elements		jQuery array of matched elements
+*  data				data that is an event object
+*
+*  ----------------------------------------- */
+function refreshEventRow($elements, data) {
+	var event = data;
+	var $tr = $('<tr id="tr-event-' + event.id + '">\
+			<td><a href="#" data-type="datetime" class="editable"\
+					data-pk="' + event.id + '"\
+					data-name="timestamp"\
+					data-title="Enter a new timestamp for this event"\
+					data-format="mm/dd/yyyy hh:ii:ss"\
+					data-viewformat="M d, yyyy H:ii p"\
+					data-clear="false"\
+				>' + moment(event.timestamp, moment.ISO_8601).format("MMM D, YYYY h:mm a") + '</a></td>\
+			<td>\
+				<a href="#" data-type="select" class="editable-surfice"\
+					data-pk="' + event.id + '"\
+					data-name="surfice"\
+					data-title="Enter a new surfice"\
+				>' + event.surfice.name + '</a>\
+			</td>\
+			<td>\
+				<a href="#" class="editable"\
+					data-type="textarea"\
+					data-pk="' + event.id + '"\
+					data-name="description"\
+				>' + event.description + '</a>\
+			</td>\
+			<td>\
+				<a href="#" class="editable-status"\
+					data-type="select"\
+					data-pk="' + event.id + '"\
+					data-name="status"\
+					data-title="Enter a new status"\
+				>' + event.status.name + '</a>\
+			</td>\
+			<td>\
+				<a class="delete" href="#"\
+					data-toggle="modal"\
+					data-target="#confirm-delete-event"\
+					data-event-id="' + event.id + '"\
+				><span class="glyphicon glyphicon-remove text-danger"></span></a>\
+			</td>\
+		</tr>');
+	
+	$tr.find(".editable").editable(ss.editable.default);
+	$tr.find(".editable-surfice").editable(ss.editable.surfice);
+	$tr.find(".editable-status").editable(ss.editable.status);
+	// Loop through the elements and add the row to each table
+	$elements.each(function() {
+		$element = $(this);
+		
+		// Change the contents of the element to the name of the surfice's surf
+		$element.append($tr);
+		
+	});
+}
+
+/* -----------------------------------------
 *  refreshAJAXPageHandler($elements, data, $form=null)
 *
 *  This function acts as a dispatcher to fire the correct
@@ -559,6 +631,10 @@ function refreshAJAXPageHandler(selector, data) {
 	// Update the status color on the page
 	else if (selector.contains("status-color"))
 		refreshStatusColor($elements, data);
+	
+	// Update the event table by adding a row when deleting a row
+	else if (selector.contains("event-row"))
+		refreshEventRow($elements, data);
 	
 	// No error if a selector isn't matched
 	

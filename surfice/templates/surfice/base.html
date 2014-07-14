@@ -32,7 +32,7 @@
   </head>
 <!-- NAVBAR
 ================================================== -->
-  <body class="{% block body_class %}{% endblock %}">
+  <body class="{% block body_class %}{% endblock %} preload">
   <a name="top"></a>
 	{% block nav %}
     <div class="navbar navbar-default navbar-static-top" role="navigation">
@@ -109,7 +109,6 @@
 	
     <script src="{% static 'surfice/js/bootstrap.min.js' %}"></script>
     <script src="{% static 'surfice/js/jasny-bootstrap.min.js' %}"></script>
-    <script src="{% static 'surfice/js/jquery.inview.min.js' %}"></script>
     
     <script src="{% static 'surfice/js/bootstrap-switch.min.js' %}"></script>
     <script src="{% static 'surfice/js/bootstrap-notify.js' %}"></script>

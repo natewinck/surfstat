@@ -305,6 +305,19 @@ body {
 
 /* ANIMATIONS
 ------------------- */
+/* Prevent animations from happening on load */
+.preload * {
+  -webkit-transition: all 0s linear !important;
+  -moz-transition: all 0s linear !important;
+  -ms-transition: all 0s linear !important;
+  -o-transition: all 0s linear !important;
+  
+  -webkit-animation: none !important;
+  -moz-animation: none !important;
+  -ms-animation: none !important;
+  -o-animation: none !important;
+}
+
 .flash {
 
   -moz-animation: flash 1.5s ease infinite;
@@ -337,6 +350,32 @@ body {
     50% { opacity: .5;}
     90% { opacity: 1; }
     100% { opacity: 1; }
+}
+
+.table-striped > tbody > tr:nth-child(even) > td,
+.table-striped > tbody > tr:nth-child(even) > th {
+	-webkit-transition: background-color 1s ease;
+/* 	background-color: rgb(255, 255, 255); */
+}
+
+@-webkit-keyframes table-rows-even {
+	/* 
+0% { background-color: #f9f9f9; }
+	100% { background-color: rgb(255, 255, 255); }
+ */
+}
+
+.table-striped > tbody > tr:nth-child(odd) > td,
+.table-striped > tbody > tr:nth-child(odd) > th {
+	-webkit-transition: background-color 1s ease;
+/* 	background-color: #f9f9f9; */
+}
+
+@-webkit-keyframes table-rows-odd {
+	/* 
+0% { background-color: rgb(255, 255, 255); }
+	100% { background-color: #f9f9f9; }
+ */
 }
 
 

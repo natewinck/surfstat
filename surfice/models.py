@@ -1186,7 +1186,7 @@ class Ding(models.Model):
 # ---------------------------------------
 class Event(models.Model):
 	# Class variables
-	timestamp	= models.DateTimeField(auto_now=512, auto_now_add=True)
+	timestamp	= models.DateTimeField(auto_now_add=True, auto_now=False)
 	status		= models.ForeignKey(Status)
 	surfice		= models.ForeignKey(Surfice)
 	description	= models.TextField()
@@ -1359,7 +1359,7 @@ class Event(models.Model):
 	# description (optional)	The new description of the event
 	# kwargs					Any other fields that would go into the generic data field as keys
 	# -------------------------------------
-	def set(self, status=None, surfice=None, description=None, **kwargs):
+	def set(self, status=None, surfice=None, description=None, timestamp=None, **kwargs):
 		
 		# If status is set and is in the database, update it
 		if	(
@@ -1380,6 +1380,10 @@ class Event(models.Model):
 		# If description is set, change the description
 		if description != None:
 			self.description = description
+		
+		# If timestamp is set, change the timestamp
+		if timestamp != None:
+			self.timestamp = timestamp
 		
 		# Go through the generic data and put it in their respective fields
 		for key in kwargs:
