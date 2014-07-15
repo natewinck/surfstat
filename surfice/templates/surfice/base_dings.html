@@ -1,0 +1,181 @@
+{% extends "surfice/base.html" %}
+
+{% block title %}Admin | Dings{% endblock %}
+
+{% load static %}
+{% load humanize %}
+{% load slugify %}
+
+{% block css %}
+<!-- x-editable (bootstrap version) -->
+<link href="{% static 'surfice/css/bootstrap-editable.css' %}" rel="stylesheet">
+<link href="{% static 'surfice/css/bootstrap-datetimepicker.min.css' %}" rel="stylesheet" type="text/css"></link> 
+{% endblock %}
+
+{% block body_class %}admin{% endblock %}
+
+
+{% block nav %}
+	{% include "surfice/admin_nav.html" %}
+{% endblock %}
+
+
+{% block heading %}
+<!-- JUMBOTRON HEADER
+================================================== -->
+<div class="container">
+	<div class="jumbotron jumbotron-admin">
+		<h1>Check the latest Dings</h1>
+
+		<div class="container">
+			<p>Ding (n): A dent or hole in the surface of the board resulting from accidental damage</p>
+		</div>
+	</div>
+</div>
+{% endblock heading %} {% block content %} <!-- Start Edit Accordian
+==================================================
+Each of the <row> act as a different function of the Edit process
+-->
+<div class="container">
+	<!-- Create a Status Section, text details-->
+	
+	<div class="page-header">
+		<h2>Click on a Ding's details to edit</h2>
+	</div>
+	
+	<table class="table table-hover" data-ajax-update="ding-row">
+		<thead>
+			<tr>
+				<th>
+					{% if 'timestamp' in order_by %}
+					<a href="{% url 'dings' page=dings.number order_by=order_by_reverse %}/">
+					{% else %}
+					<a href="{% url 'dings' page=dings.number order_by='-timestamp' %}/">
+					{% endif %}
+					Time <span class="glyphicon glyphicon-sort"></span></a>
+				</th>
+				<th aria-sort="ascending">
+					{% if 'surfice' in order_by %}
+					<a href="{% url 'dings' page=dings.number order_by=order_by_reverse %}/">
+					{% else %}
+					<a href="{% url 'dings' page=dings.number order_by='surfice' %}/">
+					{% endif %}
+					Surfice <span class="glyphicon glyphicon-sort"></span></a>
+				</th>
+				<th>
+					{% if 'description' in order_by %}
+					<a href="{% url 'dings' page=dings.number order_by=order_by_reverse %}/">
+					{% else %}
+					<a href="{% url 'dings' page=dings.number order_by='description' %}/">
+					{% endif %}
+					Description of Ding <span class="glyphicon glyphicon-sort"></span></a>
+				</th>
+				<th>
+					{% if 'status' in order_by %}
+					<a href="{% url 'dings' page=dings.number order_by=order_by_reverse %}/">
+					{% else %}
+					<a href="{% url 'dings' page=dings.number order_by='status' %}/">
+					{% endif %}
+					Status <span class="glyphicon glyphicon-sort"></span></a>
+				</th>
+				<th>
+					{% if 'email' in order_by %}
+					<a href="{% url 'dings' page=dings.number order_by=order_by_reverse %}/">
+					{% else %}
+					<a href="{% url 'dings' page=dings.number order_by='email' %}/">
+					{% endif %}
+					Email <span class="glyphicon glyphicon-sort"></span></a>
+				</th>
+				<th colspan="2"></th>
+			</tr>
+		</thead>
+		{% for ding in dings %}
+		<tr id="tr-ding-{{ ding.id }}" data-href="{% url 'ding' ding=ding.id %}">
+			<td>{{ ding.timestamp|date:"M j, Y f a"|cut:"." }}</td>
+			<td>
+				<a data-name="surfice" href="{% url 'surfice' surfice=ding.surfice.name|slugify %}">{{ ding.surfice.name }}</a>
+			</td>
+			<td>{{ ding.description|truncatechars:140 }}</td>
+			<td class="dynamic-color" style="background-color:{{ ding.status.data.color }}">
+				<a class="dynamic-color" style="background-color:{{ ding.status.data.color }}" href="{% url 'status' status=ding.status.name|slugify %}">{{ ding.status }}</a>
+			</td>
+			<td>
+				<a href="mailto:{{ ding.email }}">{{ ding.email }}</a>
+			</td>
+			<td>
+				<a class="delete" href="#"
+					data-toggle="modal"
+					data-target="#confirm-delete-ding"
+					data-ding-id="{{ ding.id }}"
+				><span class="glyphicon glyphicon-remove text-danger"></span></a>
+			</td>
+			<td>
+			<a href="{% url 'ding' ding=ding.id %}"><span class="glyphicon glyphicon-eye-open"></span></a>
+			</td>
+		</tr>
+		{% endfor %}
+	</table>
+	
+	<!-- BEGIN PAGINATION -->
+	<ul class="pager">
+		{% if dings.has_next %}
+			<li class="previous">
+				{% if order_by == '' %}
+				<a href="{% url 'dings' page=dings.next_page_number %}/"><span class="glyphicon glyphicon-chevron-left"> Older</span></a>
+				{% else %}
+				<a href="{% url 'dings' page=dings.next_page_number order_by=order_by %}/"><span class="glyphicon glyphicon-chevron-left"> Older</span></a>
+				{% endif %}
+			</li>
+			
+		{% endif %}
+		
+		{% if dings.has_previous %}
+		<li class="next link">
+			{% if order_by == '' %}
+			<a href="{% url 'dings' page=dings.previous_page_number %}/">Newer <span class="glyphicon glyphicon-chevron-right"></span></a>
+			{% else %}
+			<a href="{% url 'dings' page=dings.previous_page_number order_by=order_by %}/">Newer <span class="glyphicon glyphicon-chevron-right"></span></a>
+			{% endif %}
+		</li>
+		{% endif %}
+	</ul>
+	<!-- /END PAGINATION -->
+</div>
+<hr class="featurette-divider">
+<!-- /END THE FEATURETTES -->
+
+<div class="modal fade" id="confirm-delete-ding" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h4 class="modal-title">Confirm Delete</h4>
+			</div>
+			<div class="modal-body">
+				Are you sure you want to delete the ding associated with <span data-ding-surfice></span>?
+			</div>
+			<div class="modal-footer">
+				<form action="ajax/delete-ding" method="post" type="ajax"
+					data-ajax-success="The ding was deleted successfully."
+					data-ajax-fail="There was an error trying to delete this ding."
+					data-ajax-action="ajax/get-ding"
+					data-ajax-get='{ "page": "{{ dings.number }}", "last":"" }'
+					data-ajax-update-target="ding-row"
+				>
+					{# To prding cross-site forgery, include the following required tag #}
+					{% csrf_token %}
+					<input type="hidden" name="ding" value="">
+					<input type="hidden" name="delete" value="1">
+					<button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+					<button type="submit" href="#" class="btn btn-danger danger" data-save="modal">Delete</button>
+				</form>
+			</div>
+		</div>
+	</div>
+</div>
+
+{% endblock content %}
+
+{% block scripts %}
+<script src="{% static 'surfice/js/moment.min.js' %}"></script>
+
+{% endblock %}

@@ -1067,15 +1067,17 @@ class Ding(models.Model):
 		# Default value to return is nothing
 		ding = None
 		
+		# If pk is less than 0, it is an error
+		#if int(pk) >= 0:
 		try:
 			# If name is set, get the ding that has that name
 			ding = Ding.objects.get(pk=pk)
-			
+		
 		# If nothing is found, do nothing
 		except Ding.DoesNotExist:
 			pass
 		
-		return Ding
+		return ding
 	
 	# -------------------------------------
 	# @staticmethod get_dings(**kwargs)
@@ -1098,6 +1100,9 @@ class Ding(models.Model):
 	#				from before and including this date
 	# start, end	if both are set, all dings between (inclusive)
 	#				will be returned
+	# [sort, sort_by,
+	# order, order_by] 	Allows custom sorting, and then sorting by
+	#					timestamp and then pk
 	# [none]		If no argument is passed, all stored Dings will be returned
 	#
 	# RETURNS
@@ -1109,32 +1114,50 @@ class Ding(models.Model):
 		# Empty array of dings
 		dings = []
 		
+		# Get how to sort the events and add it to the order_by array
+		order_by = ['-timestamp', '-pk']
+		if 	 'sort' 	in kwargs: order_by.insert(0, kwargs['sort'])
+		elif 'sort_by' 	in kwargs: order_by.insert(0, kwargs['sort_by'])
+		elif 'order' 	in kwargs: order_by.insert(0, kwargs['order'])
+		elif 'order_by' in kwargs: order_by.insert(0, kwargs['order_by'])
+		
+		# Ignoring the '-' to reverse the order, check to make sure that the field
+		# we are trying to sort by actually exists
+		# If it doesn't exist, just do the default -timestamp, -pk ordering
+		if not order_by[0].replace('-', '') in ['timestamp', 'surfice', 'status', 'email', 'description', 'id', 'pk']:
+			order_by.pop(0)
+		
+		# For the foreign keys, order by name rather than their arbitrary pks
+		# e.g. 'status' becomes 'status__name'
+		elif order_by[0].replace('-', '') in ['status', 'surfice']:
+			order_by[0] += '__name'
+		
 		# Get all dings related to a specific surfice
 		if 'surfice' in kwargs:
 			surfice = kwargs['surfice']
-			dings = Ding.objects.filter(surfice=surfice).order_by('-timestamp', '-pk')
+			dings = Ding.objects.filter(surfice=surfice).order_by(*order_by)
 		
 		# Get all dings related to a specific email
 		elif 'email' in kwargs:
 			email = kwargs['email']
-			dings = Ding.objects.filter(email=email).order_by('-timestamp', '-pk')
+			dings = Ding.objects.filter(email=email).order_by(*order_by)
 		
 		# Get all dings that report a specific status
 		elif 'status' in kwargs:
 			status = kwargs['status']
-			dings = Ding.objects.filter(status=status).order_by('-timestamp', '-pk')
+			dings = Ding.objects.filter(status=status).order_by(*order_by)
 		
 		# Get all dings in the past x days
 		elif 'days' in kwargs:
 			x = kwargs['days']
 			start = date.today() - timedelta(x)
 			# Equivalent in SQL to SELECT ... WHERE timestamp >= start
-			dings = Ding.objects.filter(timestamp__gte=start).order_by('-timestamp', '-pk')
+			dings = Ding.objects.filter(timestamp__gte=start).order_by(*order_by)
 			
 		# Get the past x number of events	
 		elif 'dings' in kwargs:
 			x = kwargs['events']
-			dings = Ding.objects.all().order_by('-timestamp', '-pk')[:x]
+			dings = Ding.objects.all().order_by(*order_by)[:x]
 		
 		# Get dings up to the current date from the start date
 		# If end is set, get dings between (inclusive) these dates			
@@ -1145,20 +1168,20 @@ class Ding(models.Model):
 			# Else, just use the current date
 			if 'end' in kwargs:
 				end = kwargs['end']
-				dings = Ding.objects.filter(timestamp__gte=start, timestamp__lte=end).order_by('-timestamp', '-pk')
+				dings = Ding.objects.filter(timestamp__gte=start, timestamp__lte=end).order_by(*order_by)
 				
 			else:
 				end = date.today()
-				dings = Ding.objects.filter(timestamp__gte=start).order_by('-timestamp', '-pk')
+				dings = Ding.objects.filter(timestamp__gte=start).order_by(*order_by)
 
 		# Get events up to and including the end date
 		elif 'end' in kwargs:
 			end = kwargs['end']
-			dings = Ding.objects.filter(timestamp__lte=end).order_by('-timestamp', '-pk')
+			dings = Ding.objects.filter(timestamp__lte=end).order_by(*order_by)
 			
 		# If no argument is given, get all events 
 		else:
-			dings = Ding.objects.all().order_by('-timestamp', '-pk')
+			dings = Ding.objects.all().order_by(*order_by)
 			
 		
 		return dings
@@ -1280,16 +1303,19 @@ class Event(models.Model):
 	# (other than the start, end variables)
 	#
 	# INPUT
-	# days		int in number of days back from the current day to pull events
-	# events	int number of events to pull regardless of date
-	# start		timestamp (YYYY-MM-DD) of the start date of events
-	# end		timestamp (YYYY-MM-DD) of the end date. Gets events
-	#			from before and including this date
+	# days				int in number of days back from the current day to pull events
+	# events			int number of events to pull regardless of date
+	# start				timestamp (YYYY-MM-DD) of the start date of events
+	# end				timestamp (YYYY-MM-DD) of the end date. Gets events
+	#					from before and including this date
 	# start, end		if both are set, all events between (inclusive)
 	#					will be returned
-	# surfice	Surfice object that has events
-	# status	Status of events
-	# [none]	If no argument is passed, all stored events will be returned
+	# surfice			Surfice object that has events
+	# status			Status of events
+	# [sort, sort_by,
+	# order, order_by] 	Allows custom sorting, and then sorting by
+	#					timestamp and then pk
+	# [none]			If no argument is passed, all stored events will be returned
 	#
 	# RETURNS
 	# Array of events in reverse chronological order (newest first)
@@ -1300,17 +1326,35 @@ class Event(models.Model):
 		# Empty array of events
 		events = []
 		
+		# Get how to sort the events and add it to the order_by array
+		order_by = ['-timestamp', '-pk']
+		if 	 'sort' 	in kwargs: order_by.insert(0, kwargs['sort'])
+		elif 'sort_by' 	in kwargs: order_by.insert(0, kwargs['sort_by'])
+		elif 'order' 	in kwargs: order_by.insert(0, kwargs['order'])
+		elif 'order_by' in kwargs: order_by.insert(0, kwargs['order_by'])
+		
+		# Ignoring the '-' to reverse the order, check to make sure that the field
+		# we are trying to sort by actually exists
+		# If it doesn't exist, just do the default -timestamp, -pk ordering
+		if not order_by[0].replace('-', '') in ['description', 'id', 'pk', 'status', 'surfice', 'timestamp']:
+			order_by.pop(0)
+		
+		# For the foreign keys, order by name rather than their arbitrary pks
+		# e.g. 'status' becomes 'status__name'
+		elif order_by[0].replace('-', '') in ['status', 'surfice']:
+			order_by[0] += '__name'
+		
 		# Get all events in the past x days
 		if   'days' in kwargs:
 			x = kwargs['days']
 			start = date.today() - timedelta(x)
 			# Equivalent in SQL to SELECT ... WHERE timestamp >= start
-			events = Event.objects.filter(timestamp__gte=start).order_by('-timestamp', '-pk')
+			events = Event.objects.filter(timestamp__gte=start).order_by(*order_by)
 			
 		# Get the past x number of events	
 		elif 'events' in kwargs:
 			x = kwargs['events']
-			events = Event.objects.all().order_by('-timestamp', '-pk')[:x]
+			events = Event.objects.all().order_by(*order_by)[:x]
 		
 		# Get events up to the current date from the start date
 		# If end is set, get events between (inclusive) these dates			
@@ -1321,28 +1365,28 @@ class Event(models.Model):
 			# Else, just use the current date
 			if 'end' in kwargs:
 				end = kwargs['end']
-				events = Event.objects.filter(timestamp__gte=start, timestamp__lte=end).order_by('-timestamp', '-pk')
+				events = Event.objects.filter(timestamp__gte=start, timestamp__lte=end).order_by(*order_by)
 				
 			else:
 				end = date.today()
-				events = Event.objects.filter(timestamp__gte=start).order_by('-timestamp', '-pk')
+				events = Event.objects.filter(timestamp__gte=start).order_by(*order_by)
 
 		# Get events up to and including the end date
 		elif 'end' in kwargs:
 			end = kwargs['end']
-			events = Event.objects.filter(timestamp__lte=end).order_by('-timestamp', '-pk')
+			events = Event.objects.filter(timestamp__lte=end).order_by(*order_by)
 		
 		# Get all events associated with this surfice
 		elif 'surfice' in kwargs:
-			events = Event.objects.filter(surfice=kwargs['surfice']).order_by('-timestamp', '-pk')
+			events = Event.objects.filter(surfice=kwargs['surfice']).order_by(*order_by)
 		
 		# Get all events that have a certain status
 		elif 'status' in kwargs:
-			events = Event.objects.filter(status=kwargs['status']).order_by('-timestamp', '-pk')
+			events = Event.objects.filter(status=kwargs['status']).order_by(*order_by)
 		
 		# If no argument is given, get all events 
 		else:
-			events = Event.objects.all().order_by('-timestamp', '-pk')
+			events = Event.objects.all().order_by(*order_by)
 			
 		
 		return events

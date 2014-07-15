@@ -1,0 +1,108 @@
+{% extends "surfice/base.html" %}
+
+{% block title %}Admin | Dings{% endblock %}
+
+{% load static %}
+{% load humanize %}
+{% load slugify %}
+
+{% block css %}
+<!-- x-editable (bootstrap version) -->
+<link href="{% static 'surfice/css/bootstrap-editable.css' %}" rel="stylesheet">
+<link href="{% static 'surfice/css/bootstrap-datetimepicker.min.css' %}" rel="stylesheet" type="text/css"></link> 
+{% endblock %}
+
+{% block body_class %}admin{% endblock %}
+
+
+{% block nav %}
+	{% include "surfice/admin_nav.html" %}
+{% endblock %}
+
+
+{% block heading %}
+<!-- JUMBOTRON HEADER
+================================================== -->
+<div class="container">
+	<div class="jumbotron jumbotron-admin">
+		<h1>What's up {{ ding.surfice.name }}?</h1>
+
+		<div class="container">
+			<p>{{ ding.surfice.description }}</p>
+		</div>
+	</div>
+</div>
+{% endblock heading %} {% block content %} <!-- Start Edit Accordian
+==================================================
+Each of the <row> act as a different function of the Edit process
+-->
+<div class="container">
+	<!-- Create a Status Section, text details-->
+	
+	<div class="page-header">
+		<h2><a href="mailto:{{ ding.email }}">{{ ding.email }}</a> sent in this Ding</h2>
+	</div>
+	
+	<div class="col-sm-4">
+		<h4>Surfice</h4>
+		<p>{{ ding.surfice.name }}</p>
+		
+		<h4>Current Surfice Status</h4>
+		<p class="dynamic-color" style="background-color:{{ ding.surfice.status.data.color }}">{{ ding.surfice.status.name }}</p>
+
+		<h4>Reports Today</h4>
+		<p>{{ surfice_dings }}</p>
+	</div>
+	
+	<div class="col-sm-8">
+		<div>Reported status: <span class="dynamic-color" style="background-color:{{ ding.status.data.color }}">&nbsp;{{ ding.status.name }}&nbsp;</span>
+		</div>
+		{# Make sure description isn't empty #}
+		{% if ding.description and ding.description.strip %}
+		<h3>Description of Ding</h3>
+		<p>{{ ding.description }}</p>
+		{% else %}
+		<h3><a href="mailto:{{ ding.email }}">{{ ding.email }}</a> did not provide a description</h3>
+		{% endif %}
+		
+		<span class="glyphicon glyphicon-envelope"></span> <a href="mailto:{{ ding.email }}">Reply</a>
+		<span class="glyphicon glyphicon-remove text-danger"></span>
+			<a class="text-danger" href="#"
+				data-toggle="modal"
+				data-target="#confirm-delete-ding-{{ ding.id }}"
+			>Delete</a>
+	</div>
+	
+</div>
+<hr class="featurette-divider">
+<!-- /END THE FEATURETTES -->
+
+<div class="modal fade" id="confirm-delete-ding-{{ ding.id }}" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h4 class="modal-title">Confirm Delete</h4>
+			</div>
+			<div class="modal-body">
+				Are you sure you want to delete this ding?
+			</div>
+			<div class="modal-footer">
+				<form action="" method="post">
+					{# To prding cross-site forgery, include the following required tag #}
+					{% csrf_token %}
+					<input type="hidden" name="ding" value="{{ ding.id }}">
+					<input type="hidden" name="delete" value="1">
+					<button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+					<button type="submit" href="#" class="btn btn-danger danger">Delete</button>
+				</form>
+			</div>
+		</div>
+	</div>
+</div>
+
+{% endblock content %}
+
+{% block scripts %}
+<script src="{% static 'surfice/js/moment.min.js' %}"></script>
+
+{% endblock %}

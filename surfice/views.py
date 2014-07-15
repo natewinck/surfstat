@@ -3,6 +3,7 @@ DEBUG = False
 #import logging
 from django.shortcuts import render
 from django.http import HttpResponse, HttpResponseRedirect
+from django.http import Http404
 #from django.template import Context, Template
 from surfice.models import Surf, Surfice, Status, Ding, Event
 import json
@@ -12,6 +13,9 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth import authenticate, login
 
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
+from django.core.urlresolvers import reverse
+
+from datetime import date, timedelta
 
 # Create your views here.
 
@@ -37,13 +41,13 @@ def debug():
 	except: pass
 	try: Status.get_status('Status2').delete()
 	except: pass
-	try: Surfice.get_surfice('Manual Surfice').deleteice()
+	try: Surfice.get_surfice('Manual Surfice').delete()
 	except: pass
-	try: Surfice.get_surfice('Surfice').deleteice()
+	try: Surfice.get_surfice('Surfice').delete()
 	except: pass
-	try: Surfice.get_surfice('Surfice1').deleteice()
+	try: Surfice.get_surfice('Surfice1').delete()
 	except: pass
-	try: Surfice.get_surfice('Surfice2').deleteice()
+	try: Surfice.get_surfice('Surfice2').delete()
 	except: pass
 	
 	
@@ -203,7 +207,7 @@ def index(request):
 	
 	# Query the database for a list of all the events
 	# Place them in context_dict
-	event_list = Event.get_events()
+	event_list = Event.get_events(days=7)[:10]
 	context_dict['events'] = event_list
 	
 	
@@ -438,11 +442,11 @@ def surfices(request):
 	return render(request, 'surfice/base_surfices.html', context_dict)
 
 @login_required
-def events(request, page):
+def events(request, page, order_by=''):
 	context_dict = {}
 	
 	# Query for events and add them to context_dict
-	event_list = Event.get_events()
+	event_list = Event.get_events(order_by=order_by)
 	
 	# Initialize paginator
 	paginator = Paginator(event_list, 10)
@@ -465,11 +469,61 @@ def events(request, page):
 	status_list = Status.get_statuses()
 	context_dict['statuses'] = status_list
 	
+	# Add order_by and its reverse to context_dict as well
+	context_dict['order_by'] = order_by
+	
+	# If order_by is blank, set the reverse to nothing also
+	if not order_by:
+		context_dict['order_by_reverse'] = ''
+	elif '-' in order_by:
+		# Cut off the '-' in front of the ordering to reverse it
+		context_dict['order_by_reverse'] = order_by[1:]
+	else:
+		# Add the '-' in front of the ordering to reverse it
+		context_dict['order_by_reverse'] = '-' + order_by
+	
 	return render(request, 'surfice/base_events.html', context_dict)
 
 @login_required
-def dings(request):
+def dings(request, page='', order_by=''):
 	context_dict = {}
+	
+	# Query for dings and add them to context_dict
+	ding_list = Ding.get_dings(order_by=order_by)
+	
+	# Initialize paginator
+	paginator = Paginator(ding_list, 10)
+	
+	# Fill the dings array with the current page
+	try:
+		context_dict['dings'] = paginator.page(page)
+	except PageNotAnInteger:
+		# If page is not an integer, deliver the first page
+		context_dict['dings'] = paginator.page(1)
+	except EmptyPage:
+		# If page is out of range (e.g. 9999), deliver the last page of dings
+		context_dict['dings'] = paginator.page(paginator.num_pages)
+	
+	# Query all the Surfices and add them to context_dict
+	surfice_list = Surfice.get_surfices()
+	context_dict['surfices'] = surfice_list
+	
+	# Query all the Statuses and add them to context_dict
+	status_list = Status.get_statuses()
+	context_dict['statuses'] = status_list
+	
+	# Add order_by and its reverse to context_dict as well
+	context_dict['order_by'] = order_by
+	
+	# If order_by is blank, set the reverse to nothing also
+	if not order_by:
+		context_dict['order_by_reverse'] = ''
+	elif '-' in order_by:
+		# Cut off the '-' in front of the ordering to reverse it
+		context_dict['order_by_reverse'] = order_by[1:]
+	else:
+		# Add the '-' in front of the ordering to reverse it
+		context_dict['order_by_reverse'] = '-' + order_by
 	
 	return render(request, 'surfice/base_dings.html', context_dict)
 
@@ -480,7 +534,7 @@ def settings(request):
 	return render(request, 'surfice/base_settings.html', context_dict)
 
 @login_required
-def status(request):
+def statuses(request):
 	context_dict = {}
 	
 	# If the admin is trying to create or delete a Status, the page is refreshed
@@ -543,4 +597,90 @@ def status(request):
 	status_list = Status.get_statuses()
 	context_dict['statuses'] = status_list
 	
-	return render(request, 'surfice/base_status.html', context_dict)
+	return render(request, 'surfice/base_statuses.html', context_dict)
+
+@login_required
+def status(request, status=''):
+	pass
+
+@login_required
+def surfice(request, surfice=''):
+	context_dict = {}
+	
+	if request.method == 'POST':
+		# Is the admin trying to delete a surfice?
+		if	(
+				'delete' in request.POST and
+				'surfice' in request.POST
+			):
+			
+			# Get the surfice that we're about to delete
+			surfice = Surfice.get_surfice(pk=request.POST['surfice'])
+			
+			# Only delete the surfice if the surfice actually exists in the database
+			# Django automatically deletes all related objects
+			# along with the surfice so go ahead and delete the surfice
+			if type(surfice) is Surfice:
+				surfice.delete()
+			
+			# Redirect to the surfices after submission to clear headers
+			return HttpResponseRedirect( reverse(surfices) )
+	
+	# Query for surfices and add them to context_dict
+	surfice = Surfice.get_surfice(pk=surfice)
+	
+	# If it does not exist, raise a 404 error
+	if type(surfice) is not Surfice:
+		raise Http404
+	
+	# Add the surfice to context_dict
+	context_dict['surfice'] = surfice
+	
+	#surfice_surfices = Surfice.get_surfices(surfice=surfice.surfice)
+	#x = 1 # Number of days
+	#start = date.today() - timedelta(x)
+	# Equivalent in SQL to SELECT ... WHERE timestamp >= start
+	#surfice_surfices = surfice_surfices.filter(timestamp__gte=start)
+	#context_dict['surfice_surfices'] = surfice_surfices.count()
+	
+	return render(request, 'surfice/base_surfice.html', context_dict)
+
+@login_required
+def ding(request, ding=''):
+	context_dict = {}
+	
+	if request.method == 'POST':
+		# Is the admin trying to delete a ding?
+		if	(
+				'delete' in request.POST and
+				'ding' in request.POST
+			):
+			
+			# Get the ding that we're about to delete
+			ding = Ding.get_ding(pk=request.POST['ding'])
+			
+			# Only delete the ding if the ding actually exists in the database
+			if type(ding) is Ding:
+				ding.delete()
+			
+			# Redirect to the dings view after submission to clear headers
+			return HttpResponseRedirect( reverse(dings) )
+	
+	# Query for dings and add them to context_dict
+	ding = Ding.get_ding(pk=ding)
+	
+	# If it does not exist, raise a 404 error
+	if type(ding) is not Ding:
+		raise Http404
+	
+	# Add the ding to context_dict
+	context_dict['ding'] = ding
+	
+	surfice_dings = Ding.get_dings(surfice=ding.surfice)
+	x = 1 # Number of days
+	start = date.today() - timedelta(x)
+	# Equivalent in SQL to SELECT ... WHERE timestamp >= start
+	surfice_dings = surfice_dings.filter(timestamp__gte=start)
+	context_dict['surfice_dings'] = surfice_dings.count()
+	
+	return render(request, 'surfice/base_ding.html', context_dict)

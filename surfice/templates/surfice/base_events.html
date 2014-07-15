@@ -46,10 +46,38 @@ Each of the <row> act as a different function of the Edit process
 	<table class="table table-striped" data-ajax-update="event-row">
 		<thead>
 			<tr>
-				<th>Time</th>
-				<th>Surfice</th>
-				<th>Description of Event</th>
-				<th>Status</th>
+				<th>
+					{% if 'timestamp' in order_by %}
+					<a href="{% url 'events' page=events.number order_by=order_by_reverse %}/">
+					{% else %}
+					<a href="{% url 'events' page=events.number order_by='-timestamp' %}/">
+					{% endif %}
+					Time <span class="glyphicon glyphicon-sort"></span></a>
+				</th>
+				<th aria-sort="ascending">
+					{% if 'surfice' in order_by %}
+					<a href="{% url 'events' page=events.number order_by=order_by_reverse %}/">
+					{% else %}
+					<a href="{% url 'events' page=events.number order_by='surfice' %}/">
+					{% endif %}
+					Surfice <span class="glyphicon glyphicon-sort"></span></a>
+				</th>
+				<th>
+					{% if 'description' in order_by %}
+					<a href="{% url 'events' page=events.number order_by=order_by_reverse %}/">
+					{% else %}
+					<a href="{% url 'events' page=events.number order_by='description' %}/">
+					{% endif %}
+					Description of Event <span class="glyphicon glyphicon-sort"></span></a>
+				</th>
+				<th>
+					{% if 'status' in order_by %}
+					<a href="{% url 'events' page=events.number order_by=order_by_reverse %}/">
+					{% else %}
+					<a href="{% url 'events' page=events.number order_by='status' %}/">
+					{% endif %}
+					Status <span class="glyphicon glyphicon-sort"></span></a>
+				</th>
 				<th></th>
 			</tr>
 		</thead>
@@ -99,11 +127,24 @@ Each of the <row> act as a different function of the Edit process
 	<!-- BEGIN PAGINATION -->
 	<ul class="pager">
 		{% if events.has_next %}
-		<li class="previous"><a href="{% url 'events' page=events.next_page_number %}/"><span class="glyphicon glyphicon-chevron-left"> Older</span></a></li>
+			<li class="previous">
+				{% if order_by == '' %}
+				<a href="{% url 'events' page=events.next_page_number %}/"><span class="glyphicon glyphicon-chevron-left"> Older</span></a>
+				{% else %}
+				<a href="{% url 'events' page=events.next_page_number order_by=order_by %}/"><span class="glyphicon glyphicon-chevron-left"> Older</span></a>
+				{% endif %}
+			</li>
+			
 		{% endif %}
 		
 		{% if events.has_previous %}
-		<li class="next link"><a href="{% url 'events' page=events.previous_page_number %}/">Newer <span class="glyphicon glyphicon-chevron-right"></span></a></li>
+		<li class="next link">
+			{% if order_by == '' %}
+			<a href="{% url 'events' page=events.previous_page_number %}/">Newer <span class="glyphicon glyphicon-chevron-right"></span></a>
+			{% else %}
+			<a href="{% url 'events' page=events.previous_page_number order_by=order_by %}/">Newer <span class="glyphicon glyphicon-chevron-right"></span></a>
+			{% endif %}
+		</li>
 		{% endif %}
 	</ul>
 	<!-- /END PAGINATION -->

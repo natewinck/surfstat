@@ -494,19 +494,35 @@ $("#confirm-delete-event").on("show.bs.modal", function(e) {
 	//$(this).wait(1000).trigger("hide.bs.modal");
 });
 
-$('#confirm-delete-event [type="submit"] .hahahahah').click(function() {
-	$("#confirm-delete-event").modal("hide");
-	$row = $(this).closest("tr");
-	$row.slideRow('up', 500, function() {
-		$row.remove();
+// Replace the info in the dialog box before showing the confirm-delete modal dialog
+$("#confirm-delete-ding").on("show.bs.modal", function(e) {
+	var $deleteButton = $(e.relatedTarget);
+	var $row = $(e.relatedTarget).closest("tr");
+	var $modal = $(this);
+	
+	// Replace the text in the delete dialog box
+	$modal.find("[data-ding-surfice]").text( $row.find('[data-name="surfice"]').text() );
+	$modal.find('input[name="ding"]').val( $deleteButton.attr("data-ding-id") );
+	
+	// When clicking submit, hide the modal
+	$modal.find('[type="submit"]').off().click(function() {
+		$modal.modal("hide");
+		
+		// Since it's been clicked
+		$(this).off();
 	});
+	
+	//$(this).wait(1000).trigger("hide.bs.modal");
 });
 
-$(".delete.deletemebecausethisisold").click(function() {
-	$row = $(this).closest("tr");
-	$row.slideRow('up', 500, function() {
-		$row.remove();
-	});
+// Table rows link to a webpage
+$("tr[data-href]").click(function() {
+	//$td = $("<td style='display:none'>").append("<a href='" + $(this).attr("data-href") + "'>");
+	//$(this).append($td);
+	//$td.trigger("click");
+	
+	
+	//window.location = $(this).attr("data-href");
 });
 
 });

@@ -28,11 +28,16 @@ function refreshAJAXPage($form) {
 	$form.find("select[data-ajax-clear]").prop("selectedIndex", 0);
 	
 	// Delete any rows from a table that were just deleted
-	if ($form.find('[name="delete"]').length)
-		var $row = $( "#tr-event-" + $form.find('[name="event"]').val() );
+	// Doesn't really work yet...
+	if ($form.find('[name="delete"]').length) {
+		var $row = $( "#tr-event-" + $form.find('[name="event"]').val() + ", " +
+					  "#tr-ding-" + $form.find('[name="ding"]').val()
+					);
+		console.log($row);
 		$row.slideRow('up', 500, function() {
 			$row.remove();
 		});
+	}
 	
 	// Get new data from the database and then once it gets it
 	// refresh the page with the new data
@@ -496,7 +501,7 @@ function refreshStatusColor($elements, data) {
 *  ----------------------------------------- */
 function refreshEventRow($elements, data) {
 	var event = data;
-	var $tr = $('<tr id="tr-event-' + event.id + '">\
+	var $tr = $('<tr id="tr-event-' + event.id + '" style="display:none;">\
 			<td><a href="#" data-type="datetime" class="editable"\
 					data-pk="' + event.id + '"\
 					data-name="timestamp"\
@@ -545,6 +550,54 @@ function refreshEventRow($elements, data) {
 		
 		// Change the contents of the element to the name of the surfice's surf
 		$element.append($tr);
+		$tr.slideRow('down', 500);
+		
+	});
+}
+
+/* -----------------------------------------
+*  refreshDingRow($elements, data)
+*
+*  Update the ding row by adding a new row when deleting a row
+*
+*  INPUT
+*  $elements		jQuery array of matched elements
+*  data				data that is a ding object
+*
+*  ----------------------------------------- */
+function refreshDingRow($elements, data) {
+	var ding = data;
+	var $tr = $('<tr id="tr-event-' + ding.id + '" style="display:none;">\
+			<td>' + moment(ding.timestamp, moment.ISO_8601).format("MMM D, YYYY h:mm a") + '</td>\
+			<td>\
+				<a href="' + ding.surfice_url + '"\
+					data-name="surfice"\
+				>' + ding.surfice.name + '</a>\
+			</td>\
+			<td>' + ding.description + '</td>\
+			<td class="dynamic-color" style="background-color:' + ding.status.data.color + '; color:' + getDynamicColor(ding.status.data.color) + ';">\
+				<a class="dynamic-color" style="background-color:' + ding.status.data.color + '; color:' + getDynamicColor(ding.status.data.color) + ';" href="' + ding.status_url + '">' + ding.status.name + '</a>\
+			</td>\
+			<td>\
+				<a href="mailto:' + ding.email + '">' + ding.email + '</a>\
+			</td>\
+			<td>\
+				<a class="delete" href="#"\
+					data-toggle="modal"\
+					data-target="#confirm-delete-event"\
+					data-event-id="' + ding.id + '"\
+				><span class="glyphicon glyphicon-remove text-danger"></span></a>\
+			</td>\
+		</tr>');
+	
+	
+	// Loop through the elements and add the row to each table
+	$elements.each(function() {
+		$element = $(this);
+		
+		// Change the contents of the element to the name of the surfice's surf
+		$element.append($tr);
+		$tr.slideRow('down', 500);
 		
 	});
 }
@@ -635,6 +688,10 @@ function refreshAJAXPageHandler(selector, data) {
 	// Update the event table by adding a row when deleting a row
 	else if (selector.contains("event-row"))
 		refreshEventRow($elements, data);
+	
+	// Update the ding table by adding a row when deleting a row
+	else if (selector.contains("ding-row"))
+		refreshDingRow($elements, data);
 	
 	// No error if a selector isn't matched
 	

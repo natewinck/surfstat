@@ -18,5 +18,5 @@ urlpatterns = patterns('',
     # Root redirects to surfice app
     url('', include('surfice.urls')),
     # Include surfice app
-    url(r'^surfice/', include('surfice.urls')),
+    #url(r'^surfice/', include('surfice.urls')),
 )

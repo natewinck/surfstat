@@ -13,6 +13,9 @@ import time
 from datetime import datetime
 
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
+from django.core.urlresolvers import reverse
+from django.utils.text import slugify
+from surfice import views
 
 
 # -----------------------------------------
@@ -397,6 +400,43 @@ def delete_event(request):
 	# If no status is set, throw an error
 	else:
 		errors.append("It's usually good to have an event to delete.")
+	
+	return errors
+
+# -----------------------------------------
+# delete_ding(request)
+#
+# Delete a ding
+#
+# INPUT
+# request			A request object
+#	- ding			The pk of a ding
+#	- delete		The flag to let us know we're deleting
+#
+# RETURNS
+# *errors
+# -----------------------------------------
+def delete_ding(request):
+	errors = []
+	
+	# If event and delete are set, go ahead and delete the event
+	if	(
+				'delete' in request.POST and
+				'ding' in request.POST
+			):
+			
+			# Get the surfice that we're about to delete
+			ding = Ding.get_ding(pk=request.POST['ding'])
+			
+			# Django automatically deletes all related objects
+			# along with the surfice so go ahead and delete the surfice
+			if type(ding) is Ding:
+				ding.delete()
+		
+	
+	# If no status is set, throw an error
+	else:
+		errors.append("It's usually good to have a ding to delete.")
 	
 	return errors
 
@@ -789,6 +829,81 @@ def get_event(request):
 	return event
 
 # -----------------------------------------
+# get_ding(request)
+#
+# Gets an ding based on the id/pk or page passed
+#
+# INPUT
+# request			A request object
+#	- ding			The pk of the ding
+#	- page			The pagination page of the ding
+#	- first, last	Get the first or last ding on the page
+#
+# RETURNS
+# Status
+# -----------------------------------------
+def get_ding(request):
+	ding = {}
+	
+	# The ding pk needs to be in request
+	if 'ding' in request.GET:
+		# Get the ding object from the database
+		ding = Ding.get_ding(pk=request.GET['ding'])
+		
+		ding = DingSerializer(ding)
+		ding = JSONRenderer().render(ding.data)
+	
+	elif 'page' in request.GET:
+		# For ease of use, get the page
+		page = request.GET['page']
+	
+		# Initialize paginator
+		# 10 per page references what is views.py
+		dings = Ding.get_dings()
+		paginator = Paginator(dings, 10)
+	
+		# Fill the dings array with the current page
+		try:
+			dings_page = paginator.page(page)
+		except PageNotAnInteger:
+			# If page is not an integer, deliver the first page
+			dings_page = paginator.page(1)
+		except EmptyPage:
+			# If page is out of range (e.g. 9999), deliver the last page of dings
+			dings_page = paginator.page(paginator.num_pages)
+		
+		if 'first' in request.GET:
+			ding = dings[0]
+		elif 'last' in request.GET:
+			ding = dings[dings_page.end_index()-1]
+		
+		# Get the surfice and status urls for addition to the dictionary in a moment
+		surfice_url = reverse(views.surfice, kwargs={'surfice': slugify(ding.surfice.name)})
+		status_url = reverse(views.status, kwargs={'status': slugify(ding.status.name)})
+		
+		# Serialize the ding object
+		ding = DingSerializer(ding)
+		
+		# Get the actual data and put it in ding
+		ding = ding.data
+		
+		# Add the surfice and status urls to the dictionary
+		ding['surfice_url'] = surfice_url
+		ding['status_url'] = status_url
+		
+		ding = JSONRenderer().render(ding)
+		
+		
+		print ding
+		
+	
+	# If ding or page were not in the request, throw an error
+	else:
+		ding.append("A ding or page was not passed")
+	
+	return ding
+
+# -----------------------------------------
 # dispatch(request, action)
 #
 # Fires functions based on the action passed.
@@ -844,6 +959,10 @@ def dispatch(request, action=''):
 	elif action == 'delete-event':
 		response = json.dumps(delete_event(request))
 	
+	# Delete a ding
+	elif action == 'delete-ding':
+		response = json.dumps(delete_ding(request))
+	
 	# Submit a ding from the user
 	elif action == 'submit-ding':
 		response = json.dumps(submit_ding(request))
@@ -879,6 +998,10 @@ def dispatch(request, action=''):
 	# Get a single event
 	elif action == 'get-event':
 		response = get_event(request)
+	
+	# Get a single ding
+	elif action == 'get-ding':
+		response = get_ding(request)
 	
 	else:
 		response = ["No action called " + action]

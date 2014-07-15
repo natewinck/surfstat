@@ -1,0 +1,179 @@
+{% extends "surfice/base.html" %}
+
+{% block title %}Admin | Surfices{% endblock %}
+
+{% load static %}
+{% load humanize %}
+{% load slugify %}
+
+{% block body_class %}admin{% endblock %}
+
+
+{% block nav %}
+	{% include "surfice/admin_nav.html" %}
+{% endblock %}
+
+
+{% block heading %}
+<div class="container">
+	<div class="jumbotron jumbotron-admin">
+		<h1>Update your Surfices</h1>
+		<div class="container">
+			<p>Surfice (n): the building block to the surfs that make up the ITS infrastructure</p>
+		</div>
+    </div>
+</div>
+{% endblock %}
+    
+
+{% block content %}
+<!--Start Accordian Container-->
+<div class="container">
+	<div class="page-header">
+		<h2>Click on a Surfice to see Details</h2>
+	</div>
+			
+	<!-- START EDIT SURFICES -->
+	{% for surfice in surfices %}
+	<div class="tab-pane fade {% if forloop.first %}in active{% endif %}" id="surfice-{{ surfice.name|slugify }}"
+		data-ajax-update="surfice-name-{{ surfice.id }}"
+	>
+<!--Start Panel {{ surfice.id }} of Accordian-->
+		<div class="row">
+<!--Row: Current Information on the Surf-->
+			<div class="col-sm-4 col-xs-6">
+				<h4>Status</h4>
+				<p data-ajax-update="surfice-status-{{ surfice.id }}">{{ surfice.status.name }}</p>
+			</div>
+			<div class="col-sm-4 col-xs-6">
+				<h4>Description</h4>
+				<p data-ajax-update="surfice-description-{{ surfice.id }}">{{ surfice.description }}</p>
+			</div>
+			<div class="col-sm-4 col-xs-6">
+				<h4>Current Surf</h4>
+				<p data-ajax-update="surfice-surf-{{ surfice.id }}">{{ surfice.surf.name }}</p>
+			</div>
+		</div>
+	
+		<hr class="divider-accordian">
+	
+		<h3>Update <span data-ajax-update="surfice-name-{{ surfice.id }}">{{ surfice.name }}</span>'s Status</h3>
+		<form type="ajax" action="ajax/set-status" method="post" role="form" id="status-surfice"
+			data-ajax-action="ajax/get-surfice"
+			data-ajax-get='{ "surfice": {{ surfice.id }} }'
+			data-ajax-update-target="surfice-status-{{ surfice.id }}"
+		>
+			{# To prevent cross-site forgery, include the following required tag #}
+			{% csrf_token %}
+			<input type="hidden" name="surfice" value="{{ surfice.id }}">
+			<div class="row">
+				<div class="col-sm-6">
+					<div class="form-group">
+						<label class="control-label">Select Status</label>
+						<select name="status" class="form-control" id="status-surfice-update-{{surfice.id}}">
+							{% for status in statuses %}
+							<option value="{{ status.id }}" {% if status == surfice.status %}selected="selected"{% endif %}>{{ status.name }}</option>
+							{% endfor %}
+						</select>
+					</div>
+				</div>
+				<div class="col-sm-6">
+					<div class="form-group">
+						<label class="control-label">Status Description</label>
+						<textarea name="description" class="form-control" rows="3" id="status-surfice-description-update" placeholder="(Optional) Add your status description..."
+							data-ajax-clear></textarea>
+					</div>
+				</div>
+			</div>
+			<div class="row">
+				<div class="col-xs-offset-10 col-xs-2">
+					<button type="submit" class="btn btn-success button-accordian pull-right">Submit</button>
+				</div>
+			</div>
+		</form>
+	
+		<hr class="divider-accordian">
+	
+		<h3>Edit <span data-ajax-update="surfice-name-{{ surfice.id }}">{{ surfice.name }}</span></h3>
+		<form type="ajax" action="ajax/update-surfice" method="post" role="form"
+			data-ajax-action="ajax/get-surfice"
+			data-ajax-get='{ "surfice": {{ surfice.id }} }'
+			data-ajax-update-target="surfice-name-{{ surfice.id }} surfice-description-{{ surfice.id }} surfice-surf-{{surfice.id}}"
+		>
+			{# To prevent cross-site forgery, include the following required tag #}
+			{% csrf_token %}
+			<input type="hidden" name="surfice" value="{{ surfice.id }}">
+			<div class="row">
+				<div class="col-sm-6 ">
+					<div class="form-group">
+						<label class="control-label">Update Surfice Name</label>
+						<input name="name" type="text" class="form-control" value="{{ surfice.name }}" placeholder="Surfice Name"
+							data-ajax-check="surfice-name"
+							data-ajax-update="surfice-name-{{ surfice.id }}"
+						>
+					</div>
+					<div class="form-group">
+						<label class="control-label">Assigned Surf</label>
+						<select name="surf" class="form-control">
+							{% for surf in surfs %}
+				
+							<option value="{{ surf.id }}" {% if surf == surfice.surf %}selected="selected"{% endif %}>{{ surf.name }}</option>
+							{% endfor %}
+						</select>
+					</div>
+				</div>
+				<div class="col-sm-6">
+					<div class="form-group">
+						<label class="control-label" for="update-surfice-description-{{ surfice.id }}">Update Surfice Description</label>
+						<textarea name="description" class="form-control" rows="3" placeholder="(Optional) Update Description here..." id="update-surfice-description-{{ surfice.id }}">{{ surfice.description }}</textarea>
+					</div>
+				</div>
+			</div>
+			<div class="row">
+				<div class="col-xs-offset-10 col-xs-2">
+					 <button type="submit" class="btn btn-success pull-right">Submit</button>
+				</div>
+			</div>
+		</form>
+	
+		<hr class="divider-accordian">
+		<div class="row">
+			<div class="col-xs-12">
+				<h3>Delete <span data-ajax-update="surfice-name-{{ surfice.id }}">{{ surfice.name }}</span></h3>
+				<button type="button" class="btn btn-danger button-accordian" data-toggle="modal" data-target="#confirm-delete-surfice-{{ surfice.id }}">Delete</button>
+			</div>
+		</div>
+	</div>
+
+	<div class="modal fade" id="confirm-delete-surfice-{{ surfice.id }}" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h4 class="modal-title">Confirm Delete</h4>
+				</div>
+				<div class="modal-body">
+					Are you sure you want to delete <span data-ajax-update="surfice-name-{{ surfice.id }}">{{ surfice.name }}</span>?
+					All data related to this surfice including all events and dings assigned to it will be deleted!
+				</div>
+				<div class="modal-footer">
+					<form action="" method="post">
+						{# To prevent cross-site forgery, include the following required tag #}
+						{% csrf_token %}
+						<input type="hidden" name="surfice" value="{{ surfice.id }}">
+						<input type="hidden" name="delete" value="1">
+						<button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+						<button type="submit" href="#" class="btn btn-danger danger">Delete</button>
+					</form>
+				</div>
+			</div>
+		</div>
+	</div>
+	
+	{% endfor %}
+	<!-- /END EDIT SURFICES -->
+</div>
+
+<hr class="featurette-divider">
+<!-- /END THE FEATURETTES -->
+
+{% endblock %}
