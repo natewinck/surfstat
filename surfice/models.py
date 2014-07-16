@@ -178,13 +178,13 @@ class Surf(models.Model):
 			# Find all Surfice objects that are in this surf
 			# and that also contain the name param
 			if name != None:
-				surfices = Surfice.objects.filter(surf=self, name__icontains=name)
+				surfices = Surf.objects.get(id=self.id).surfice_set.filter(name__icontains=name)
 			
 			# If name is not set, get all Surfices under this Surf
 			else:
-				surfices = Surfice.objects.filter(surf=self)
+				surfices = Surf.objects.get(id=self.id).surfice_set.all()
 		
-		except Surfice.DoesNotExist:
+		except Surf.DoesNotExist:
 			# We get here if we didn't find the specified category.
 			# Don't do anything - the template displays the "no category" message for us.
 			pass
@@ -339,15 +339,17 @@ class Surf(models.Model):
 #
 # METHODS
 # String			__unicode__(self)
-# Surfice			create(name, surf, description, **kwargs)
+# Surfice			create(name, surfs, description, **kwargs)
 # void				delete(self, *args, **kwargs)
 # Surfice			get_surfice(name, pk, id)
 # *Surfice			get_surfices(...)
 # Status			get_status(self)
 # *Event			get_events(self, ...)
-# void				set(self, name, surf, description, **kwargs)
+# void				set(self, name, surfs, description, **kwargs)
 # bool				set_name(self, name)
-# void				set_surf(self, surf)
+# void				[deprecated] set_surf(self, surf)
+# void				add_surf(self, surf)
+# void				add_surfs(self, surfs)
 # void				set_description(self, description)
 # void				set_status(self, status, description)
 # bool				save_new(self, *args, **kwargs)
@@ -357,7 +359,7 @@ class Surf(models.Model):
 class Surfice(models.Model):
 	# Class variables
 	name 		= models.CharField(max_length=512, unique=True)
-	surf 		= models.ForeignKey(Surf)
+	surfs 		= models.ManyToManyField(Surf) #models.ForeignKey(Surf)
 	description = models.TextField()
 	status		= models.ForeignKey('Status')
 	data		= YAMLField()
@@ -371,13 +373,13 @@ class Surfice(models.Model):
 	#	self.group = Surf()
 	
 	# -------------------------------------
-	# @staticmethod create(name, surf, description, **kwargs)
+	# @staticmethod create(name, surfs, description, **kwargs)
 	# 
 	# Create a new Surfice object and store it in the database
 	# 
 	# INPUT
 	# name						Name of the Surfice
-	# surf						Surf object that this Surfice belongs to
+	# surfs						Surf object array that this Surfice belongs to
 	# status					Status object that Surfice has
 	# description (optional)	Description of the Surfice
 	# kwargs (optional)			Generic data stored as keys
@@ -386,12 +388,11 @@ class Surfice(models.Model):
 	# The created Surfice object
 	# -------------------------------------
 	@staticmethod
-	def create(name, surf, status, description='', **kwargs):
+	def create(name, surfs, status, description='', **kwargs):
 		surfice = None
 		
 		# Check to make sure a Surfice object with the same name
 		# isn't already in the database.
-		print "here"
 		if not Surfice.is_saved(name=name) and name.strip() != '':
 			print "inside"
 			# Create the Surfice object
@@ -400,7 +401,7 @@ class Surfice(models.Model):
 			# Set the Surfice class variables
 			# Remove extra spaces from the name
 			surfice.name = ' '.join(name.split())
-			surfice.surf = surf
+			surfice.surfs.add(surfs)
 			surfice.description = description
 			surfice.status = status
 			
@@ -482,12 +483,12 @@ class Surfice(models.Model):
 			# If both surf and name are set, find all objects with that Surf
 			# and contain the name
 			if surf != None and name != None:
-				surfices = Surfice.objects.filter(surf=surf, name__icontains=name)
+				surfices = Surfice.objects.filter(surfs=surf, name__icontains=name)
 			
 			# If surf is set, find all Surfice objects with that Surf
 			elif surf != None:
 				# CHECK TO SEE IF THIS IS REAL SURF OBJECT
-				surfices = Surfice.objects.filter(surf=surf)
+				surfices = Surfice.objects.filter(surfs=surf)
 				
 			# If name is set, find all Surfices that contain that name
 			elif name != None:
@@ -538,18 +539,18 @@ class Surfice(models.Model):
 		return events
 	
 	# -------------------------------------
-	# set(self, name, surf, description, **kwargs)
+	# set(self, name, surfs, description, **kwargs)
 	#
 	# Generic setter function. All fields are optional, but nothing happens
 	# if no parameters are passed
 	#
 	# INPUT
 	# name (optional)			The new name of the surfice object
-	# surf (optional)			The new surf object this surfice is part of
+	# surfs (optional)			The new surf objects this surfice is part of
 	# description (optional)	The new description of the surfice object
 	# kwargs					Any other fields that would go into the generic data field as keys
 	# -------------------------------------
-	def set(self, name=None, surf=None, description=None, **kwargs):
+	def set(self, name=None, surfs=None, description=None, **kwargs):
 		
 		# If name is set, name hasn't changed, name isn't blank, and there isn't another object
 		# with the same name (case insensitive), update the name
@@ -561,13 +562,11 @@ class Surfice(models.Model):
 			):
 			self.name = ' '.join(name.split())
 		
-		# If surf is set and is in the database, update it
+		# If surfs are set, update it
 		if	(
-				surf != None and
-				type(surf) is Surf and
-				Surf.objects.filter(pk=Surf.pk).count() == 1
+				surfs != None
 			):
-			self.surf = surf
+			self.surfs.add(surfs)
 		
 		# If description is set, change the description
 		if description != None:
@@ -608,7 +607,7 @@ class Surfice(models.Model):
 		return code
 	
 	# -------------------------------------
-	# set_surf(self, surf)
+	# [deprecated] set_surf(self, surf)
 	# 
 	# Sets the surf of the surfice and saves it to the database.
 	# Only runs if Surf object exists in database. If it doesn't,
@@ -625,6 +624,42 @@ class Surfice(models.Model):
 		
 			# Save surfice object to database
 			self.save()
+	
+	# -------------------------------------
+	# add_surf(self, surf)
+	# 
+	# Add a surf to this surfice and save it to the database.
+	# Only runs if Surf object exists in database. If it doesn't,
+	# nothing happens
+	# 
+	# INPUT
+	# surf			The surf object that this surfice will be added to
+	#
+	# -------------------------------------
+	def add_surf(self, surf):
+		# Check to make sure Surf is actually in the database
+		if Surf.is_saved(surf=surf):
+			self.surfs.add(surf)
+		
+			# Save surfice object to database
+			self.save()
+	
+	# -------------------------------------
+	# add_surfs(self, surfs)
+	# 
+	# Add surfs to this surfice and save it to the database.
+	# Does not check if surfs are already in database (dangerous)
+	# 
+	# INPUT
+	# surfs			The surf objects that this surfice will be added to
+	#
+	# -------------------------------------
+	def add_surfs(self, surfs):
+		# Does NOT check if surfs are already in database (dangerous)
+		self.surfs.add(surfs)
+	
+		# Save surfice object to database
+		self.save()
 	
 	# -------------------------------------
 	# set_description(self, description)
