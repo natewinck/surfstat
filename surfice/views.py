@@ -299,7 +299,7 @@ def surfs(request):
 	# If the admin is trying to create or delete a Surf, the page is refreshed
 	flag = False
 	if request.method == 'POST':
-			
+		
 		# Is the admin trying to delete a status?
 		if	(
 				'delete' in request.POST and
@@ -349,12 +349,12 @@ def surfs(request):
 	
 	
 	# Query for surfs and add them to context_dict
-	surf_list = Surf.get_surfs()
+	surf_list = Surf.get_surfs().prefetch_related('surfice_set')
 	context_dict['surfs'] = surf_list
 	
 	# For each Surf, query for Surfices and add them to context_dict
 	for i, surf in enumerate(context_dict['surfs']):
-		context_dict['surfs'][i].surfices = surf.get_surfices()
+		context_dict['surfs'][i].surfices = surf_list[i].surfice_set.all()
 	
 	# Query all the Surfices and add them to context_dict
 	surfice_list = Surfice.get_surfices()

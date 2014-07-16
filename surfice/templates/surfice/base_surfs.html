@@ -108,7 +108,7 @@
 							   
 </div>
 					<ul class="list-group surfices-list">
-						{% for surfice in surf.surfices %}
+						{% for surfice in surf.surfices.all %}
 						<li class="list-group-item" value="{{ surfice.id }}">{{ surfice.name }}&nbsp;<span class="glyphicon glyphicon-remove pull-right"></span></li>
 						{% endfor %}
 					</ul>

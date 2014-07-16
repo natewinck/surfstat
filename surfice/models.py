@@ -178,6 +178,7 @@ class Surf(models.Model):
 			# Find all Surfice objects that are in this surf
 			# and that also contain the name param
 			if name != None:
+				# surfices is a reverse lookup defined by the related name in the Surfice class
 				surfices = Surf.objects.get(id=self.id).surfice_set.filter(name__icontains=name)
 			
 			# If name is not set, get all Surfices under this Surf
@@ -359,7 +360,16 @@ class Surf(models.Model):
 class Surfice(models.Model):
 	# Class variables
 	name 		= models.CharField(max_length=512, unique=True)
-	surfs 		= models.ManyToManyField(Surf) #models.ForeignKey(Surf)
+	
+	# Reason for not using related_name:
+	# In this case, the related_name would be 'surfices' so 
+	# that you can do things like surf.surfices and it looks clean.
+	# Unfortunately when it came to templating, I need the 'surfices'
+	# namespace to make it clear there. I figured if there was a place
+	# to be more clear, it would be on the design side.
+	# Thus, instead of using 'surfices' we use the default 'surfice_set'
+	surfs 		= models.ManyToManyField(Surf)
+	
 	description = models.TextField()
 	status		= models.ForeignKey('Status')
 	data		= YAMLField()
