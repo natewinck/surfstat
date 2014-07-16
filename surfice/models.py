@@ -178,11 +178,11 @@ class Surf(models.Model):
 			# Find all Surfice objects that are in this surf
 			# and that also contain the name param
 			if name != None:
-				surfices = Surfice.objects.filter(surf=self, name__icontains=name)
+				surfices = Surf.objects.get(id=self.id).surfice_set.filter(name__icontains=name)
 			
 			# If name is not set, get all Surfices under this Surf
 			else:
-				surfices = Surfice.objects.filter(surf=self)
+				surfices = Surf.objects.get(id=self.id).surfice_set.all()
 		
 		except Surfice.DoesNotExist:
 			# We get here if we didn't find the specified category.
@@ -565,7 +565,7 @@ class Surfice(models.Model):
 		if	(
 				surf != None and
 				type(surf) is Surf and
-				Surf.objects.filter(pk=Surf.pk).count() == 1
+				Surf.objects.filter(pk=surf.pk).count() == 1
 			):
 			self.surf = surf
 		
