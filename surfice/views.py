@@ -411,13 +411,21 @@ def surfices(request):
 		# Is the admin trying to create a surfice?
 		elif	(
 					'name' in request.POST and
-					'surf' in request.POST and
 					'status' in request.POST
 				):
 			
-			surf = Surf.get_surf(pk=request.POST['surf'])
+			# Get the surf objects based on the pks that were passed
+			surfs = []
+			if 'surfs' in request.POST:
+				# Loop through the passed pks and append the surf to surfs array
+				for pk in request.POST.getlist('surfs'):
+					surfs.append( Surf.get_surf(pk=pk) )
+			
+			
 			status = Status.get_status(pk=request.POST['status'])
-			surfice = Surfice.create(request.POST['name'], surf, status, request.POST.get('description', ''))
+			print surfs
+			surfice = Surfice.create(request.POST['name'], surfs, status, request.POST.get('description', ''))
+			surfice = []
 			if type(surfice) is not Surfice:
 				flag = True
 		
@@ -431,7 +439,7 @@ def surfices(request):
 	context_dict['surfs'] = surf_list
 	
 	# Query all the Surfices and add them to context_dict
-	surfice_list = Surfice.get_surfices()
+	surfice_list = Surfice.get_surfices().prefetch_related('surfs')
 	context_dict['surfices'] = surfice_list
 	
 	# Query all the Statuses and add them to context_dict

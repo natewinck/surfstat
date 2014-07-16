@@ -525,4 +525,10 @@ $("tr[data-href]").click(function() {
 	//window.location = $(this).attr("data-href");
 });
 
+$(".multiselect").multiselect({
+	buttonContainer: '<br><div class="btn-group" />',
+	enableFiltering: true,
+	enableCaseInsensitiveFiltering: true
+});
+
 });

@@ -32,7 +32,7 @@ from datetime import date, timedelta
 class Surf(models.Model):
 	# Class variables
 	name 		= models.CharField(max_length=512, unique=True)
-	description = models.TextField()
+	description = models.TextField(blank=True)
 	data		= YAMLField()
 	
 	# Class methods
@@ -348,7 +348,8 @@ class Surf(models.Model):
 # *Event			get_events(self, ...)
 # void				set(self, name, surfs, description, **kwargs)
 # bool				set_name(self, name)
-# void				[deprecated] set_surf(self, surf)
+# void				set_surf(self, surf)
+# void				set_surfs(self, surfs)
 # void				add_surf(self, surf)
 # void				add_surfs(self, surfs)
 # void				set_description(self, description)
@@ -368,9 +369,9 @@ class Surfice(models.Model):
 	# namespace to make it clear there. I figured if there was a place
 	# to be more clear, it would be on the design side.
 	# Thus, instead of using 'surfices' we use the default 'surfice_set'
-	surfs 		= models.ManyToManyField(Surf)
+	surfs 		= models.ManyToManyField(Surf, blank=True)
 	
-	description = models.TextField()
+	description = models.TextField(blank=True)
 	status		= models.ForeignKey('Status')
 	data		= YAMLField()
 	
@@ -411,7 +412,6 @@ class Surfice(models.Model):
 			# Set the Surfice class variables
 			# Remove extra spaces from the name
 			surfice.name = ' '.join(name.split())
-			surfice.surfs.add(surfs)
 			surfice.description = description
 			surfice.status = status
 			
@@ -419,8 +419,12 @@ class Surfice(models.Model):
 			for key in kwargs:
 				surfice.data[key] = kwargs[key]
 			
-			# Save the Status object to the database
+			# Save the Surfice object to the database
 			surfice.save()
+			
+			# Now that the Surfice object has been saved,
+			# associate it with surf objects 
+			surfice.surfs = surfs
 		
 		return surfice
 		
@@ -617,9 +621,9 @@ class Surfice(models.Model):
 		return code
 	
 	# -------------------------------------
-	# [deprecated] set_surf(self, surf)
+	# set_surf(self, surf)
 	# 
-	# Sets the surf of the surfice and saves it to the database.
+	# Replaces the surf(s) of the surfice with this surf and saves it to the database.
 	# Only runs if Surf object exists in database. If it doesn't,
 	# nothing happens
 	# 
@@ -630,10 +634,25 @@ class Surfice(models.Model):
 	def set_surf(self, surf):
 		# Check to make sure Surf is actually in the database
 		if Surf.is_saved(surf=surf):
-			self.surf = surf
+			self.surf = [surf]
 		
 			# Save surfice object to database
 			self.save()
+	
+	# -------------------------------------
+	# set_surfs(self, surfs)
+	# 
+	# Replaces the surf(s) of the surfice with these surfs and saves it to the database.
+	# 
+	# INPUT
+	# surfs			The surf array that this surfice will be set to
+	#
+	# -------------------------------------
+	def set_surfs(self, surfs):
+		self.surf = surfs
+	
+		# Save surfice object to database
+		self.save()
 	
 	# -------------------------------------
 	# add_surf(self, surf)
@@ -786,7 +805,7 @@ class Surfice(models.Model):
 class Status(models.Model):
 	# Class variables
 	name 		= models.CharField(max_length=512, unique=True)
-	description = models.TextField()
+	description = models.TextField(blank=True)
 	data		= YAMLField()
 	
 	def __unicode__(self):
@@ -1055,7 +1074,7 @@ class Ding(models.Model):
 	surfice		= models.ForeignKey(Surfice)
 	status		= models.ForeignKey(Status)
 	email		= models.EmailField()
-	description	= models.TextField()
+	description	= models.TextField(blank=True)
 	data		= YAMLField()
 	
 	def __unicode__(self):
@@ -1257,7 +1276,7 @@ class Event(models.Model):
 	timestamp	= models.DateTimeField(auto_now_add=True, auto_now=False)
 	status		= models.ForeignKey(Status)
 	surfice		= models.ForeignKey(Surfice)
-	description	= models.TextField()
+	description	= models.TextField(blank=True)
 	data		= YAMLField()
 	
 	def __unicode__(self):

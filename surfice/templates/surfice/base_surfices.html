@@ -77,10 +77,11 @@
 						</div>
 						<div class="col-sm-6">
 							<div class="form-group">
-								<label class="control-label">Assigned Surf</label>
-								<select name="surf" class="form-control">
+								<label class="control-label">Assigned Surfs</label>
+								<select name="surfs" class="multiselect form-control" multiple="multiple">
 									{% for surf in surfs %}
-									<option value="{{ surf.id }}">{{ surf.name }}</option>
+						
+									<option value="{{ surf.id }}" {% if surf in surfice.surfs.all %}selected="selected"{% endif %}>{{ surf.name }}</option>
 									{% endfor %}
 								</select>
 							</div>
@@ -175,11 +176,11 @@
 								>
 							</div>
 							<div class="form-group">
-								<label class="control-label">Assigned Surf</label>
-								<select name="surf" class="form-control">
+								<label class="control-label">Assigned Surfs</label>
+								<select name="surfs" class="multiselect form-control" multiple="multiple">
 									{% for surf in surfs %}
 						
-									<option value="{{ surf.id }}" {% if surf == surfice.surf %}selected="selected"{% endif %}>{{ surf.name }}</option>
+									<option value="{{ surf.id }}" {% if surf in surfice.surfs.all %}selected="selected"{% endif %}>{{ surf.name }}</option>
 									{% endfor %}
 								</select>
 							</div>
