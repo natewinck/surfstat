@@ -137,6 +137,114 @@ def set_surf(request):
 	return errors
 
 # -----------------------------------------
+# set_surfs(request)
+#
+# Sets the surfs of a surfice
+# If no surfs or surfice are in request, nothing happens
+#
+# INPUT
+# request		A request object
+#	- surfs		Array of pks of surfs
+#	- surfice	The pk of the surfice
+#
+# RETURNS
+# *errors
+# -----------------------------------------
+def set_surfs(request):
+	errors = []
+	
+	# Both surf and surfice need to be in request
+	if 'surfs' in request.POST and 'surfice' in request.POST:
+		# Get both surfice and surf objects from the database
+		surfice = Surfice.get_surfice(pk=request.POST['surfice'])
+		surf = Surf.get_surf(pk=request.POST['surf'])
+		
+		# Get the surf objects based on the pks that were passed
+		surfs = []
+		# Loop through the passed pks and append the surf to surfs array
+		for pk in request.POST.getlist('surfs'):
+			surfs.append( Surf.get_surf(pk=pk) )
+		
+		# Set the surf
+		surfice.set_surfs(surfs)
+	
+	# If either surf or surfice was not in the request, throw an error
+	else:
+		errors.append("A Surf or Surfice was not passed")
+	
+	return errors
+
+# -----------------------------------------
+# add_surf(request)
+#
+# Add the surf to a surfice
+# If no surf or surfice is in request, nothing happens
+#
+# INPUT
+# request		A request object
+#	- surf		The pk of the surf
+#	- surfice	The pk of the surfice
+#
+# RETURNS
+# *errors
+# -----------------------------------------
+def add_surf(request):
+	errors = []
+	
+	# Both surf and surfice need to be in request
+	if 'surf' in request.POST and 'surfice' in request.POST:
+		# Get both surfice and surf objects from the database
+		surfice = Surfice.get_surfice(pk=request.POST['surfice'])
+		surf = Surf.get_surf(pk=request.POST['surf'])
+		
+		# Set the surf
+		surfice.add_surf(surf)
+	
+	# If either surf or surfice was not in the request, throw an error
+	else:
+		errors.append("A Surf or Surfice was not passed")
+	
+	return errors
+
+# -----------------------------------------
+# set_surfs(request)
+#
+# Sets the surfs of a surfice
+# If no surfs or surfice are in request, nothing happens
+#
+# INPUT
+# request		A request object
+#	- surfs		Array of pks of surfs
+#	- surfice	The pk of the surfice
+#
+# RETURNS
+# *errors
+# -----------------------------------------
+def add_surfs(request):
+	errors = []
+	
+	# Both surf and surfice need to be in request
+	if 'surfs' in request.POST and 'surfice' in request.POST:
+		# Get both surfice and surf objects from the database
+		surfice = Surfice.get_surfice(pk=request.POST['surfice'])
+		surf = Surf.get_surf(pk=request.POST['surf'])
+		
+		# Get the surf objects based on the pks that were passed
+		surfs = []
+		# Loop through the passed pks and append the surf to surfs array
+		for pk in request.POST.getlist('surfs'):
+			surfs.append( Surf.get_surf(pk=pk) )
+		
+		# Set the surf
+		surfice.add_surfs(surfs)
+	
+	# If either surf or surfice was not in the request, throw an error
+	else:
+		errors.append("A Surf or Surfice was not passed")
+	
+	return errors
+
+# -----------------------------------------
 # update_surf(request)
 #
 # Update a surf's name and description
@@ -198,6 +306,7 @@ def update_surf(request):
 # request						A request object
 #	- surfice					The pk of a surfice
 #	- surf (optional)			The pk of a surf
+#	- surfs (optional)			pks of surfs
 #	- name (optional)			New name of the surfice
 #	- description (optional)	New description of the surfice
 #	- data (optional)			JSON data for general data of the surfice
@@ -217,6 +326,17 @@ def update_surfice(request):
 		# If surf is set in request, set this new surf to the surfice
 		if 'surf' in request.POST:
 			surfice.set_surf(Surf.get_surf(pk=request.POST['surf']))
+		
+		# If surfs is set in request, set this new surf to the surfice
+		elif 'surfs' in request.POST:
+			# Get the surf objects based on the pks that were passed
+			surfs = []
+			# Loop through the passed pks and append the surf to surfs array
+			for pk in request.POST.getlist('surfs'):
+				surfs.append( Surf.get_surf(pk=pk) )
+		
+			# Set the surf
+			surfice.set_surfs(surfs)
 		
 		# If name is in request, give this surfice a new name
 		# Returns a False flag when another surfice already has this new name
@@ -938,6 +1058,18 @@ def dispatch(request, action=''):
 	# Set the surf of a surfice
 	elif action == 'set-surf':
 		response = json.dumps(set_surf(request))
+	
+	# Set the surfs of a surfice
+	elif action == 'set-surfs':
+		response = json.dumps(set_surfs(request))
+	
+	# Add a surf to a surfice
+	elif action == 'add-surf':
+		response = json.dumps(add_surf(request))
+	
+	# Add surfs to a surfice
+	elif action == 'add-surfs':
+		response = json.dumps(add_surfs(request))
 	
 	# Update the surf's name and description
 	elif action == 'update-surf':

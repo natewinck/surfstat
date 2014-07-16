@@ -113,8 +113,15 @@
 						<p data-ajax-update="surfice-description-{{ surfice.id }}">{{ surfice.description }}</p>
 					</div>
 					<div class="col-sm-4 col-xs-6">
-						<h4>Current Surf</h4>
-						<p data-ajax-update="surfice-surf-{{ surfice.id }}">{{ surfice.surf.name }}</p>
+						<h4>Current Surfs</h4>
+						<p data-ajax-update="surfice-surf-{{ surfice.id }}">
+							{% for surf in surfice.surfs.all %}
+								{{ surf.name }}<br>
+								
+							{% empty %}<em>(none)</em>
+							
+							{% endfor %}
+						</p>
 					</div>
 				</div>
 			

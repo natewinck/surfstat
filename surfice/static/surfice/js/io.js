@@ -280,7 +280,7 @@ function surfNameField($input) {
 	
 	// If the surfs array already exists, just fire the function without getting all the info
 	// If surfs is empty, however, get the new data
-	if (ss.surfs.length == 0) {
+	if (Object.size(ss.surfs) == 0) {
 		console.log("getting new surfs");
 		ss.getSurfs(function(data) {
 			checkField();
@@ -324,7 +324,7 @@ function surficeNameField($input) {
 	
 	// If the surfs array already exists, just fire the function without getting all the info
 	// If surfs is empty, however, get the new data
-	if (ss.surfices.length == 0) {
+	if (Object.size(ss.surfices) == 0) {
 		console.log("getting new surfices");
 		ss.getSurfices(function(data) {
 			checkField();
@@ -368,7 +368,7 @@ function statusNameField($input) {
 	
 	// If the surfs array already exists, just fire the function without getting all the info
 	// If surfs is empty, however, get the new data
-	if (ss.statuses.length == 0) {
+	if (Object.size(ss.statuses) == 0) {
 		console.log("getting new surfices");
 		ss.getStatuses(function(data) {
 			checkField();

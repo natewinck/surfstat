@@ -39,11 +39,11 @@ if (typeof Object.size === 'undefined')
 	};
 
 function Surfstat() {
-	this.surfs = [];
-	this.surfices = [];
-	this.statuses = [];
-	this.events = [];
-	this.dings = [];
+	this.surfs = {};
+	this.surfices = {};
+	this.statuses = {};
+	this.events = {};
+	this.dings = {};
 	// Ajax variable
 	this.ajax = {
 		// elements is a dictionary with selectors as the key
@@ -105,57 +105,76 @@ Surfstat.prototype.get = function(action, getData, callbackSuccess, callbackFail
 		if (action == "get-surf") {
 			console.log("get-surf");
 			console.log(data);
-			$.each(s.surfs, function(key, surf) {
-				console.log(surf);
-				if (surf.id == data.id) {
-					console.log("Found!!");
-					s.surfs[key] = data;
-					return false;
-				}
-			});
+			s.surfs[data.id] = data
 		}
 		
 		// Get all the surfs
 		else if (action == "get-surfs") {
-			s.surfs = data;
+			// Put the data into dictionary array by id
+			for (var key in data) {
+				s.surfs[data[key].id] = data[key];
+			}
+			//s.surfs = data;
 		}
 		
 		// Get all the surfs and their containing surfices
 		else if (action == "get-surfs-with-surfices") {
-			s.surfs = data;
+			// Put data into dictionary array by id
+			for (var key in data) {
+				s.surfs[data[key].id] = data[key];
+			}
 		}
 		
 		// Get a single surfice and put in the array
 		else if (action == "get-surfice") {
-			$.each(s.surfices, function(key, surfice) {
-				if (surfice.id == data.id) {
-					s.surfices[key] = surfice;
-					return false;
-				}
-			});
+			// Insert surfice into array at the correct point
+			s.surfices[data.id] = data;
 		}
 		
 		// For getting ALL surfices (need to add specificity later)
 		else if (action == "get-surfices") {
-			// This is wrong...especially if I only get a few surfices
-			// If I got ALL the surfices (there was no data passed for GET)
-			if (!getData)
-				s.surfices = data;
+			// Put data into dictionary array by id
+			for (var key in data) {
+				s.surfices[data[key].id] = data[key];
+			}
 		}
 		
 		// Get a single status and put it in the array
 		else if (action == "get-status") {
-			$.each(s.statuses, function(key, status) {
-				if (status.id == data.id) {
-					s.statuses[key] = status;
-					return false;
-				}
-			});
+			// Insert data into array at the correct dictionary position
+			s.statuses[data.id] = data
+		}
+		
+		// Get a single status and put it in the array
+		else if (action == "get-statuses") {
+			// Put data into dictionary array by id
+			for (var key in data) {
+				s.statuses[data[key].id] = data[key];
+			}
 		}
 		
 		else if (action == "get-event") {
 			console.log(data);
 			s.events[data.id] = data;
+		}
+		
+		else if (action == "get-events") {
+			// Put data into dictionary array by id
+			for (var key in data) {
+				s.events[data[key].id] = data[key];
+			}
+		}
+		
+		else if (action == "get-ding") {
+			console.log(data);
+			s.dings[data.id] = data;
+		}
+		
+		else if (action == "get-dings") {
+			// Put data into dictionary array by id
+			for (var key in data) {
+				s.dings[data[key].id] = data[key];
+			}
 		}
 		
 		// If action is empty or not available

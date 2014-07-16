@@ -421,11 +421,13 @@ def surfices(request):
 				for pk in request.POST.getlist('surfs'):
 					surfs.append( Surf.get_surf(pk=pk) )
 			
-			
+			# Get the status object
 			status = Status.get_status(pk=request.POST['status'])
-			print surfs
+			
+			# All objects have been gotten, so create the surfice
 			surfice = Surfice.create(request.POST['name'], surfs, status, request.POST.get('description', ''))
-			surfice = []
+			
+			# Check to make sure a Surfice object was actually created
 			if type(surfice) is not Surfice:
 				flag = True
 		

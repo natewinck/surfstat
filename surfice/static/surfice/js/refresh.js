@@ -51,7 +51,7 @@ function refreshAJAXPage($form) {
 		// Now loop through the selectors and fire a separate methods for each one
 		$.each(selectors, function(key, selector) {
 			
-			refreshAJAXPageHandler(selector, data);
+			refreshAJAXPageDispatcher(selector, data);
 			
 		});
 	});
@@ -346,6 +346,39 @@ function refreshSurfSurfices($elements, data) {
 }
 
 /* -----------------------------------------
+*  refreshSurfSurfices($elements, data)
+*
+*  Update this surf's surfices table (usually because the status was updated)
+*
+*  INPUT
+*  $elements		jQuery array of matched elements
+*  data				Array of surfices
+*
+*  ----------------------------------------- */
+function updateSurfices($elements, data) {
+	
+	// Only replace the rows in the table if there
+	// are surfices in the surf
+	if (data.length > 0) {
+		
+		// Loop through the elements to be updated
+		$elements.each(function() {
+			$element = $(this);
+			
+			if ($element.is("table")) {
+				// Only update the rows that had surfices that were updated
+				// Loop through the surfices we just got and refresh them in the table
+				$.each(data, function(key, surfice) {
+					var $newRow = $(getSurficeRow(surfice));
+					var $currentRow = $element.find('[data-ajax-id=surfice-' + surfice.id + ']');
+					$currentRow.replaceWith($newRow);
+				});
+			}
+		});
+	}
+}
+
+/* -----------------------------------------
 *  refreshSurficeName($elements, data)
 *
 *  Update all the surfice names
@@ -625,7 +658,7 @@ function refreshDingRow($elements, data) {
 *  $form (optional) The form that requested the refresh
 *
 *  ----------------------------------------- */
-function refreshAJAXPageHandler(selector, data) {
+function refreshAJAXPageDispatcher(selector, data) {
 	// First get the element(s) that contain this whole selector
 	//$elements = $("[data-ajax-update=\"" + selector + "\"]");
 	
@@ -664,6 +697,11 @@ function refreshAJAXPageHandler(selector, data) {
 	// Update this surf's surfices (usually because the status was updated)
 	else if (selector.contains("surf-surfices"))
 		refreshSurfSurfices($elements, data);
+	
+	// Update this surf's surfices (usually because the status was updated)
+	// Make sure to get all the surfices on the page that get updated
+	else if (selector.contains("surfices"))
+		updateSurfices($elements, data);
 	
 	// Update all the surfice names
 	else if (selector.contains("surfice-name"))
@@ -713,10 +751,19 @@ function refreshAJAXPageHandler(selector, data) {
 *
 *  ----------------------------------------- */
 function addSurficeRowToSurf($table, surfice) {
-	var $row = $("<tr class=\"dynamic-color\" style=\"background-color:" + surfice.status.data.color +"; color: " + getDynamicColor(surfice.status.data.color) + ";\">");
+	var $row = $("<tr class=\"dynamic-color\" style=\"background-color:" + surfice.status.data.color +"; color: " + getDynamicColor(surfice.status.data.color) + ";\" data-ajax-id='surfice-" + surfice.id + "'>");
 	$row.append("<td>" + surfice.name + "</td>");
 	$row.append("<td>" + surfice.status.name + "</td>");
 
 	// Now add the created row to the table
 	$table.append($row);
+}
+
+function getSurficeRow(surfice) {
+	var $row = $("<tr class=\"dynamic-color\" style=\"background-color:" + surfice.status.data.color +"; color: " + getDynamicColor(surfice.status.data.color) + ";\" data-ajax-id='surfice-" + surfice.id + "'>");
+	$row.append("<td>" + surfice.name + "</td>");
+	$row.append("<td>" + surfice.status.name + "</td>");
+
+	// Now add the created row to the table
+	return $row[0];
 }

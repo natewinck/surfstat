@@ -24,7 +24,7 @@ class StatusSerializer(serializers.ModelSerializer):
 		model = Status
 
 class SurficeSerializer(serializers.ModelSerializer):
-	surf = SurfSerializer(many=False)
+	surfs = SurfSerializer(many=False)
 	status = StatusSerializer()
 	
 	data = serializers.SerializerMethodField('get_data_field')

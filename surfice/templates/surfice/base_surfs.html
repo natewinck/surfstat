@@ -76,9 +76,11 @@
 					<div class="row">
 						<div class="col-sm-8">
 							<h4>All Surfices in <span data-ajax-update="surf-name-{{ surf.id }}">{{ surf.name }}</span></h4>
-							<table class="table" data-ajax-update="surfs-surfices surf-surfices-{{ surf.id }}" data-ajax-id="surf-{{ surf.id }}">
+							<table class="table" data-ajax-update="surfs-surfices surf-surfices-{{ surf.id }} surfices" data-ajax-id="surf-{{ surf.id }}">
 								{% for surfice in surf.surfices %}
-								<tr class="dynamic-color" style="background-color:{{ surfice.status.data.color }}">
+								<tr class="dynamic-color" style="background-color:{{ surfice.status.data.color }}"
+									data-ajax-id="surfice-{{ surfice.id }}"
+								>
 									<td>{{ surfice.name }}</td>
 									<td>{{ surfice.status.name }}</td>
 								</tr>
@@ -117,9 +119,10 @@
 					</div>-->
 					<div class="row">
 						<div class="col-xs-12">
-							<form type="ajax" action="ajax/set-surf" method="post" role="form"
-							data-ajax-action="ajax/get-surfs-with-surfices"
-							data-ajax-update-target="surfs-surfices surfices-select surf-delete"
+							<form type="ajax" action="ajax/add-surf" method="post" role="form"
+							data-ajax-action="ajax/get-surfices"
+							data-ajax-get='{ "surf":"{{ surf.id }}" }'
+							data-ajax-update-target="surf-surfices-{{ surf.id }} surfices-select surf-delete"
 							data-ajax-success="Surfice successfully added."
 							data-ajax-id="{{ surf.id }}">
 								{# To prevent cross-site forgery, include the following required tag #}
@@ -146,7 +149,7 @@
 					<form type="ajax" action="ajax/set-surf-status" method="post" role="form"
 						data-ajax-action="ajax/get-surfices"
 						data-ajax-get='{"surf": {{ surf.id }}}'
-						data-ajax-update-target="surf-surfices-{{ surf.id }}"
+						data-ajax-update-target="surf-surfices-breakit-{{ surf.id }} surfices"
 						data-ajax-id="surf-{{ surf.id }}">
 						<div class="row">
 							<div class="col-sm-6">

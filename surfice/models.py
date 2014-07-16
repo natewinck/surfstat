@@ -685,7 +685,8 @@ class Surfice(models.Model):
 	# -------------------------------------
 	def add_surfs(self, surfs):
 		# Does NOT check if surfs are already in database (dangerous)
-		self.surfs.add(surfs)
+		# Expand the array out for .add()
+		self.surfs.add(*surfs)
 	
 		# Save surfice object to database
 		self.save()
