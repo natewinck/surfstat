@@ -85,6 +85,28 @@ def set_surf_status(request):
 		# Do nothing
 		errors.append("To set a Surf, I need both a Surf and a Status.")
 		pass
+	elif 'all' in request.POST:
+		# Get all the surfices
+		surfices = Surfice.get_surfices()
+		
+		# Get the status that all the surfices will be set to
+		status = Status.get_status(pk=request.POST['status'])
+		
+		# Get the description. If no description was passed,
+		# fill it in with the default value of the empty string
+		# Using .get() allows for description not being set in POST
+		description = request.POST.get('description','')
+		
+		# If event is set and is set to False, don't create an event with the update
+		if 'event' in request.POST and int(request.POST['event']) == 0:
+			event = False
+		# Create an event by default
+		else:
+			event = True
+		
+		# Now set the status for all the Surfices in this Surf
+		for surfice in surfices:
+			surfice.set_status(status, description, event=event)
 	else:
 		# Get the surf and status parameters to set the status of the surfice
 		surf = Surf.get_surf(pk=request.POST['surf'])
@@ -95,12 +117,20 @@ def set_surf_status(request):
 		# Using .get() allows for description not being set in POST
 		description = request.POST.get('description','')
 		
+		# If event is set and is set to False, don't create an event with the update
+		
+		if 'event' in request.POST and int(request.POST['event']) == 0:
+			event = False
+		# Create an event by default
+		else:
+			event = True
+		
 		# Get all the surfices associated with this surf
 		surfices = surf.get_surfices()
 		
 		# Now set the status for all the Surfices in this Surf
 		for surfice in surfices:
-			surfice.set_status(status, description)
+			surfice.set_status(status, description, event=event)
 	
 	return errors
 
@@ -114,6 +144,7 @@ def set_surf_status(request):
 # request		A request object
 #	- surf		The pk of the surf
 #	- surfice	The pk of the surfice
+#	- surfices	Array of pks of surfices
 #
 # RETURNS
 # *errors
@@ -129,6 +160,27 @@ def set_surf(request):
 		
 		# Set the surf
 		surfice.set_surf(surf)
+	
+	elif 'surf' in request.POST and 'surfices' in request.POST:
+		# Get the surf object from the database
+		surf = Surf.get_surf(pk=request.POST['surf'])
+		
+		# Get the surfice objects based on the pks that were passed
+		surfices = []
+		# Loop through the passed pks and append the surf to surfs array
+		for pk in request.POST.getlist('surfices'):
+			surfices.append( Surfice.get_surfice(pk=pk) )
+		
+		# Now set these surfices to the surf
+		surf.surfice_set = surfices
+	
+	# If only surf is set, clear all the surfices from the surf
+	elif 'surf' in request.POST:
+		# Get the surf object from the database
+		surf = Surf.get_surf(pk=request.POST['surf'])
+		
+		# Clear the surfices from this surf
+		surf.surfice_set.clear()
 	
 	# If either surf or surfice was not in the request, throw an error
 	else:

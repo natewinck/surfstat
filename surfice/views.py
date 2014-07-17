@@ -300,7 +300,7 @@ def surfs(request):
 	flag = False
 	if request.method == 'POST':
 		
-		# Is the admin trying to delete a status?
+		# Is the admin trying to delete a surf?
 		if	(
 				'delete' in request.POST and
 				'surf' in request.POST
@@ -338,10 +338,21 @@ def surfs(request):
 					pass
 		
 		# Is the admin trying to create a surf?
-		elif 'name' in request.POST and 'description' in request.POST:
-			surf = Surf.create(request.POST['name'], request.POST['description'])
+		elif 'name' in request.POST:
+				
+			surf = Surf.create(request.POST['name'], request.POST.get('description', ''))
+			
+			# If the surf wasn't created, throw a flag
 			if surf == None:
 				flag = True
+			# If the surf was created, assign surfices to it
+			else:
+				surfices = []
+				if 'surfices' in request.POST:
+					# Loop through the passed pks and append the surf to surfs array
+					for pk in request.POST.getlist('surfices'):
+						surfices.append( Surfice.get_surfice(pk=pk) )
+				surf.surfice_set = surfices
 		
 		# Redirect to this view after submission to clear headers
 		return HttpResponseRedirect('')

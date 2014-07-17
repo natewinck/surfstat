@@ -78,7 +78,7 @@
 						<div class="col-sm-6">
 							<div class="form-group">
 								<label class="control-label">Assigned Surfs</label>
-								<select name="surfs" class="multiselect form-control" multiple="multiple">
+								<select name="surfs" class="multiselect-surfs form-control" multiple="multiple">
 									{% for surf in surfs %}
 						
 									<option value="{{ surf.id }}" {% if surf in surfice.surfs.all %}selected="selected"{% endif %}>{{ surf.name }}</option>
@@ -184,7 +184,7 @@
 							</div>
 							<div class="form-group">
 								<label class="control-label">Assigned Surfs</label>
-								<select name="surfs" class="multiselect form-control" multiple="multiple">
+								<select name="surfs" class="multiselect-surfs form-control" multiple="multiple">
 									{% for surf in surfs %}
 						
 									<option value="{{ surf.id }}" {% if surf in surfice.surfs.all %}selected="selected"{% endif %}>{{ surf.name }}</option>

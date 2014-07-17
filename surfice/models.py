@@ -207,18 +207,12 @@ class Surf(models.Model):
 		
 		# If name is set, name hasn't changed, name isn't blank, and there isn't another object
 		# with the same name (case insensitive), update the name
-		if	(
-				name != None 							and
-				name.strip() != ''						and
-				' '.join(name.split()) != self.name 	and
-				Surf.objects.filter(name__iexact='name').count() == 0
-			):
-			# Get rid of extra spaces in the name
-			self.name = ' '.join(name.split())
+		if name != None:
+			self.set_name()
 		
 		# If description is set, change the description
 		if description != None:
-			self.description = description
+			self.set_description(description)
 		
 		# Go through the generic data and put it in their respective fields
 		for key in kwargs:
@@ -248,7 +242,7 @@ class Surf(models.Model):
 		
 		# Check if new name already exists in database
 		# If new name doesn't exist, set this object to that name	
-		elif not Surf.is_saved(name=name) and name.strip() != '':
+		elif not Surf.is_saved(name=name, exclude=self.id) and name.strip() != '':
 			self.name = ' '.join(name.split())
 			self.save()
 			code = True
@@ -304,16 +298,17 @@ class Surf(models.Model):
 	# name (optional)	Name of the Surf object
 	# pk (optional)		Private key of the Surf object
 	# surf (optional)	Surf object
+	# exclude (optional)	pk of surf object to exclude from name search
 	# 
 	# RETURNS
 	# True if Surf object is in database
 	# False if Surf object is not in database
 	# -------------------------------------
 	@staticmethod
-	def is_saved(name=None, pk=None, surf=None):
+	def is_saved(name=None, pk=None, surf=None, exclude=-1):
 		exists = False
 		
-		if name != None and Surf.objects.filter(name__iexact=' '.join(name.split())).count() > 0:
+		if name != None and Surf.objects.filter(name__iexact=' '.join(name.split())).exclude(pk=exclude).count() > 0:
 			exists = True
 		
 		elif pk != None and Surf.objects.filter(pk=pk).count() > 0:
@@ -568,23 +563,16 @@ class Surfice(models.Model):
 		
 		# If name is set, name hasn't changed, name isn't blank, and there isn't another object
 		# with the same name (case insensitive), update the name
-		if	(
-				name != None 							and
-				name.strip() != ''						and
-				' '.join(name.split()) != self.name 	and
-				Surf.objects.filter(name__iexact='name').count() == 0
-			):
-			self.name = ' '.join(name.split())
+		if name != None:
+			self.set_name(name)
 		
 		# If surfs are set, update it
-		if	(
-				surfs != None
-			):
-			self.surfs.add(surfs)
+		if surfs != None:
+			self.set_surfs(surfs)
 		
 		# If description is set, change the description
 		if description != None:
-			self.description = description
+			self.set_description(description)
 		
 		# Go through the generic data and put it in their respective fields
 		for key in kwargs:
@@ -614,7 +602,7 @@ class Surfice(models.Model):
 		
 		# Check if new name already exists in database
 		# If new name doesn't exist and isn't blank, set this object to that name	
-		elif not Surfice.is_saved(name=name)  and name.strip() != '':
+		elif not Surfice.is_saved(name=name, exclude=self.id)  and name.strip() != '':
 			self.name = ' '.join(name.split())
 			self.save()
 			code = True
@@ -716,11 +704,11 @@ class Surfice(models.Model):
 	# description (optional)	If set (even to a blank string), create an
 	#							event along with the status
 	# -------------------------------------
-	def set_status(self, status, description=False):
+	def set_status(self, status, description='', event=True):
 		
 		# If we want to create an event along with updating the status,
 		# do it here.
-		if description != False:
+		if event:
 			Event.create(self, status, description)
 		
 		self.status = status
@@ -758,17 +746,18 @@ class Surfice(models.Model):
 	# name			Name of the Surfice object
 	# pk			Private key of the surfice object
 	# surfice		Surfice object
+	# exclude (optional)	pk of Surfice object that you want to exclude from name search
 	# 
 	# RETURNS
 	# True if Surfice object is in database
 	# False if Surfice object is not in database
 	# -------------------------------------
 	@staticmethod
-	def is_saved(name=None, pk=None, surfice=None):
+	def is_saved(name=None, pk=None, surfice=None, exclude=-1):
 		exists = False
 		print Surfice.objects.filter(name__iexact=' '.join( name.split() )).count() > 0
 		# If name is set and the object is in the database
-		if name != None and Surfice.objects.filter(name__iexact=' '.join( name.split() )).count() > 0:
+		if name != None and Surfice.objects.filter(name__iexact=' '.join( name.split() )).exclude(pk=exclude).count() > 0:
 			exists = True
 		
 		# If pk is set and the object is in the database
@@ -948,22 +937,15 @@ class Status(models.Model):
 		
 		# If name is set, name hasn't changed, and there isn't another object
 		# with the same name, update the name
-		if	(
-				name != None 							and
-				name.strip() != ''						and
-				' '.join(name.split()) != self.name 	and
-				Status.objects.filter(name__iexact='name').count() == 0
-			):
-			# Remove extra spaces from the name
-			self.name = ' '.join(name.split())
+		if name != None:
+			self.set_name(name)
 		
 		# If description is set, change the description
 		if description != None:
-			self.description = description
+			self.set_description(description)
 		
 		# Go through the generic data and put it in their respective fields
 		for key in kwargs:
-			print key, kwargs[key]
 			self.data[key] = kwargs[key]
 		
 		# Save the object to the database
@@ -990,7 +972,7 @@ class Status(models.Model):
 		
 		# Check if new name already exists in database
 		# If new name doesn't exist and isn't blank, set this object to that name	
-		elif not Status.is_saved(name=name) and name.strip() != '':
+		elif not Status.is_saved(name=name, exclude=self.id) and name.strip() != '':
 			self.name = ' '.join(name.split())
 			self.save()
 			code = True
@@ -1021,17 +1003,18 @@ class Status(models.Model):
 	# name			Name of the Status object
 	# pk			Private key of the object
 	# status		Status object
+	# exclude (optional)	pk of status object to exclude from name search
 	# 
 	# RETURNS
 	# True if Status object is in database
 	# False if Status object is not in database
 	# -------------------------------------
 	@staticmethod
-	def is_saved(name=None, pk=None, status=None):
+	def is_saved(name=None, pk=None, status=None, exclude=-1):
 		exists = False
 		
 		# If name is set and the object is in the database
-		if name != None and Status.objects.filter(name__iexact=' '.join(name.split())).count() > 0:
+		if name != None and Status.objects.filter(name__iexact=' '.join(name.split())).exclude(pk=exclude).count() > 0:
 			exists = True
 		
 		# If pk is set and the object is in the database

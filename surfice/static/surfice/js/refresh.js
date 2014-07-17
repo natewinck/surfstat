@@ -176,7 +176,7 @@ function refreshSurfsSurfices($elements, data) {
 	
 		// If nothing is left in surfices, fill the table with only an empty row
 		if (empty) {
-			var $row = $("<tr><td>No Surfices in here</td></tr>");
+			var $row = $(getEmptySurfRow());
 			$element.append($row);
 		}
 
@@ -185,7 +185,49 @@ function refreshSurfsSurfices($elements, data) {
 }
 
 /* -----------------------------------------
-*  refreshSurficesSelect($elements, data)
+*  refreshSurfSurficesSelect($elements, data)
+*
+*  Update this surf's surfice selector
+*
+*  INPUT
+*  $elements		jQuery array of matched elements
+*  data				Array of surfs with deep data including surfices
+*
+*  ----------------------------------------- */
+function refreshSurfSurficesSelect($elements, data) {
+	$elements.each(function() {
+		$element = $(this);
+	
+		var surfId = $element.attr("data-ajax-id");
+
+		//{% for surfice in surfices %}
+		//	{% if surfice not in surf.surfices %}
+		//	<option value="{{ surfice.id }}">{{ surfice.name }}</option>
+		//	{% endif %}
+		//{% endfor %}
+		$element.html("");
+
+		// For every surfice in data...
+		// Loop through the surfs
+		$.each(data, function(key, surf) {
+		
+			// Only show surfices that are in other surfs
+			// So exclude the current surf
+			if ("surf-" + surf.id != surfId) {
+				// Loop through this surf's surfices and add them to the <select>
+				$.each(surf.surfices, function(key, surfice) {
+					var $option = $("<option value=\"" + surfice.id + "\">" + surfice.name + "</option>");
+					$element.append($option);
+				});
+			}
+		
+		});
+	
+	});
+}
+
+/* -----------------------------------------
+*  refreshSurfsSurficesSelect($elements, data)
 *
 *  Update the matched selectors to reflect
 *  addition or removal of surfices from surfs
@@ -195,8 +237,7 @@ function refreshSurfsSurfices($elements, data) {
 *  data				Array of surfs with deep data including surfices
 *
 *  ----------------------------------------- */
-function refreshSurficesSelect($elements, data) {
-				
+function refreshSurfsSurficesSelect($elements, data) {
 	$elements.each(function() {
 		$element = $(this);
 	
@@ -239,7 +280,6 @@ function refreshSurficesSelect($elements, data) {
 *
 *  ----------------------------------------- */
 function refreshSurfDelete($elements, data) {
-	
 	// To make naming easier, rename data to surfs
 	var surfs = data;
 
@@ -325,7 +365,6 @@ function refreshSurfDelete($elements, data) {
 *
 *  ----------------------------------------- */
 function refreshSurfSurfices($elements, data) {
-	
 	// Only replace the rows in the table if there
 	// are surfices in the surf
 	if (data.length > 0) {
@@ -342,6 +381,24 @@ function refreshSurfSurfices($elements, data) {
 				addSurficeRowToSurf($element, surfice);
 			});
 		});
+	}
+	
+	// If there are no surfices in the surf, output the empty row
+	else {
+		var $row = $(getEmptySurfRow());
+		
+		// Loop through the tables to be updated
+		$elements.each(function() {
+			$element = $(this);
+		
+			// Empty the table
+			$element.html("");
+			
+			// Add the empty row
+			$element.append($row);
+		});
+		
+		
 	}
 }
 
@@ -669,7 +726,7 @@ function refreshAJAXPageDispatcher(selector, data) {
 	
 	// Pull the matching elements from the cache
 	$elements = ss.ajax.$elements[selector];
-
+	
 	// If there are no elements to match, continue onto the next loop
 	if (!$elements.length) return;
 	
@@ -690,9 +747,10 @@ function refreshAJAXPageDispatcher(selector, data) {
 	else if (selector.contains("surfices-select"))
 		refreshSurficesSelect($elements, data);
 	
+	// Since change to category model, there is no need to refresh the delete dialog box
 	// Update every delete dialog box for surfs
-	else if (selector.contains("surf-delete"))
-		refreshSurfDelete($elements, data);
+	//else if (selector.contains("surf-delete"))
+	//	refreshSurfDelete($elements, data);
 	
 	// Update this surf's surfices (usually because the status was updated)
 	else if (selector.contains("surf-surfices"))
@@ -700,7 +758,7 @@ function refreshAJAXPageDispatcher(selector, data) {
 	
 	// Update this surf's surfices (usually because the status was updated)
 	// Make sure to get all the surfices on the page that get updated
-	else if (selector.contains("surfices"))
+	else if (selector.contains("update-surfices"))
 		updateSurfices($elements, data);
 	
 	// Update all the surfice names
@@ -766,4 +824,8 @@ function getSurficeRow(surfice) {
 
 	// Now add the created row to the table
 	return $row[0];
+}
+
+function getEmptySurfRow() {
+	return $("<tr><td>No Surfices in here</td></tr>")[0];
 }

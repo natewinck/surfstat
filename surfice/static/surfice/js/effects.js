@@ -525,10 +525,21 @@ $("tr[data-href]").click(function() {
 	//window.location = $(this).attr("data-href");
 });
 
-$(".multiselect").multiselect({
+$(".multiselect-surfs").multiselect({
 	buttonContainer: '<br><div class="btn-group" />',
 	enableFiltering: true,
 	enableCaseInsensitiveFiltering: true
+});
+
+$(".multiselect-surfices").multiselect({
+	buttonContainer: '<div class="btn-group btn-group-justified" />',
+	// Bootstrap buttons need to be wrapped in another div
+	// That option is not given however...
+	//buttonClass: "btn btn-block btn-default",
+	buttonWidth: "100%",
+	enableFiltering: true,
+	enableCaseInsensitiveFiltering: true,
+	includeSelectAllOption: true
 });
 
 });
