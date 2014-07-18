@@ -370,14 +370,8 @@ $(".surfice").hover(
 ------------------------------ */
 $(".dropdown-select .dropdown-menu li").click(function(event) {
     var $target = $( event.currentTarget );
-    var $group = $target.closest( '.dropdown-select' )
-    $group
-        .find( '[data-bind="label"]' ).text( $target.text() )
-        .end()
-        .children( '.dropdown-toggle' ).dropdown( 'toggle' );
-    
-    $group.find( 'input[type="hidden"]' ).val( $target.attr("value") )
-    
+    var $group = $target.closest( '.dropdown-select' );
+    dropdownSelect($target);
     // If the dropdown autosubmits the form, submit it now!
     if ($group.hasClass("autosubmit")) {
         $(this).parents("form").submit();
@@ -386,6 +380,16 @@ $(".dropdown-select .dropdown-menu li").click(function(event) {
     return false;
  
 });
+
+function dropdownSelect($li) {
+	var $target = $li;
+    var $group = $target.closest( '.dropdown-select' )
+    $group
+        .find( '[data-bind="label"]' ).text( $target.text() )
+        .end()
+        .children( '.dropdown-toggle' ).dropdown( 'toggle' );
+    $group.find( 'input[type="hidden"]' ).val( $target.attr("value") )
+}
     
 
 /* AUTOSUBMIT DROPDOWN
@@ -471,7 +475,6 @@ $(".dynamic-color").each(function() {
 	// change the color of the text to white
 	$(this).css("color", getDynamicColor($(this).css("background-color")));
 });
-
 
 // Replace the info in the dialog box before showing the confirm-delete modal dialog
 $("#confirm-delete-event").on("show.bs.modal", function(e) {

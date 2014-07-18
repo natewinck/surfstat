@@ -477,23 +477,43 @@ function refreshSurficeName($elements, data) {
 }
 
 /* -----------------------------------------
-*  refreshSurficeSurf($elements, data)
+*  refreshSurficeSurfs($elements, data)
 *
-*  Update all of this surfice's names
+*  Update all of this surfice's surf names
 *
 *  INPUT
 *  $elements		jQuery array of matched elements
 *  data				data that has a surf object with a name attribute
 *
 *  ----------------------------------------- */
-function refreshSurficeSurf($elements, data) {
+function refreshSurficeSurfs($elements, data) {
+	var surfsHTML = "";
+	var surfsText = "";
+	// If the surfice is assigned to one or more surfices, create a string
+	if (data.surfs.length) {
+		$.each(data.surfs, function(key, surf) {
+			surfsHTML += surf.name + "<br>";
+			surfsText += surf.name + ", ";
+		});
+		
+		surfsHTML = surfsHTML.slice(0, -4);
+		surfsText = surfsText.slice(0, -2);
+	}
+	// If the surfice is not assigned to any surfs
+	else {
+		surfsHTML = "<em>(none)</em>";
+	}
+	
 	
 	// Loop through the elements and change the surf name in each one
 	$elements.each(function() {
 		$element = $(this);
 		
 		// Change the contents of the element to the name of the surfice's surf
-		$element.text(data.surf.name).val(data.surf.name);
+		if ($element.attr("value"))
+			$element.val(surfsText);
+		else
+			$element.html(surfsHTML);
 		
 	});
 }
@@ -501,7 +521,7 @@ function refreshSurficeSurf($elements, data) {
 /* -----------------------------------------
 *  refreshSurficeStatus($elements, data)
 *
-*  Update all the surfice names
+*  Update all the surfice statuses
 *
 *  INPUT
 *  $elements		jQuery array of matched elements
@@ -516,6 +536,38 @@ function refreshSurficeStatus($elements, data) {
 		
 		// Change the contents of the element to the name of the surfice's surf
 		$element.text(data.status.name).val(data.status.name);
+		
+		// Specifically for surfice page
+		$element.parent().css({
+			"background-color": data.status.data.color,
+			"color": getDynamicColor(data.status.data.color)
+		});
+		
+	});
+}
+
+/* -----------------------------------------
+*  refreshSurficesStatus($elements, data)
+*
+*  Update all the surfices statuses
+*
+*  INPUT
+*  $elements		jQuery array of matched elements
+*  data				data that has an array of surfices with status object with a name attribute
+*
+*  ----------------------------------------- */
+function refreshSurficesStatus($elements, data) {
+	
+	// Loop through the elements and change the surfice status in each one
+	$elements.each(function() {
+		$element = $(this);
+		
+		var surficeId = $element.attr("data-ajax-id");
+		
+		for (var key in data) {
+			// Change the contents of the element to the name of the surfice's surf
+			if (data[key].id == surficeId) $element.text(data[key].status.name).val(data[key].status.name);
+		}
 		
 	});
 }
@@ -766,12 +818,16 @@ function refreshAJAXPageDispatcher(selector, data) {
 		refreshSurficeName($elements, data);
 	
 	// Update this surfice's surf on the page
-	else if (selector.contains("surfice-surf"))
-		refreshSurficeSurf($elements, data);
+	else if (selector.contains("surfice-surfs"))
+		refreshSurficeSurfs($elements, data);
 	
 	// Update this surfice's status on the page
 	else if (selector.contains("surfice-status"))
 		refreshSurficeStatus($elements, data);
+	
+	// Update surfices statuses on the page
+	else if (selector.contains("surfices-status"))
+		refreshSurficesStatus($elements, data);
 	
 	// Update the status name on the page
 	else if (selector.contains("status-name"))

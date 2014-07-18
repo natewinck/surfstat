@@ -78,7 +78,11 @@
                     
                     <td><a href="surfs/{{ surf.name|slugify }}">{{ surf.name }}</a></td>
                     <td>
-                        <form type="ajax" action="ajax/set-surf-status" method="post">
+                        <form type="ajax" action="ajax/set-surf-status" method="post"
+                        	data-ajax-action="ajax/get-surfices"
+                        	data-ajax-get='{ "surf": "{{surf.id}}" }'
+                        	data-ajax-update-target="surfices-status"
+                        >
                             {# To prevent cross-site forgery, include the following required tag #}
                             {% csrf_token %}
                             <input type="hidden" name="surf" value="{{ surf.id }}">
@@ -117,8 +121,9 @@
                                 {% csrf_token %}
                                 <input type="hidden" name="surfice" value="{{ surfice.id }}">
                                 <div class="dropdown pull-right dropdown-select autosubmit">
-                                    <input type="hidden" name="status">
-                                    <button type="button" class="btn btn-default btn-xs dropdown-toggle" data-toggle="dropdown" tabindex="-1"><span data-bind="label">{{ surfice.status.name }}</span>
+                                    <input type="hidden" name="status" data-ajax-update="surfices-status" data-ajax-id="{{ surfice.id }}">
+                                    <button type="button" class="btn btn-default btn-xs dropdown-toggle" data-toggle="dropdown" tabindex="-1">
+                                    	<span data-bind="label" data-ajax-update="surfices-status" data-ajax-id="{{ surfice.id }}">{{ surfice.status.name }}</span>
                                         <span class="caret"></span>
                                     </button>
                                     <ul class="dropdown-menu" role="menu" aria-labelledby="dLabel">
@@ -139,7 +144,11 @@
             </div>
             <div class="col-xs-6">
             <h2 class="featurette-heading" style="text-align:right">Surf through your Surfices</h2>
-            <p style="text-align:right">The latest update was to the Webmail surfice with a status of Up.  To make any changes, just select a new status from each surfice's dropdown menu.</p>
+            <p style="text-align:right">
+				{% with events|first as event %}
+				The latest recorded update was to the {{ event.surfice.name }} surfice with a status of {{ event.status.name }}.  To make any changes, just select a new status from each surfice's dropdown menu.
+				{% endwith %}
+			</p>
             </div>  
 </div>
     

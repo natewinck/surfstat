@@ -379,13 +379,15 @@ def update_surfice(request):
 		if 'surf' in request.POST:
 			surfice.set_surf(Surf.get_surf(pk=request.POST['surf']))
 		
-		# If surfs is set in request, set this new surf to the surfice
-		elif 'surfs' in request.POST:
+		# Surfs is set in request, set this new surf to the surfice
+		else:
 			# Get the surf objects based on the pks that were passed
 			surfs = []
-			# Loop through the passed pks and append the surf to surfs array
-			for pk in request.POST.getlist('surfs'):
-				surfs.append( Surf.get_surf(pk=pk) )
+			# If surfs were set in the request add them to the array
+			if 'surfs' in request.POST:
+				# Loop through the passed pks and append the surf to surfs array
+				for pk in request.POST.getlist('surfs'):
+					surfs.append( Surf.get_surf(pk=pk) )
 		
 			# Set the surf
 			surfice.set_surfs(surfs)

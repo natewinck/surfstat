@@ -26,7 +26,7 @@
 				{# Example of using the general data field #}
 				{# If color is set in data, set the color #}
 				{% for surfice in surfices %}
-				<div class="surfice surfice-success" {% if surfice.status.data.color %}style="background-color:{{ surfice.status.data.color }}"{% endif %}>
+				<div class="surfice surfice-success dynamic-color" {% if surfice.status.data.color %}style="background-color:{{ surfice.status.data.color }}"{% endif %}>
 					<h2 class="center-all featurette-heading-grid surfice-active">{{ surfice.name }}</h2><a class="btn btn-lg btn-info center-all-button featurette-heading-grid surfice-hover" role="button" data-toggle="modal" data-target="#ding-{{ surfice.id }}">Report an Issue</a>
 				</div>
 				{% endfor %}
@@ -46,7 +46,7 @@
 				
 				<!-- DING MODAL DIALOG BOX -->
 				{% for surfice in surfices %}
-				<div class="modal fade" id="ding-{{ surfice.id }}" tabindex="-1" role="dialog" aria-labelledby="Ding Label" aria-hidden="true">
+				<div class="modal fade ding" id="ding-{{ surfice.id }}" tabindex="-1" role="dialog" aria-labelledby="Ding Label" aria-hidden="true">
 				  <div class="modal-dialog">
 					<div class="modal-content">
 					  <div class="modal-header">
@@ -55,14 +55,17 @@
 					  </div>
 					  <div class="modal-body">
 						
-						<form id="ding-form-{{ surfice.id }}" class="form-horizontal text-left" role="form" action="ajax/submit-ding" type="ajax" method="post">
+						<form id="ding-form-{{ surfice.id }}" class="form-horizontal text-left" role="form" action="ajax/submit-ding" type="ajax" method="post"
+							data-ajax-success="Issue submitted!"
+							data-ajax-fail="Could not submit issue :("
+						>
 							{# To prevent cross-site forgery, include the following required tag #}
 							{% csrf_token %}
 							<input type="hidden" name="surfice" value="{{ surfice.id }}">
 						  	<div class="form-group"> 
-								<label class="col-sm-2 control-label" for="exampleInputEmail1">Email</label>
+								<label class="col-sm-2 control-label">Email</label>
 								<div class="col-sm-6">
-									<input type="email" class="form-control" name="email" placeholder="Enter email">
+									<input type="email" class="form-control" name="email" placeholder="Enter email" data-ajax-clear>
 								</div>
 						  	</div>
 							
@@ -73,14 +76,14 @@
 								<label class="col-sm-2 control-label">Status</label>
 								<div class="col-sm-10">
 									<div class="input-group">
-										<input type="text" name="description" class="form-control" placeholder="(Optional) Feed me more detail...">
+										<input type="text" name="description" class="form-control" placeholder="(Optional) Feed me more detail..." data-ajax-clear>
 										<div class="input-group-btn dropdown-select">
 											<input type="hidden" name="status" value="{{ statuses.0.id }}">
 											<button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown"><span data-bind="label">{{ statuses.0.name }}</span> <span class="caret"></span></button>
 											<ul class="dropdown-menu pull-right">
-											  {% for status in statuses %}
-											  <li value="{{ status.id }}"><a href="#">{{ status.name }}</a></li>
-											  {% endfor %}
+												{% for status in statuses %}
+												<li value="{{ status.id }}"><a href="#">{{ status.name }}</a></li>
+												{% endfor %}
 												
 											</ul>
 										</div><!-- /btn-group -->

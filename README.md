@@ -97,11 +97,14 @@ Backend
 - Add comments everywhere! Especially HTML, CSS, JavaScript, views.py, urls.py, ajax.py
 - Initial setup step-by-step process (and can choose MySQL, SQLite, or PostgreSQL)
 - Email to Groups
+- Events can be for surfices or surfs
+  - Deleting surfs or ~~surfices~~ (done) also deletes the respective events and dings
 
 Data
 ----
 - ~~Add generic JSON columns for every data model~~
-- One Surfice can be in multiple Surfs (category model)
+- ~~One Surfice can be in multiple Surfs (category model)~~
+  - ~~A Surfice can have zero Surfs~~
 - Set up MySQL in addition to SQLite
 
 Testing

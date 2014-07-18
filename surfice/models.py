@@ -622,7 +622,7 @@ class Surfice(models.Model):
 	def set_surf(self, surf):
 		# Check to make sure Surf is actually in the database
 		if Surf.is_saved(surf=surf):
-			self.surf = [surf]
+			self.surfs = [surf]
 		
 			# Save surfice object to database
 			self.save()
@@ -637,7 +637,7 @@ class Surfice(models.Model):
 	#
 	# -------------------------------------
 	def set_surfs(self, surfs):
-		self.surf = surfs
+		self.surfs = surfs
 	
 		# Save surfice object to database
 		self.save()

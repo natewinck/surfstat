@@ -52,6 +52,9 @@ MIDDLEWARE_CLASSES = (
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 )
 
+# Set up LDAP
+from ldap_asbury import *
+
 ROOT_URLCONF = 'surfstat.urls'
 
 WSGI_APPLICATION = 'surfstat.wsgi.application'

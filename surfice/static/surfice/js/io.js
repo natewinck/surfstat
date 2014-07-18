@@ -268,7 +268,9 @@ function sleep(milliseconds) {
 ------------------------------ */
 $('.modal [type="submit"]').click(function(e) {
 	e.preventDefault();
-	$(this).parents(".modal").find("form").submit();
+	var $modal = $(this).parents(".modal");
+	$modal.find("form").submit();
+	$modal.modal("hide");
 });
 
 

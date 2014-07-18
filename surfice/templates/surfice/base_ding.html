@@ -44,19 +44,24 @@ Each of the <row> act as a different function of the Edit process
 	</div>
 	
 	<div class="col-sm-4">
-		<h4>Surfice</h4>
-		<p>{{ ding.surfice.name }}</p>
+		<div class="row">
+			<h4>Surfice</h4>
+			<p>{{ ding.surfice.name }}</p>
+		</div>
 		
-		<h4>Current Surfice Status</h4>
-		<p class="dynamic-color" style="background-color:{{ ding.surfice.status.data.color }}">{{ ding.surfice.status.name }}</p>
-
-		<h4>Reports Today</h4>
-		<p>{{ surfice_dings }}</p>
+		<div class="row dynamic-color" style="background-color:{{ ding.surfice.status.data.color }}">
+			<h4>Current Surfice Status</h4>
+			<p>{{ ding.surfice.status.name }}</p>
+		</div>
+		
+		<div class="row">
+			<h4>Reports Today</h4>
+			<p>{{ surfice_dings }}</p>
+		</div>
 	</div>
 	
 	<div class="col-sm-8">
-		<div>Reported status: <span class="dynamic-color" style="background-color:{{ ding.status.data.color }}">&nbsp;{{ ding.status.name }}&nbsp;</span>
-		</div>
+		<div class="dynamic-color" style="background-color:{{ ding.status.data.color }}">Reported status: {{ ding.status.name }}</div>
 		{# Make sure description isn't empty #}
 		{% if ding.description and ding.description.strip %}
 		<h3>Description of Ding</h3>
