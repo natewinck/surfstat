@@ -581,7 +581,7 @@ $(".multiselect-surfices").multiselect({
 	includeSelectAllOption: true
 });
 
-$(".multiselect").multiselect();
+//$(".multiselect").multiselect();
 
 });
 
