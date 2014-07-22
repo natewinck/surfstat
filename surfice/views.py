@@ -270,8 +270,8 @@ def admin(request):
 	context_dict['surfs'] = surf_list
 	
 	# For each Surf, query for Surfices and add them to context_dict
-	for i, surf in enumerate(context_dict['surfs']):
-		context_dict['surfs'][i].surfices = surf_list[i].surfice_set.all()
+	#for i, surf in enumerate(context_dict['surfs']):
+		#context_dict['surfs'][i].surfices = surf_list[i].surfice_set.all()
 	
 	# Query for Surfices and add them to context_dict
 	surfice_list = Surfice.get_surfices()
@@ -354,7 +354,7 @@ def surfs(request):
 					# Loop through the passed pks and append the surf to surfs array
 					for pk in request.POST.getlist('surfices'):
 						surfices.append( Surfice.get_surfice(pk=pk) )
-				surf.surfice_set = surfices
+				surf.surfices = surfices
 		
 		# Redirect to this view after submission to clear headers
 		return HttpResponseRedirect('')
@@ -362,12 +362,12 @@ def surfs(request):
 	
 	
 	# Query for surfs and add them to context_dict
-	surf_list = Surf.get_surfs().prefetch_related('surfice_set')
+	surf_list = Surf.get_surfs().prefetch_related('surfices')
 	context_dict['surfs'] = surf_list
 	
 	# For each Surf, query for Surfices and add them to context_dict
-	for i, surf in enumerate(context_dict['surfs']):
-		context_dict['surfs'][i].surfices = surf_list[i].surfice_set.all()
+	#for i, surf in enumerate(context_dict['surfs']):
+		#context_dict['surfs'][i].surfices = surf_list[i].surfice_set.all()
 	
 	# Query all the Surfices and add them to context_dict
 	surfice_list = Surfice.get_surfices()

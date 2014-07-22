@@ -364,7 +364,7 @@ class Surfice(models.Model):
 	# namespace to make it clear there. I figured if there was a place
 	# to be more clear, it would be on the design side.
 	# Thus, instead of using 'surfices' we use the default 'surfice_set'
-	surfs 		= models.ManyToManyField(Surf, blank=True)
+	surfs 		= models.ManyToManyField(Surf, blank=True, related_name='surfices')
 	
 	description = models.TextField(blank=True)
 	status		= models.ForeignKey('Status')
@@ -1138,6 +1138,7 @@ class Ding(models.Model):
 	# 
 	#
 	# INPUT
+	# dings			Number of dings to return
 	# surfice		Dings related to a Surfice object
 	# email			The email address of the person who submitted the ding
 	# status		The reported status stored in the Ding
@@ -1180,8 +1181,13 @@ class Ding(models.Model):
 		elif order_by[0].replace('-', '') in ['status', 'surfice']:
 			order_by[0] += '__name'
 		
+		# Get this number of dings
+		if 'dings' in kwargs:
+			x = kwargs['dings']
+			dings = Ding.objects.all().order_by(*order_by)[:x]
+		
 		# Get all dings related to a specific surfice
-		if 'surfice' in kwargs:
+		elif 'surfice' in kwargs:
 			surfice = kwargs['surfice']
 			dings = Ding.objects.filter(surfice=surfice).order_by(*order_by)
 		

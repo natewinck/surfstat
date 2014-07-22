@@ -27,11 +27,12 @@
     
 
 {% block content %}
-<!--Start Accordian Container-->
 <div class="container">
 	<div class="page-header">
 		<h2>Click on a Surfice to see Details</h2>
 	</div>
+	
+	<!-- start left nav -->
 	<div class="col-sm-4">
 		<div class="list-group select">
 			<a href="#new" class="list-group-item list-group-item-success">Create New Surfice<span class="glyphicon glyphicon-plus pull-right"></span></a>
@@ -40,9 +41,12 @@
 			{% endfor %}
 		</div>
 	</div>
+	<!-- /end left nav -->
+	
 	<div class="col-sm-8">    
 		<div class="panel-group tab-content">
-			<!-- START CREATE SURFICE -->
+			
+			<!-- start new-surfice tab -->
 			<div class="tab-pane fade" id="new">
 				<h3>Create a Surfice</h3>
 				<form action="" method="post" role="form" id="new-surfice">
@@ -94,16 +98,16 @@
 					</div>
 				</form>
 			</div>
-			<!-- /END CREATE SURFICE -->
+			<!-- /end new-surfice tab -->
 			
-			<!-- START EDIT SURFICES -->
+			<!-- start surfice tabs -->
 			{% for surfice in surfices %}
 			<div class="tab-pane fade {% if forloop.first %}in active{% endif %}" id="surfice-{{ surfice.name|slugify }}"
 				data-ajax-update="surfice-name-{{ surfice.id }}"
 			>
-<!--Start Panel {{ surfice.id }} of Accordian-->
+			
+				<!-- current surfice info -->
 				<div class="row">
-<!--Row: Current Information on the Surf-->
 					<div class="col-sm-4 col-xs-6 dynamic-color" style="background-color:{{ surfice.status.data.color }}">
 						<h4>Status</h4>
 						<p data-ajax-update="surfice-status-{{ surfice.id }}">{{ surfice.status.name }}</p>
@@ -125,9 +129,11 @@
 						</p>
 					</div>
 				</div>
+				<!-- /end current surfice info -->
 			
 				<hr class="divider-accordian">
-			
+				
+				<!-- update surfice status -->
 				<h3>Update <span data-ajax-update="surfice-name-{{ surfice.id }}">{{ surfice.name }}</span>'s Status</h3>
 				<form type="ajax" action="ajax/set-status" method="post" role="form" id="status-surfice"
 					data-ajax-action="ajax/get-surfice"
@@ -162,9 +168,11 @@
 						</div>
 					</div>
 				</form>
+				<!-- /end update surfice status -->
 			
 				<hr class="divider-accordian">
-			
+				
+				<!-- edit surfice -->
 				<h3>Edit <span data-ajax-update="surfice-name-{{ surfice.id }}">{{ surfice.name }}</span></h3>
 				<form type="ajax" action="ajax/update-surfice" method="post" role="form"
 					data-ajax-action="ajax/get-surfice"
@@ -206,16 +214,21 @@
 						</div>
 					</div>
 				</form>
+				<!-- /end edit surfice -->
 			
 				<hr class="divider-accordian">
+				
+				<!-- delete surfice -->
 				<div class="row">
 					<div class="col-xs-12">
 						<h3>Delete <span data-ajax-update="surfice-name-{{ surfice.id }}">{{ surfice.name }}</span></h3>
 						<button type="button" class="btn btn-danger button-accordian" data-toggle="modal" data-target="#confirm-delete-surfice-{{ surfice.id }}">Delete</button>
 					</div>
 				</div>
+				<!-- /end delete surfice -->
 			</div>
-		
+			
+			<!-- start modal delete -->
 			<div class="modal fade" id="confirm-delete-surfice-{{ surfice.id }}" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
 				<div class="modal-dialog">
 					<div class="modal-content">
@@ -239,14 +252,14 @@
 					</div>
 				</div>
 			</div>
+			<!-- /end modal delete -->
 			
 			{% endfor %}
-			<!-- /END EDIT SURFICES -->
+			<!-- /end surfice tabs -->
 		</div>
 	</div>
 </div>
 
 <hr class="featurette-divider">
-<!-- /END THE FEATURETTES -->
 
 {% endblock %}

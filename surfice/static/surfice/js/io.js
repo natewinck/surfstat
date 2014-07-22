@@ -1,68 +1,4 @@
-/* iequals
-------------------------------
-*  Checks if two strings are equal to each other (case insensitive).
-*
-*  Example: "A cool Surf" turns into "a-cool-surf"
-*
-*  RETURNS
-*  bool
-*  
------------------------------- */
-if (typeof String.prototype.iequals === 'undefined') String.prototype.iequals = function(string) { return this.toLowerCase() === string.toLowerCase(); };
-
-function getJSONVal(json, keys) {
-	//console.log(json);
-	//console.log(keys);
-	//console.log(keys[0]);
-	// If this is the last level of keys, return the object
-	if (keys.length == 1 || typeof(json) == undefined) {
-		//console.log("the last level");
-		//console.log(json[keys[0]]);
-		return json[keys[0]];
-	} else {
-		// Get the next level of json values
-		json = json[keys[0]];
-		
-		// Remove the first element of the keys since we are now past that level
-		keys.shift();
-		
-		// Recursive...get the JSON object at the next level of keys
-		return getJSONVal(json, keys);
-	}
-}
-
-function flipQuotes(str) {
-  var result = [], i = 0, lim = str.length, c;
-
-  for (; i < lim; i += 1) {
-    c = str.charAt(i);
-    switch(c) {
-      case '"':
-        result.push("'");
-        break;
-
-      case "'":
-        result.push('"');
-        break;
-
-      default:
-        result.push(c);
-    }
-  }
-
-  return result.join('');
-}
-
 $(function() {
-
-$ajaxGlobalFields = $("[data-ajax-global-update]");
-$ajaxLocalFields = $("[data-ajax-update]");
-$ajaxSurfices = $ajaxGlobalFields.is("[data-ajax-surfices]");
-$ajaxSurfs = $ajaxGlobalFields.is("[data-ajax-surfs]");
-$ajaxStatuses = $ajaxGlobalFields.is("[data-ajax-statuses]");
-$ajaxSurfSurfices = $ajaxGlobalFields.is("[data-ajax-surfsurfices]");
-$ajaxNotSurfSurfices = $ajaxGlobalFields.is("[data-ajax-notsurfsurfices]");
-
 
 /* FORM SUBMIT
 ------------------------------ 
@@ -154,57 +90,22 @@ $("form[type='ajax']").on("submit", function(e) {
 				$button.text("Saved");
 			}
 			
-			// (MOVE TO SEPARATE FUNCTION) Update all ajax fields
-			
-			//var $fields = $("[data-ajax-update=" + $form.attr("data-ajax-update-target") + "]");
-			
-			// Since new data has been added, refresh the ss object
-			//ss.getSurfs();
-			
-			
-			//refreshAJAXPage($form, $form.attr("data-ajax-action"), getData)
-			//console.log(window.location.pathname + $form.attr("data-ajax-action"));
-			
-			// For testing purposes:
-			// set the message to display: none to fade it in later.
-			// var message = $('<div class="alert alert-error errormessage" style="display: none;">');
-// 			// a close button
-// 			var close = $('<button type="button" class="close" data dismiss="alert">&times</button>');
-// 			message.append(close); // adding the close button to the message
-// 			message.append(data); // adding the error response to the message
-// 			// add the message element to the body, fadein, wait 3secs, fadeout
-// 			message.appendTo($('body')).fadeIn(300).delay(3000).fadeOut(500);
-			
+			// Show a notification about the POST
 			var notification = $form.attr("data-ajax-success");
 			if (notification == "" || typeof notification === "undefined") notification = "Save successful."
 			ss.notify("success", notification);
 			
+			// Since something was updated, refresh the AJAX fields on the page
 			refreshAJAXPage($form);
-			/*
-			$.getJSON(window.location.pathname + $form.attr("data-ajax-action"), getData)
-				.done(function(data) {
-					console.log(data);
-					
-					// Refresh the page with the JSON data
-					refreshAJAXPage($form, data);
-					
-				})
-				.fail(function(data) {
-					
-				});
-			*/
-			//field = $(this).attr("[data-ajax-update]");
-			// $form.find("[data-ajax-update]").each(function() {
-// 				
-// 				
-// 			});
 			
+			// Stop the pulsing
 			$button.removeClass("flash");
+			
+			// Pause for a moment, then re-enable the submit button
 			setTimeout(function() {
 				$button.removeClass("disabled");
 				$button.text($buttonText);
 			}, 750);
-			//$button.text($buttonText);
     	})
 		.done(function() {
 			// Nothing here (same as above)
@@ -230,11 +131,14 @@ $("form[type='ajax']").on("submit", function(e) {
 			$button.addClass("btn-danger").removeClass(originalBtnType);
 			$button.removeClass("flash");
 			
+			// Get the fail notification
 			var notification = $form.attr("data-ajax-fail");
-			console.log(notification);
+			
+			// Show the notification
 			if (notification == "" || typeof notification === "undefined") notification = "Save failed."
 			ss.notify("danger", notification);
 			
+			// Pause for a moment, then re-enable the submit button
 			setTimeout(function() {
 				$button.removeClass("disabled");
 				$button.removeClass("btn-danger").addClass(originalBtnType);
@@ -246,14 +150,6 @@ $("form[type='ajax']").on("submit", function(e) {
     		// Nothing
 		});
 });
-
-function sleep(milliseconds) {
-   var currentTime = new Date().getTime();
-
-   while (currentTime + milliseconds >= new Date().getTime()) {
-   }
-}
-
 
 /* SUBMIT FORM
 ------------------------------ 
@@ -272,162 +168,6 @@ $('.modal [type="submit"]').click(function(e) {
 	$modal.find("form").submit();
 	$modal.modal("hide");
 });
-
-
-/* VALIDATION
-------------------------------- */
-function surfNameField($input) {
-	
-	var surfId = $input.closest("form").find('input[name="surf"]').val();
-	
-	// If the surfs array already exists, just fire the function without getting all the info
-	// If surfs is empty, however, get the new data
-	if (Object.size(ss.surfs) == 0) {
-		console.log("getting new surfs");
-		ss.getSurfs(function(data) {
-			checkField();
-		});
-		
-	} else {
-		checkField();
-	}
-	
-	// Create a closure for checking the field to comply with DRY programming
-	function checkField() {
-		// Loop through all the surfs to find a match
-		// not including this current surf
-		$.each(ss.surfs, function(key, surf) {
-			//console.log($input.val().replace(/^\s+|\s+$/gm,'') + " - " + surf.name);
-			//console.log($input.val().replace(/^\s+|\s+$/gm,'').iequals(surf.name));
-			
-			var val = $input.val().replace(/\s+/gm," ").trim();
-			
-			// If the name is blank, throw an error
-			// Otherwise if the new name is the same as another
-			// surf and that I'm not checking its own name,
-			// throw an error.
-			if (	val == "" ||
-					(	surfId != surf.id &&
-						val.iequals(surf.name)
-					)
-			) {
-				$input.closest(".form-group").removeClass("has-success").addClass("has-error");
-				return false;
-			} else {
-				$input.closest(".form-group").removeClass("has-error").addClass("has-success");
-			}
-		});
-	}
-}
-
-function surficeNameField($input) {
-	
-	var surficeId = $input.closest("form").find('input[name="surfice"]').val();
-	
-	// If the surfs array already exists, just fire the function without getting all the info
-	// If surfs is empty, however, get the new data
-	if (Object.size(ss.surfices) == 0) {
-		console.log("getting new surfices");
-		ss.getSurfices(function(data) {
-			checkField();
-		});
-		
-	} else {
-		checkField();
-	}
-	
-	// Create a closure for checking the field to comply with DRY programming
-	function checkField() {
-		// Loop through all the surfs to find a match
-		// not including this current surf
-		$.each(ss.surfices, function(key, surfice) {
-			//console.log($input.val().replace(/^\s+|\s+$/gm,'') + " - " + surfice.name);
-			//console.log($input.val().replace(/^\s+|\s+$/gm,'').iequals(surfice.name));
-			
-			var val = $input.val().replace(/\s+/gm," ").trim();
-			
-			// If the name is blank, throw an error
-			// Otherwise if the new name is the same as another
-			// surfice and that I'm not checking its own name,
-			// throw an error.
-			if (	val == "" ||
-					(	surficeId != surfice.id &&
-						val.iequals(surfice.name)
-					)
-			) {
-				$input.closest(".form-group").removeClass("has-success").addClass("has-error");
-				return false;
-			} else {
-				$input.closest(".form-group").removeClass("has-error").addClass("has-success");
-			}
-		});
-	}
-}
-
-function statusNameField($input) {
-	
-	var statusId = $input.closest("form").find('input[name="status"]').val();
-	
-	// If the surfs array already exists, just fire the function without getting all the info
-	// If surfs is empty, however, get the new data
-	if (Object.size(ss.statuses) == 0) {
-		console.log("getting new surfices");
-		ss.getStatuses(function(data) {
-			checkField();
-		});
-		
-	} else {
-		checkField();
-	}
-	
-	// Create a closure for checking the field to comply with DRY programming
-	function checkField() {
-		// Loop through all the surfs to find a match
-		// not including this current surf
-		$.each(ss.statuses, function(key, status) {
-			//console.log($input.val().replace(/^\s+|\s+$/gm,'') + " - " + surfice.name);
-			//console.log($input.val().replace(/^\s+|\s+$/gm,'').iequals(surfice.name));
-			
-			var val = $input.val().replace(/\s+/gm," ").trim();
-			
-			// If the name is blank, throw an error
-			// Otherwise if the new name is the same as another
-			// status and that I'm not checking its own name,
-			// throw an error.
-			if (	val == "" ||
-					(	statusId != status.id &&
-						val.iequals(status.name)
-					)
-			) {
-				$input.closest(".form-group").removeClass("has-success").addClass("has-error");
-				return false;
-			} else {
-				$input.closest(".form-group").removeClass("has-error").addClass("has-success");
-			}
-		});
-	}
-}
-
-$('input[name="name"][data-ajax-check]').keyup(function(e) {
-	$input = $(this);
-	
-	//var check = $.data($input.get(0), "ajax-check");
-	var check = $(this).attr("data-ajax-check");
-	
-	if (typeof check === 'undefined') {
-		// Nothing to do if check is undefined
-	}
-	else if (check == "surf-name")
-		surfNameField($input);
-	
-	else if (check == "surfice-name")
-		surficeNameField($input);
-	
-	else if (check == "status-name")
-		statusNameField($input);
-});
-
-var textfield = $("input[name=username]");
 
 $('button.login[type="submit"]').click(function(e) {
 	//e.preventDefault();

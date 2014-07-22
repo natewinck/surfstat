@@ -21,8 +21,6 @@
 
 
 {% block heading %}
-<!-- JUMBOTRON HEADER
-================================================== -->
 <div class="container">
 	<div class="jumbotron jumbotron-admin">
 		<h1>Update your Statuses</h1>
@@ -32,20 +30,22 @@
 		</div>
 	</div>
 </div>
-{% endblock heading %} {% block content %} <!-- Start Edit Accordian
-==================================================
-Each of the <row> act as a different function of the Edit process
--->
+{% endblock heading %}
+
+{% block content %}
+
 <div class="container">
-	<!-- Create a Status Section, text details-->
 	
 	<div class="page-header">
 		<h2>Click on an Event's details to edit</h2>
 	</div>
 	
+	<!-- start event table -->
 	<table class="table table-striped" data-ajax-update="event-row">
 		<thead>
+			<!-- table headers -->
 			<tr>
+				<!-- timestamp header -->
 				<th>
 					{% if 'timestamp' in order_by %}
 					<a href="{% url 'events' page=events.number order_by=order_by_reverse %}/">
@@ -54,6 +54,8 @@ Each of the <row> act as a different function of the Edit process
 					{% endif %}
 					Time <span class="glyphicon glyphicon-sort"></span></a>
 				</th>
+				
+				<!-- surfice header -->
 				<th aria-sort="ascending">
 					{% if 'surfice' in order_by %}
 					<a href="{% url 'events' page=events.number order_by=order_by_reverse %}/">
@@ -62,6 +64,8 @@ Each of the <row> act as a different function of the Edit process
 					{% endif %}
 					Surfice <span class="glyphicon glyphicon-sort"></span></a>
 				</th>
+				
+				<!-- description header -->
 				<th>
 					{% if 'description' in order_by %}
 					<a href="{% url 'events' page=events.number order_by=order_by_reverse %}/">
@@ -70,6 +74,8 @@ Each of the <row> act as a different function of the Edit process
 					{% endif %}
 					Description of Event <span class="glyphicon glyphicon-sort"></span></a>
 				</th>
+				
+				<!-- status header -->
 				<th>
 					{% if 'status' in order_by %}
 					<a href="{% url 'events' page=events.number order_by=order_by_reverse %}/">
@@ -78,11 +84,14 @@ Each of the <row> act as a different function of the Edit process
 					{% endif %}
 					Status <span class="glyphicon glyphicon-sort"></span></a>
 				</th>
+				
+				<!-- no headers -->
 				<th></th>
 			</tr>
 		</thead>
 		{% for event in events %}
 		<tr id="tr-event-{{ event.id }}">
+			<!-- timestamp -->
 			<td><a href="#" data-type="datetime" class="editable"
 					data-pk="{{ event.id }}"
 					data-name="timestamp"
@@ -91,6 +100,8 @@ Each of the <row> act as a different function of the Edit process
 					data-viewformat="M d, yyyy H:ii p"
 					data-clear="false"
 				>{{ event.timestamp|date:"M j, Y f a"|cut:"." }}</a></td>
+			
+			<!-- surfice -->
 			<td>
 				<a href="#" data-type="select" class="editable-surfice"
 					data-pk="{{ event.id }}"
@@ -98,6 +109,8 @@ Each of the <row> act as a different function of the Edit process
 					data-title="Enter a new surfice"
 				>{{ event.surfice.name }}</a>
 			</td>
+			
+			<!-- description -->
 			<td>
 				<a href="#" class="editable"
 					data-type="textarea"
@@ -105,6 +118,8 @@ Each of the <row> act as a different function of the Edit process
 					data-name="description"
 				>{{ event.description }}</a>
 			</td>
+			
+			<!-- status -->
 			<td>
 				<a href="#" class="editable-status"
 					data-type="select"
@@ -113,6 +128,8 @@ Each of the <row> act as a different function of the Edit process
 					data-title="Enter a new status"
 				>{{ event.status }}</a>
 			</td>
+			
+			<!-- delete -->
 			<td>
 				<a class="delete" href="#"
 					data-toggle="modal"
@@ -123,8 +140,9 @@ Each of the <row> act as a different function of the Edit process
 		</tr>
 		{% endfor %}
 	</table>
+	<!-- /end event table -->
 	
-	<!-- BEGIN PAGINATION -->
+	<!-- start pagination -->
 	<ul class="pager">
 		{% if events.has_next %}
 			<li class="previous">
@@ -147,11 +165,12 @@ Each of the <row> act as a different function of the Edit process
 		</li>
 		{% endif %}
 	</ul>
-	<!-- /END PAGINATION -->
+	<!-- /end pagination -->
 </div>
-<hr class="featurette-divider">
-<!-- /END THE FEATURETTES -->
 
+<hr class="featurette-divider">
+
+<!-- delete event modal -->
 <div class="modal fade" id="confirm-delete-event" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
 	<div class="modal-dialog">
 		<div class="modal-content">
@@ -180,6 +199,7 @@ Each of the <row> act as a different function of the Edit process
 		</div>
 	</div>
 </div>
+<!-- /end delete event modal -->
 
 {% endblock content %}
 

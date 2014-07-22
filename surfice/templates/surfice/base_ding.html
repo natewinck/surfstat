@@ -21,8 +21,6 @@
 
 
 {% block heading %}
-<!-- JUMBOTRON HEADER
-================================================== -->
 <div class="container">
 	<div class="jumbotron jumbotron-admin">
 		<h1>What's up {{ ding.surfice.name }}?</h1>
@@ -32,17 +30,16 @@
 		</div>
 	</div>
 </div>
-{% endblock heading %} {% block content %} <!-- Start Edit Accordian
-==================================================
-Each of the <row> act as a different function of the Edit process
--->
+{% endblock heading %}
+
+{% block content %}
 <div class="container">
-	<!-- Create a Status Section, text details-->
 	
 	<div class="page-header">
 		<h2><a href="mailto:{{ ding.email }}">{{ ding.email }}</a> sent in this Ding</h2>
 	</div>
 	
+	<!-- left info -->
 	<div class="col-sm-4">
 		<div class="row">
 			<h4>Surfice</h4>
@@ -59,7 +56,9 @@ Each of the <row> act as a different function of the Edit process
 			<p>{{ surfice_dings }}</p>
 		</div>
 	</div>
+	<!-- /end left info -->
 	
+	<!-- ding info -->
 	<div class="col-sm-8">
 		<div class="dynamic-color" style="background-color:{{ ding.status.data.color }}">Reported status: {{ ding.status.name }}</div>
 		{# Make sure description isn't empty #}
@@ -77,12 +76,13 @@ Each of the <row> act as a different function of the Edit process
 				data-target="#confirm-delete-ding-{{ ding.id }}"
 			>Delete</a>
 	</div>
+	<!-- /end ding info -->
 	
 </div>
 <hr class="featurette-divider">
-<!-- /END THE FEATURETTES -->
 
-<div class="modal fade" id="confirm-delete-ding-{{ ding.id }}" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+<!-- delete ding modal -->
+<div class="modal fade" id="confirm-delete-ding-{{ ding.id }}" tabindex="-1" role="dialog" aria-hidden="true">
 	<div class="modal-dialog">
 		<div class="modal-content">
 			<div class="modal-header">
@@ -104,6 +104,7 @@ Each of the <row> act as a different function of the Edit process
 		</div>
 	</div>
 </div>
+<!-- /end delete ding modal -->
 
 {% endblock content %}
 

@@ -1,40 +1,47 @@
+# Import the models and their serializers
 from surfice.models import Surf, Surfice, Status, Ding, Event
-from django.http import HttpResponse
+from surfice.serializers import (SurfSerializer, SurficeSerializer, StatusSerializer,
+	EventSerializer, DingSerializer, SurfWithSurficeSerializer)
+
+# Import json renderers
+from rest_framework.renderers import JSONRenderer
+import json
+
+# Import form validation
 from django.core.exceptions import ValidationError
 from django.core.validators import validate_email
-import json
-from django.forms.models import model_to_dict
-from django.core import serializers
 
-from surfice.serializers import *
-from rest_framework.renderers import JSONRenderer
-
+# Import date and time
 import time
 from datetime import datetime
 
-from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
-from django.core.urlresolvers import reverse
+# Import url helpers
 from django.utils.text import slugify
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from surfice import views
 
+# Import authentication
+from django.contrib.auth.decorators import permission_required
 
-# -----------------------------------------
-# set_status(request)
-#
-# Sets the status of a surfice based on the request parameters
-# 
-# If no surfice or status is in request, nothing happens
-#
-# INPUT
-# request						A request object
-#	- surfice					The pk of the surfice
-#	- status					The pk of the surf
-#	- description (optional)	The description of the status update
-#
-# RETURNS
-# *errors
-# -----------------------------------------
+# Import the response so we can return
+from django.http import HttpResponse
+
+
 def set_status(request):
+	""" Sets the status of a surfice
+	
+		If no surfice or status is in the request, nothing happens.
+		
+		INPUT
+		request.POST
+			- surfice					The pk of the surfice
+			- status					The pk of the surf
+			- description (optional)	The description of the status update
+		
+		RETURNS
+		*errors
+	"""
+	
 	errors = []
 	# If neither surfice nor status are present,
 	# don't do anything
@@ -49,7 +56,8 @@ def set_status(request):
 			# fill it in with the default value of the empty string
 			# Using .get() allows for description not being set in POST
 			description = request.POST.get('description','')
-		
+			
+			# Set the status of the surf, which also creates an event
 			surfice.set_status(status, description)
 	
 		else:
@@ -60,32 +68,27 @@ def set_status(request):
 	
 	return errors
 
-# -----------------------------------------
-# set_surf_status(request)
-#
-# Sets the status of all surfices belonging to a surf based on the request parameters
-# 
-# If no surf or status is in request, nothing happens
-#
-# INPUT
-# request						A request object
-#	- surf						The pk of the surf
-#	- status					The pk of the status
-#	- description (optional)	The description of the status update
-#
-# RETURNS
-# *errors
-# -----------------------------------------
 def set_surf_status(request):
+	""" Sets the status of all surfices belonging to a surf.
+		
+		If no surf or status is in request, nothing happens.
+		
+		INPUT
+		request						A request object
+			- surf						The pk of the surf
+			- status					The pk of the status
+			- description (optional)	The description of the status update
+			- all (optional)			Flag for setting all surfs instead of only one
+			- event (optional)			Flag for creating an event or not
+		
+		RETURNS
+		*errors
+	
+	"""
 	errors = []
 	
-	# If neither surfice nor status are present,
-	# don't do anything
-	if 'surf' not in request.POST or 'status' not in request.POST:
-		# Do nothing
-		errors.append("To set a Surf, I need both a Surf and a Status.")
-		pass
-	elif 'all' in request.POST:
+	# Set the status of all surfs
+	if 'all' in request.POST and 'status' in request.POST:
 		# Get all the surfices
 		surfices = Surfice.get_surfices()
 		
@@ -107,7 +110,9 @@ def set_surf_status(request):
 		# Now set the status for all the Surfices in this Surf
 		for surfice in surfices:
 			surfice.set_status(status, description, event=event)
-	else:
+	
+	# Set the status of a specific surf
+	elif 'surf' in request.POST and 'status' in request.POST:
 		# Get the surf and status parameters to set the status of the surfice
 		surf = Surf.get_surf(pk=request.POST['surf'])
 		status = Status.get_status(pk=request.POST['status'])
@@ -131,6 +136,14 @@ def set_surf_status(request):
 		# Now set the status for all the Surfices in this Surf
 		for surfice in surfices:
 			surfice.set_status(status, description, event=event)
+		
+	# If none of the previous conditions is met,
+	# don't do anything
+	else:
+		# Do nothing
+		errors.append("To set a Surf, I need both a Surf and a Status. If setting all Surfs, I need a Status.")
+		pass
+	
 	
 	return errors
 
@@ -172,7 +185,7 @@ def set_surf(request):
 			surfices.append( Surfice.get_surfice(pk=pk) )
 		
 		# Now set these surfices to the surf
-		surf.surfice_set = surfices
+		surf.surfices = surfices
 	
 	# If only surf is set, clear all the surfices from the surf
 	elif 'surf' in request.POST:
@@ -180,7 +193,7 @@ def set_surf(request):
 		surf = Surf.get_surf(pk=request.POST['surf'])
 		
 		# Clear the surfices from this surf
-		surf.surfice_set.clear()
+		surf.surfices.clear()
 	
 	# If either surf or surfice was not in the request, throw an error
 	else:
@@ -188,21 +201,19 @@ def set_surf(request):
 	
 	return errors
 
-# -----------------------------------------
-# set_surfs(request)
-#
-# Sets the surfs of a surfice
-# If no surfs or surfice are in request, nothing happens
-#
-# INPUT
-# request		A request object
-#	- surfs		Array of pks of surfs
-#	- surfice	The pk of the surfice
-#
-# RETURNS
-# *errors
-# -----------------------------------------
 def set_surfs(request):
+	""" Sets the surfs of a surfice
+		
+		If no surfs or surfice are in request, nothing happens
+		
+		INPUT
+		request			A request object
+			- surfs		Array of pks of surfs
+			- surfice	The pk of the surfice
+		
+		RETURNS
+		*errors
+	"""
 	errors = []
 	
 	# Both surf and surfice need to be in request
@@ -211,13 +222,13 @@ def set_surfs(request):
 		surfice = Surfice.get_surfice(pk=request.POST['surfice'])
 		surf = Surf.get_surf(pk=request.POST['surf'])
 		
-		# Get the surf objects based on the pks that were passed
-		surfs = []
+		# Get the surf objects based on the pks that were passed.
 		# Loop through the passed pks and append the surf to surfs array
+		surfs = []
 		for pk in request.POST.getlist('surfs'):
 			surfs.append( Surf.get_surf(pk=pk) )
 		
-		# Set the surf
+		# Set the surfs of the surfice, replacing any that were already there
 		surfice.set_surfs(surfs)
 	
 	# If either surf or surfice was not in the request, throw an error
@@ -226,21 +237,19 @@ def set_surfs(request):
 	
 	return errors
 
-# -----------------------------------------
-# add_surf(request)
-#
-# Add the surf to a surfice
-# If no surf or surfice is in request, nothing happens
-#
-# INPUT
-# request		A request object
-#	- surf		The pk of the surf
-#	- surfice	The pk of the surfice
-#
-# RETURNS
-# *errors
-# -----------------------------------------
 def add_surf(request):
+	""" Add a surf to a surfice
+		
+		If no surf or surfice is in request, nothing happens
+		
+		INPUT
+		request			A request object
+			- surf		The pk of the surf
+			- surfice	The pk of the surfice
+		
+		RETURNS
+		*errors
+	"""
 	errors = []
 	
 	# Both surf and surfice need to be in request
@@ -249,7 +258,7 @@ def add_surf(request):
 		surfice = Surfice.get_surfice(pk=request.POST['surfice'])
 		surf = Surf.get_surf(pk=request.POST['surf'])
 		
-		# Set the surf
+		# Add the surf to the surfice
 		surfice.add_surf(surf)
 	
 	# If either surf or surfice was not in the request, throw an error
@@ -258,21 +267,20 @@ def add_surf(request):
 	
 	return errors
 
-# -----------------------------------------
-# set_surfs(request)
-#
-# Sets the surfs of a surfice
-# If no surfs or surfice are in request, nothing happens
-#
-# INPUT
-# request		A request object
-#	- surfs		Array of pks of surfs
-#	- surfice	The pk of the surfice
-#
-# RETURNS
-# *errors
-# -----------------------------------------
 def add_surfs(request):
+	""" Add surfs to a surfice
+		
+		If no surfs or surfice are in request, nothing happens
+		
+		INPUT
+		request			A request object
+			- surfs		Array of pks of surfs
+			- surfice	The pk of the surfice
+		
+		RETURNS
+		*errors
+	"""
+	
 	errors = []
 	
 	# Both surf and surfice need to be in request
@@ -281,13 +289,13 @@ def add_surfs(request):
 		surfice = Surfice.get_surfice(pk=request.POST['surfice'])
 		surf = Surf.get_surf(pk=request.POST['surf'])
 		
-		# Get the surf objects based on the pks that were passed
-		surfs = []
+		# Get the surf objects based on the pks that were passed.
 		# Loop through the passed pks and append the surf to surfs array
+		surfs = []
 		for pk in request.POST.getlist('surfs'):
 			surfs.append( Surf.get_surf(pk=pk) )
 		
-		# Set the surf
+		# Add the surfs to the surfice
 		surfice.add_surfs(surfs)
 	
 	# If either surf or surfice was not in the request, throw an error
@@ -296,23 +304,22 @@ def add_surfs(request):
 	
 	return errors
 
-# -----------------------------------------
-# update_surf(request)
-#
-# Update a surf's name and description
-# If no surf or surfice is in request, nothing happens
-#
-# INPUT
-# request		A request object
-#	- surf						The pk of a surf
-#	- name (optional)			New name of the surf
-#	- description (optional)	New description of the surf
-#	- data (optional)			JSON data for general data of the surf
-#
-# RETURNS
-# *errors
-# -----------------------------------------
 def update_surf(request):
+	""" Update a surf's attributes
+		
+		If no surf is in request, nothing happens.
+		
+		INPUT
+		request							A request object
+			- surf						The pk of a surf
+			- name (optional)			The new name of the surf
+			- description (optional)	New description of the surf
+			- data (optional)			JSON data for general data of the surf
+		
+		RETURNS
+		*errors
+	"""
+	
 	errors = []
 	
 	# If there is a surf in request, go ahead and edit it
@@ -320,8 +327,6 @@ def update_surf(request):
 		
 		# Get the surf object
 		surf = Surf.get_surf(pk=request.POST['surf'])
-		
-		#### Edit get so that it uses pk AND id
 		
 		# If name is in request, edit the name
 		# If the name already exists in the database, throw an error
@@ -348,25 +353,24 @@ def update_surf(request):
 	
 	return errors
 
-# -----------------------------------------
-# update_surfice(request)
-#
-# Update a surfice's surf, name, and description based on what's in request
-# If no surfice is in request, nothing happens
-#
-# INPUT
-# request						A request object
-#	- surfice					The pk of a surfice
-#	- surf (optional)			The pk of a surf
-#	- surfs (optional)			pks of surfs
-#	- name (optional)			New name of the surfice
-#	- description (optional)	New description of the surfice
-#	- data (optional)			JSON data for general data of the surfice
-#
-# RETURNS
-# *errors
-# -----------------------------------------
 def update_surfice(request):
+	""" Update a surfice's attributes
+		
+		If no surfice is in request, nothing happens
+		
+		INPUT
+		request							A request object
+			- surfice					The pk of a surfice
+			- surf (optional)			The pk of a surf
+			- surfs (optional)			pks of surfs
+			- name (optional)			New name of the surfice
+			- description (optional)	New description of the surfice
+			- data (optional)			JSON data for general data of the surfice
+		
+		RETURNS
+		*errors
+	"""
+	
 	errors = []
 	
 	# If surfice is set, go ahead and edit it
@@ -377,10 +381,16 @@ def update_surfice(request):
 		
 		# If surf is set in request, set this new surf to the surfice
 		if 'surf' in request.POST:
-			surfice.set_surf(Surf.get_surf(pk=request.POST['surf']))
+			# If surf is -1, that means we need to clear the surfs from the surfice
+			if int( request.POST['surf'] ) == -1:
+				surfice.surfs.clear()
+			
+			# If surf is set to a real surf, set the surfice's surf to that
+			else:
+				surfice.set_surf(Surf.get_surf(pk=request.POST['surf']))
 		
 		# Surfs is set in request, set this new surf to the surfice
-		else:
+		elif 'surfs' in request.POST:
 			# Get the surf objects based on the pks that were passed
 			surfs = []
 			# If surfs were set in the request add them to the array
@@ -389,7 +399,7 @@ def update_surfice(request):
 				for pk in request.POST.getlist('surfs'):
 					surfs.append( Surf.get_surf(pk=pk) )
 		
-			# Set the surf
+			# Set the surfs of the surfice
 			surfice.set_surfs(surfs)
 		
 		# If name is in request, give this surfice a new name
@@ -417,23 +427,22 @@ def update_surfice(request):
 	
 	return errors
 
-# -----------------------------------------
-# update_status(request)
-#
-# Update a status's name, description, and color based on what's in request
-# If no status is in request, nothing happens
-#
-# INPUT
-# request						A request object
-#	- status					The pk of a status
-#	- name (optional)			New name of the status
-#	- description (optional)	New description of the status
-#	- data (optional)			JSON data for general data of the status (like color)
-#
-# RETURNS
-# *errors
-# -----------------------------------------
 def update_status(request):
+	""" Update a status's attributes
+		
+		If no status is in request, nothing happens
+		
+		INPUT
+		request						A request object
+			- status					The pk of a status
+			- name (optional)			New name of the status
+			- description (optional)	New description of the status
+			- data (optional)			JSON data for general data of the status (like color)
+		
+		RETURNS
+		*errors
+	"""
+	
 	errors = []
 	
 	# If status is set, go ahead and edit it
@@ -467,24 +476,22 @@ def update_status(request):
 	
 	return errors
 
-# -----------------------------------------
-# update_event(request)
-#
-# Update an event's surfice, description, status, and data based on what's in request
-# If no event is in request, nothing happens
-#
-# INPUT
-# request						A request object
-#	- pk						The pk of an event
-#	- surfice (optional)		New name of the event
-#	- description (optional)	New description of the event
-#	- status (optional)			New status for the event
-#	- data (optional)			JSON data for general data of the event
-#
-# RETURNS
-# *errors
-# -----------------------------------------
 def update_event(request):
+	""" Update an event's attribute
+		If no event is in request, nothing happens
+		
+		INPUT
+		request							A request object
+			- pk						The pk of an event
+			- surfice (optional)		New name of the event
+			- description (optional)	New description of the event
+			- status (optional)			New status for the event
+			- data (optional)			JSON data for general data of the event
+		
+		RETURNS
+		*errors
+	"""
+	
 	errors = []
 	
 	# If status is set, go ahead and edit it
@@ -500,9 +507,8 @@ def update_event(request):
 		
 		# Get the status object
 		event = Event.get_event(pk=request.POST['pk'])
-		print post
-		# If name is in request, give this status a new name
-		# Returns a False flag when another status already has this new name
+		
+		# If surfice is in request, assign this event to this new surfice
 		if 'surfice' in post:
 			flag = event.set( surfice=Surfice.get_surfice(pk=post['surfice']) )
 			if not flag:
@@ -512,15 +518,20 @@ def update_event(request):
 		if 'description' in post:
 			event.set(description=post['description'])
 		
+		# If status is in request, set the event to the new status
 		if 'status' in post:
 			flag = event.set(status=Status.get_status(pk=post['status']))
 			if not flag:
 				errors.append("That status doesn't exist.")
 		
 		if 'timestamp' in post:
-			#time_string = "01/21/2012 14:30:59"
+			# Timestamp passed in format "01/21/2012 14:30:59"
 			strp_time = time.strptime(post['timestamp'], "%m/%d/%Y %H:%M:%S")
+			
+			# Convert the time to a Django-acceptable timestamp
 			date_django = datetime.fromtimestamp(time.mktime(strp_time))
+			
+			# Set the timestamp
 			event.set(timestamp=date_django)
 
 		
@@ -539,20 +550,116 @@ def update_event(request):
 	
 	return errors
 
-# -----------------------------------------
-# delete_event(request)
-#
-# Update an event
-#
-# INPUT
-# request			A request object
-#	- event			The pk of an event
-#	- delete		The flag to let us know we're deleting
-#
-# RETURNS
-# *errors
-# -----------------------------------------
+def delete_surf(request):
+	""" Delete a surf
+		
+		INPUT
+		request			A request object
+			- surf		The pk of a surf
+			- delete	The flag to delete
+		
+		RETURNS
+		*errors
+	"""
+	errors = []
+	
+	# If surf and delete are set, go ahead and delete the surf
+	if	(
+				'delete' in request.POST and
+				'surf' in request.POST
+			):
+			
+			# Get the surf that we're about to delete
+			surf = Surf.get_surf(pk=request.POST['surf'])
+			
+			# Check to make sure this is a real Surf object, then delete it
+			if type(surf) is Surf:
+				surf.delete()
+		
+	
+	# If no surf is set, throw an error
+	else:
+		errors.append("It's usually good to have a surf to delete.")
+	
+	return errors
+
+def delete_surfice(request):
+	""" Delete a surfice
+		
+		INPUT
+		request			A request object
+			- surfice	The pk of a surfice
+			- delete	The flag to delete
+		
+		RETURNS
+		*errors
+	"""
+	errors = []
+	
+	# If surfice and delete are set, go ahead and delete the surfice
+	if	(
+				'delete' in request.POST and
+				'surfice' in request.POST
+			):
+			
+			# Get the surfice that we're about to delete
+			surfice = Surfice.get_surfice(pk=request.POST['surfice'])
+			
+			# Check to make sure this is a real Surfice object, then delete it
+			if type(surfice) is Surfice:
+				surfice.delete()
+		
+	
+	# If no surfice is set, throw an error
+	else:
+		errors.append("It's usually good to have a surfice to delete.")
+	
+	return errors
+
+def delete_status(request):
+	""" Delete a status
+		
+		INPUT
+		request			A request object
+			- status	The pk of a status
+			- delete	The flag to delete
+		
+		RETURNS
+		*errors
+	"""
+	errors = []
+	
+	# If status and delete are set, go ahead and delete the status
+	if	(
+				'delete' in request.POST and
+				'status' in request.POST
+			):
+			
+			# Get the status that we're about to delete
+			status = Status.get_status(pk=request.POST['status'])
+			
+			# Check to make sure this is a real Surf object, then delete it
+			if type(status) is Status:
+				status.delete()
+		
+	
+	# If no status is set, throw an error
+	else:
+		errors.append("It's usually good to have a status to delete.")
+	
+	return errors
+
 def delete_event(request):
+	""" Delete an event
+		
+		INPUT
+		request			A request object
+			- event		The pk of an event
+			- delete	The flag to delete
+		
+		RETURNS
+		*errors
+	"""
 	errors = []
 	
 	# If event and delete are set, go ahead and delete the event
@@ -561,39 +668,34 @@ def delete_event(request):
 				'event' in request.POST
 			):
 			
-			# Get the surfice that we're about to delete
+			# Get the event that we're about to delete
 			event = Event.get_event(pk=request.POST['event'])
 			
-			# Django automatically deletes all related objects
-			# along with the surfice so go ahead and delete the surfice
+			# Check to make sure this is a real Event object, then delete it
 			if type(event) is Event:
 				event.delete()
-				pass
 		
 	
-	# If no status is set, throw an error
+	# If no event is set, throw an error
 	else:
 		errors.append("It's usually good to have an event to delete.")
 	
 	return errors
 
-# -----------------------------------------
-# delete_ding(request)
-#
-# Delete a ding
-#
-# INPUT
-# request			A request object
-#	- ding			The pk of a ding
-#	- delete		The flag to let us know we're deleting
-#
-# RETURNS
-# *errors
-# -----------------------------------------
 def delete_ding(request):
+	""" Delete a ding
+		
+		INPUT
+		request			A request object
+			- ding		The pk of a ding
+			- delete	The flag to delete
+		
+		RETURNS
+		*errors
+	"""
 	errors = []
 	
-	# If event and delete are set, go ahead and delete the event
+	# If ding and delete are set, go ahead and delete the ding
 	if	(
 				'delete' in request.POST and
 				'ding' in request.POST
@@ -602,39 +704,39 @@ def delete_ding(request):
 			# Get the surfice that we're about to delete
 			ding = Ding.get_ding(pk=request.POST['ding'])
 			
-			# Django automatically deletes all related objects
-			# along with the surfice so go ahead and delete the surfice
+			# Check to make sure this is a real Ding object, then delete it
 			if type(ding) is Ding:
 				ding.delete()
 		
 	
-	# If no status is set, throw an error
+	# If no ding is set, throw an error
 	else:
 		errors.append("It's usually good to have a ding to delete.")
 	
 	return errors
 
-# -----------------------------------------
-# submit_ding(request)
-#
-# Submit a ding based on the surfice, email, and state passed to it
-#
-# INPUT
-# request						A request object
-#	- surfice					The pk of a status
-#	- email						Email address of the user submitting the ding
-#	- description (optional)	Description of the ding
-#	- status (optional)			The reported status of the surfice
-#	- data (optional)			JSON data for general data of the status (like color)
-#
-# RETURNS
-# *errors
-# -----------------------------------------
 def submit_ding(request):
+	""" Submit a ding for a surfice
+		
+		INPUT
+		request							A request object
+			- surfice					The pk of a surfice
+			- email						Email address of the user submitting the ding
+			- description (optional)	Description of the ding
+			- status				The reported status of the surfice
+			- data (optional)			JSON data for general data of the ding
+		
+		RETURNS
+		*errors
+	"""
 	errors = []
 	
-	# If both surfice and email is set
-	if 'surfice' in request.POST and 'email' in request.POST:
+	# If both surfice, email, and status are set
+	if (
+			'surfice'	in request.POST and
+			'email' 	in request.POST and
+			'status' 	in request.POST
+		):
 		try:
 			# First see if the email address is actually an email address
 			validate_email(request.POST['email'])
@@ -651,11 +753,12 @@ def submit_ding(request):
 				# Get the JSON data from POST
 				data = json.loads(request.POST['data'])
 			
+			# Create the ding
 			ding = Ding.create(
-				Surfice.get_surfice(pk=request.POST['surfice']),
+				surfice,
 				Status.get_status(pk=request.POST['status']),
 				request.POST['email'],
-				request.POST['description'],
+				request.POST.get('description', ''),
 				**data
 			)
 			
@@ -667,80 +770,97 @@ def submit_ding(request):
 			errors.append("Whoa, something unexpected happened")
 			pass
 	
+	# If no surfice is set, throw an error
+	else:
+		errors.append("It's usually good to have a surfice to assign a ding to.")
+	
 	return errors
 
-# -----------------------------------------
-# get_surf(request)
-#
-# Gets a surf based on the id/pk passed
-#
-# INPUT
-# request		A request object
-#	- surf		The pk of the surf
-#
-# RETURNS
-# Surf
-# -----------------------------------------
 def get_surf(request):
+	""" Get a surf by name or id
+		
+		INPUT
+		request			A request object
+			- surf		The pk of the surf
+			- name		The name of the surf
+		
+		RETURNS
+		Surf
+	"""
+	
 	surf = {}
 	
-	# Both surf and surfice need to be in request
+	# If surf is set, get a surf object by id
 	if 'surf' in request.GET:
 		# Get the surf object from the database
 		surf = Surf.get_surf(pk=request.GET['surf'])
-		
-		# Convert the surf to a dictionary so that we can pass it back as JSON
-		#surf = model_to_dict(surf)
 		
 		# Serialize the surf
 		surf = SurfSerializer(surf)
 		surf = JSONRenderer().render(surf.data)
 	
-	# If surf was not in the request, throw an error
+	# If name is set, get a surf object by name
+	elif 'name' in request.GET:
+		# Get the surf object from the database
+		surf = Surf.get_surf(name=request.GET['name'])
+		
+		# Serialize the surf
+		surf = SurfSerializer(surf)
+		surf = JSONRenderer().render(surf.data)
+	
+	# If surf or name were not in the request, throw an error
 	else:
 		surf.append("A Surf was not passed")
 	
 	return surf
 
-# -----------------------------------------
-# get_surfs(request)
-#
-# Gets all surfs from the database
-#
-# INPUT
-# request		A request object
-# 
-# RETURNS
-# *Surf
-# -----------------------------------------
 def get_surfs(request):
+	""" Get surfs as JSON data
+		
+		If a parameter is set, get surfs by that.
+		Otherwise, get all the surfs
+		
+		INPUT
+		request			A request object
+			- name		The name of the surf
+		
+		RETURNS
+		*Surf
+	"""
+	
 	surfs = {}
 	
-	# Get the surf object from the database
-	surfs = Surf.get_surfs()
+	# If name is set, get all the surfs that contain this name
+	if 'name' in request.GET:
+		# Get the surf objects that contain this name
+		surfs = Surf.get_surfs(name=request.GET['name'])
 	
-	# Serialize the surf
+	# If nothing is set, get all the surfs
+	else:	
+		# Get the surf object from the database
+		surfs = Surf.get_surfs()
+	
+	# Serialize the surfs
 	surfs = SurfSerializer(surfs)
 	surfs = JSONRenderer().render(surfs.data)
 	
 	return surfs
 
-# -----------------------------------------
-# get_surfice(request)
-#
-# Gets a surfice based on the id/pk passed
-#
-# INPUT
-# request		A request object
-#	- surfice	The pk of the surf
-#
-# RETURNS
-# Surfice
-# -----------------------------------------
 def get_surfice(request):
+	""" Get a surfice by name or id
+		
+		INPUT
+		request			A request object
+			- surfice	The pk of the surfice
+			- name		The name of the surfice
+		
+		RETURNS
+		Surfice
+	"""
+	
 	surfice = {}
 	
-	# Surfice needs to be in request
+	# If surfice is set, get the surfice by id
 	if 'surfice' in request.GET:
 		# Get the surfice object from the database
 		surfice = Surfice.get_surfice(pk=request.GET['surfice'])
@@ -749,214 +869,153 @@ def get_surfice(request):
 		surfice = SurficeSerializer(surfice)
 		surfice = JSONRenderer().render(surfice.data)
 	
+	# If name is set, get the surfice by name
+	elif 'name' in request.GET:
+		# Get the surfice object from the database
+		surfice = Surfice.get_surfice(name=request.GET['name'])
+		
+		# Serialize the surfice
+		surfice = SurficeSerializer(surfice)
+		surfice = JSONRenderer().render(surfice.data)
+		
 	# If surf was not in the request, throw an error
 	else:
 		surfice.append("A Surf was not passed")
 	
 	return surfice
 
-# -----------------------------------------
-# get_surfice(request)
-#
-# Gets surfices based on the whichever parameter is passed
-#
-# INPUT
-# request		A request object
-#	- ***		The pk of the surf
-#
-# RETURNS
-# Surf
-# -----------------------------------------
 def get_surfices(request):
+	""" Get surfices by surf or all
+		
+		INPUT
+		request			A request object
+			- surf		The pk of the surf that surfices belong to
+			- name		Get all surfices that contain this name
+			- status	Get all surfices that have this status
+			- [none]	Get all surfices
+		
+		RETURNS
+		*Surfice
+	"""
+	
 	surfices = {}
 	
-	# Both surf and surfice need to be in request
+	# If surf is in request, get all the surfices that belong to it
 	if 'surf' in request.GET:
 		# Get the surf object from the database
 		surf = Surf.get_surf(pk=request.GET['surf'])
 		
 		# Get all the surfices within that Surf
 		surfices = surf.get_surfices()
-		
-		# Convert the surf to a dictionary so that we can pass it back as JSON
-		#surfices = model_to_dict(surfices)
-		#print surfices[0].status.data.color
-		surfices = SurficeSerializer(surfices)
-		surfices = JSONRenderer().render(surfices.data)
 	
-	# If surf was not in the request get all the surfices
+	# If name is set, get all surfices that contain this name
+	elif 'name' in request.GET:
+		# Get all the surfices within that Surf
+		surfices = surf.get_surfices(name=request.GET['name'])
+	
+	# If status is set, get all surfices that have this status
+	elif 'status' in request.GET:
+		# Get the status
+		status = Status.get_status(pk=request.GET['status'])
+		
+		# Get all the surfices with that status
+		surfices = Surfice.get_surfices(status=status)
+	
+	# If nothing was set in GET, get all the surfices
 	else:
 		surfices = Surfice.get_surfices()
-		surfices = SurficeSerializer(surfices)
-		surfices = JSONRenderer().render(surfices.data)
+	
+	# Serialize the surfices so that we can pass them back as an array of JSON objects
+	surfices = SurficeSerializer(surfices)
+	surfices = JSONRenderer().render(surfices.data)
 	
 	return surfices
 
-# -----------------------------------------
-# get_surfs_with_surfices(request)
-#
-# Gets surfices based on the whichever parameter is passed
-#
-# INPUT
-# request		A request object
-#	- ***		The pk of the surf
-#
-# RETURNS
-# Surf
-# -----------------------------------------
-def get_surfs_with_surfices(request):
-	#context_dict = {}
-	surfs = {}
-	
-	# Exactly the same as views.surfs()...
-	
-	# Query for surfs and add them to context_dict
-	surfs = Surf.get_surfs()
-	
-	# For each Surf, query for Surfices and add them to context_dict
-	#for i, surf in enumerate(surfs):
-		#surfs[i].surfices = SurficeSerializer(surf.get_surfices())
-		
-	
-	# Query all the Surfices and add them to context_dict
-	#surfice_list = Surfice.get_surfices()
-	#context_dict['surfices'] = SurficeSerializer(surfice_list)
-	
-	# Both surf and surfice need to be in request
-	# if False and 'surf' in request.GET:
-# 		# Get the surf object from the database
-# 		surf = Surf.get_surf(pk=request.GET['surf'])
-# 		
-# 		# Get all the surfices within that Surf
-# 		surfices = surf.get_surfices()
-# 		
-# 		# Convert the surf to a dictionary so that we can pass it back as JSON
-# 		#surfices = model_to_dict(surfices)
-# 		#print surfices[0].status.data.color
-# 		surfices = SurficeSerializer(surfices)
-# 		surfices = JSONRenderer().render(surfices.data)
-# 	
-# 	# If surf was not in the request get all the surfices
-# 	elif False:
-# 		surfices = Surfice.get_surfices()
-# 		surfices = SurficeSerializer(surfices)
-# 		surfices = JSONRenderer().render(surfices.data)
-	
-	surfs = SurfWithSurficeSerializer(surfs)
-	surfs = JSONRenderer().render(surfs.data)
-	
-	print surfs
-	
-	return surfs
-
-# -----------------------------------------
-# get_status(request)
-#
-# Gets a status based on the id/pk passed
-#
-# INPUT
-# request		A request object
-#	- status	The status of the surf
-#
-# RETURNS
-# Status
-# -----------------------------------------
 def get_status(request):
+	""" Get a status by id or name
+		
+		INPUT
+		request			A request object
+			- status	The status id
+			- name		The name of the status
+		
+		RETURNS
+		Status
+	"""
+	
 	status = {}
 	
-	# Both surf and surfice need to be in request
+	# If status is set, get the status object by id
 	if 'status' in request.GET:
-		# Get the surf object from the database
+		# Get the status object from the database
 		status = Status.get_status(pk=request.GET['status'])
 		
-		# Convert the surf to a dictionary so that we can pass it back as JSON
-		#status = model_to_dict(status)
-		#status = serializers.serialize("json", [status])
-		
+		# Serialize the status so that we can pass it back as JSON
 		status = StatusSerializer(status)
 		status = JSONRenderer().render(status.data)
 	
-	# If surf was not in the request, throw an error
+	# If name is set, get the status object by name
+	elif 'name' in request.GET:
+		# Get the status object from the database
+		status = Status.get_status(name=request.GET['name'])
+		
+		# Serialize the status so that we can pass it back as JSON
+		status = StatusSerializer(status)
+		status = JSONRenderer().render(status.data)
+	
+	# If nothing was set, throw an error
 	else:
-		status.append("A Surf was not passed")
+		status.append("A Status id or name was not passed")
 	
 	return status
 
-# -----------------------------------------
-# get_statuses(request)
-#
-# Gets an array of all statuses
-#
-# INPUT
-# request		A request object
-#	- status	The status of the surf
-#
-# RETURNS
-# Status
-# -----------------------------------------
 def get_statuses(request):
+	""" Get an array of statuses
+		
+		If no parameters are set, get all the statuses
+		
+		INPUT
+		request			A request object
+			- name		Get all statuses that contain this name
+		
+		RETURNS
+		*Status
+	"""
+	
 	statuses = {}
 	
-	# Get the surf object from the database
-	statuses = Status.get_statuses()
+	# If name is set, get all statuses that contain this name
+	if 'name' in request.GET:
+		statuses = Status.get_statuses(name=request.GET['name'])
 	
-	# Convert the surf to a dictionary so that we can pass it back as JSON
-	#status = model_to_dict(status)
-	#status = serializers.serialize("json", [status])
+	# If nothing is set, get all statuses
+	else:
+		# Get the status object from the database
+		statuses = Status.get_statuses()
 	
+	# Serialize the status so that we can pass it back as JSON
 	statuses = StatusSerializer(statuses)
 	statuses = JSONRenderer().render(statuses.data)
 	
 	return statuses
 
-# -----------------------------------------
-# get_status(request)
-#
-# Gets a status based on the id/pk passed
-#
-# INPUT
-# request		A request object
-#	- status	The status of the surf
-#
-# RETURNS
-# Status
-# -----------------------------------------
-def get_status(request):
-	status = {}
-	
-	# Both surf and surfice need to be in request
-	if 'status' in request.GET:
-		# Get the surf object from the database
-		status = Status.get_status(pk=request.GET['status'])
-		
-		# Convert the surf to a dictionary so that we can pass it back as JSON
-		#status = model_to_dict(status)
-		#status = serializers.serialize("json", [status])
-		
-		status = StatusSerializer(status)
-		status = JSONRenderer().render(status.data)
-	
-	# If surf was not in the request, throw an error
-	else:
-		status.append("A Surf was not passed")
-	
-	return status
-
-# -----------------------------------------
-# get_event(request)
-#
-# Gets an event based on the id/pk or page passed
-#
-# INPUT
-# request			A request object
-#	- event			The pk of the event
-#	- page			The pagination page of the event
-#	- first, last	Get the first or last event on the page
-#
-# RETURNS
-# Status
-# -----------------------------------------
 def get_event(request):
+	""" Get an event
+		
+		This will either get event by id
+		or get the first/last event of a page
+		based on pagination settings in views.py
+		
+		INPUT
+		request				A request object
+			- event			The pk of the event
+			- page			The pagination page of the event
+			- first, last	Get the first or last event on the page
+		
+		RETURNS
+		Event
+	"""
+	
 	event = {}
 	
 	# The event pk needs to be in request
@@ -972,7 +1031,7 @@ def get_event(request):
 		page = request.GET['page']
 	
 		# Initialize paginator
-		# 10 per page references what is views.py
+		# 10 per page - references what is in views.py
 		events = Event.get_events()
 		paginator = Paginator(events, 10)
 	
@@ -989,34 +1048,110 @@ def get_event(request):
 		if 'first' in request.GET:
 			event = events[0]
 		elif 'last' in request.GET:
-			print events_page.end_index()
-			print events_page.end_index() - 1
 			event = events[events_page.end_index()-1]
 		
 		event = EventSerializer(event)
 		event = JSONRenderer().render(event.data)
 	
-	# If surf was not in the request, throw an error
+	# If event or page were not in the request, throw an error
 	else:
 		event.append("An event or page was not passed")
 	
 	return event
 
-# -----------------------------------------
-# get_ding(request)
-#
-# Gets an ding based on the id/pk or page passed
-#
-# INPUT
-# request			A request object
-#	- ding			The pk of the ding
-#	- page			The pagination page of the ding
-#	- first, last	Get the first or last ding on the page
-#
-# RETURNS
-# Status
-# -----------------------------------------
+def get_events(request):
+	""" Get an array of events
+		
+		Only one order_by and one get mode can be used at a time.
+		For example, I can order by timestamp, over a certain number of days
+		
+		INPUT
+		request			A request object
+			- days				int in number of days back from the current day to pull events
+			- events			int number of events to pull regardless of date
+			- start				timestamp (YYYY-MM-DD) of the start date of events
+			- end				timestamp (YYYY-MM-DD) of the end date. Gets events
+			-					from before and including this date
+			- start, end		if both are set, all events between (inclusive)
+			-					will be returned
+			- surfice			Surfice object that has events
+			- status			Status of events
+			- [sort, sort_by,
+			- order, order_by] 	Allows custom sorting, and then sorting by
+			-					timestamp and then pk
+			- [none]			If no argument is passed, all stored events will be returned
+			-
+			- RETURNS
+			- Array of events in reverse chronological order (newest first)
+		
+		RETURNS
+		*Event in order_by order or reverse chronological order (newest first)
+	"""
+	
+	events = {}
+	
+	# Get how to order the events
+	order_by = ''
+	if   'sort'		in request.GET: order_by = request.GET['sort']
+	elif 'sort_by' 	in request.GET: order_by = request.GET['sort_by']
+	elif 'order' 	in request.GET: order_by = request.GET['order']
+	elif 'order_by' in request.GET: order_by = request.GET['order_by']
+	
+	# If days is set, get all events back this number of days
+	if 'days' in request.GET:
+		events = Event.get_events(days=request.GET['days'], order_by=order_by)
+	
+	# If events is set, get this number of events
+	elif 'events' in request.GET:
+		events = Event.get_events(events=request.GET['events'], order_by=order_by)
+	
+	# If start and end are set (YYYY-MM-DD), get all events between (inclusive)
+	elif 'start' in request.GET and 'end' in request.GET:
+		events = Event.get_events(events=request.GET['events'], order_by=order_by)
+	
+	# If start timestamp (YYYY-MM-DD) is set, get all events from this date
+	elif 'start' in request.GET:
+		events = Event.get_events(start=request.GET['start'], order_by=order_by)
+	
+	# If end timestamp (YYYY-MM-DD) is set, get all events up to and including this event
+	elif 'end' in request.GET:
+		events = Event.get_events(end=request.GET['end'], order_by=order_by)
+	
+	# If surfice is set, get all events associated with this surfice
+	elif 'surfice' in request.GET:
+		events = Event.get_events(surfice=request.GET['surfice'], order_by=order_by)
+	
+	# If status is set, get all events that have a certain status
+	elif 'status' in request.GET:
+		events = Event.get_events(status=request.GET['status'], order_by=order_by)
+	
+	# If nothing is set, get all events
+	else:
+		events = Event.get_events(order_by=order_by)
+	
+	# Serialize the events so that we can pass them back as JSON
+	events = EventSerializer(events)
+	events = JSONRenderer().render(events.data)
+	
+	return events
+
 def get_ding(request):
+	""" Get a ding
+		
+		This will either get ding by id
+		or get the first/last ding of a page
+		based on pagination settings in views.py
+
+		INPUT
+		request				A request object
+			- ding			The pk of the ding
+			- page			The pagination page of the ding
+			- first, last	Get the first or last ding on the page
+		
+		RETURNS
+		Ding
+	"""
+	
 	ding = {}
 	
 	# The ding pk needs to be in request
@@ -1051,25 +1186,14 @@ def get_ding(request):
 		elif 'last' in request.GET:
 			ding = dings[dings_page.end_index()-1]
 		
-		# Get the surfice and status urls for addition to the dictionary in a moment
-		surfice_url = reverse(views.surfice, kwargs={'surfice': slugify(ding.surfice.name)})
-		status_url = reverse(views.status, kwargs={'status': slugify(ding.status.name)})
-		
 		# Serialize the ding object
 		ding = DingSerializer(ding)
 		
 		# Get the actual data and put it in ding
 		ding = ding.data
 		
-		# Add the surfice and status urls to the dictionary
-		ding['surfice_url'] = surfice_url
-		ding['status_url'] = status_url
-		
+		# Render the ding out to JSON
 		ding = JSONRenderer().render(ding)
-		
-		
-		print ding
-		
 	
 	# If ding or page were not in the request, throw an error
 	else:
@@ -1077,28 +1201,130 @@ def get_ding(request):
 	
 	return ding
 
-# -----------------------------------------
-# dispatch(request, action)
-#
-# Fires functions based on the action passed.
-# If no action is passed, nothing happens
-#
-# INPUT
-# request				A request object
-# action (optional)		A string that corresponds to a function
-#
-# ACTIONS
-# set-status			Set status of surfice
-# set-surf-status		Set status of an entire surf
-# set-surf				Set surf of a surfice
-# update-surf			Update info of surf
-# update-surfice		Update info of surfice
-#
-# RETURNS
-# HttpResponse
-# -----------------------------------------
+def get_dings(request):
+	""" Get an array of dings
+		
+		Only one order_by and one get mode can be used at a time.
+		For example, I can order by timestamp, over a certain number of days
+		
+		INPUT
+		request			A request object
+			- email				The email address of the person who submitted the ding
+			- days				int in number of days back from the current day to pull dings
+			- dings				int number of dings to pull regardless of date
+			- start				timestamp (YYYY-MM-DD) of the start date of dings
+			- end				timestamp (YYYY-MM-DD) of the end date. Gets dings
+			-					from before and including this date
+			- start, end		if both are set, all dings between (inclusive)
+			-					will be returned
+			- surfice			Dings related to this surfice
+			- status			The reported status stored in the ding
+			- [sort, sort_by,
+			- order, order_by] 	Allows custom sorting, and then sorting by
+			-					timestamp and then pk
+			- [none]			If no argument is passed, all stored dings will be returned
+			-
+			- RETURNS
+			- Array of dings in reverse chronological order (newest first)
+		
+		RETURNS
+		*Ding in order_by order or reverse chronological order (newest first)
+	"""
+	
+	dings = {}
+	
+	# Get how to order the dings
+	order_by = ''
+	if   'sort'		in request.GET: order_by = request.GET['sort']
+	elif 'sort_by' 	in request.GET: order_by = request.GET['sort_by']
+	elif 'order' 	in request.GET: order_by = request.GET['order']
+	elif 'order_by' in request.GET: order_by = request.GET['order_by']
+	
+	# If email is set, get all dings associated with this email address
+	if 'email' in request.GET:
+		dings = Ding.get_dings(email=request.GET['email'], order_by=order_by)
+	
+	# If days is set, get all dings back this number of days
+	elif 'days' in request.GET:
+		dings = Ding.get_dings(days=request.GET['days'], order_by=order_by)
+	
+	# If dings is set, get this number of dings
+	elif 'dings' in request.GET:
+		dings = Ding.get_dings(dings=request.GET['dings'], order_by=order_by)
+	
+	# If start and end are set (YYYY-MM-DD), get all dings between (inclusive)
+	elif 'start' in request.GET and 'end' in request.GET:
+		dings = Ding.get_dings(dings=request.GET['dings'], order_by=order_by)
+	
+	# If start timestamp (YYYY-MM-DD) is set, get all dings from this date
+	elif 'start' in request.GET:
+		dings = Ding.get_dings(start=request.GET['start'], order_by=order_by)
+	
+	# If end timestamp (YYYY-MM-DD) is set, get all dings up to and including this ding
+	elif 'end' in request.GET:
+		dings = Ding.get_dings(end=request.GET['end'], order_by=order_by)
+	
+	# If surfice is set, get all dings associated with this surfice
+	elif 'surfice' in request.GET:
+		dings = Ding.get_dings(surfice=request.GET['surfice'], order_by=order_by)
+	
+	# If status is set, get all dings that have a certain status
+	elif 'status' in request.GET:
+		dings = Ding.get_dings(status=request.GET['status'], order_by=order_by)
+	
+	# If nothing is set, get all dings
+	else:
+		dings = Ding.get_dings(order_by=order_by)
+	
+	# Serialize the dings so that we can pass them back as JSON
+	dings = DingSerializer(dings)
+	dings = JSONRenderer().render(dings.data)
+	
+	return dings
+
+@permission_required('is_superuser', raise_exception=True)
 def dispatch(request, action=''):
-	print "hello?"
+	""" Dispatch all ajax functions
+		
+		Fires functions based on the action passed.
+		If no action is passed, nothing happens
+		
+		INPUT
+		request				A request object
+		action				A string that corresponds to a function
+		
+		ACTIONS
+		set-status			Set status of a surfice
+		set-surf-status		Set status of an entire surfice
+		set-surf			Set surf of a surfice
+		set-surfs			Set surfs of a surfice
+		add-surf			Add surf to a surfice
+		add-surfs			Add surfs to a surfice
+		update-surf			Update info of surf
+		update-surfice		Update info of surfice
+		update-status		Update info of status
+		update-event		Update info of event
+		delete-surf 		Delete a surf
+		delete-surfice 		Delete a surfice
+		delete-status		Delete a status
+		delete-event		Delete an event
+		delete-ding			Delete a ding
+		submit-ding			Submit a ding
+		get-surf			Get a surf
+		get-surfs			Get array of surfs
+		get-surfice			Get a surfice
+		get-surfices		Get array of surfices
+		get-status			Get a status
+		get-statuses		Get array of statuses
+		get-event			Get an event
+		get-events			Get an array of events
+		get-ding			Get a ding
+		get-dings			Get an array of dings
+		
+		RETURNS
+		JSON HttpResponse
+	"""
+	
 	response = {}
 	
 	# Set the status of a surfice
@@ -1141,6 +1367,18 @@ def dispatch(request, action=''):
 	elif action == 'update-event':
 		response = json.dumps(update_event(request))
 	
+	# Delete a surf
+	elif action == 'delete-surf':
+		response = json.dumps(delete_surf(request))
+	
+	# Delete a surfice
+	elif action == 'delete-surfice':
+		response = json.dumps(delete_surfice(request))
+	
+	# Delete a status
+	elif action == 'delete-status':
+		response = json.dumps(delete_status(request))
+	
 	# Delete an event
 	elif action == 'delete-event':
 		response = json.dumps(delete_event(request))
@@ -1157,7 +1395,7 @@ def dispatch(request, action=''):
 	elif action == 'get-surf':
 		response = get_surf(request)
 	
-	# Get all surfs
+	# Get a set of surfs
 	elif action == 'get-surfs':
 		response = get_surfs(request)
 	
@@ -1168,10 +1406,6 @@ def dispatch(request, action=''):
 	# Get a set of surfices
 	elif action == 'get-surfices':
 		response = get_surfices(request)
-	
-	# Get surfs with surfices in them
-	elif action == 'get-surfs-with-surfices':
-		response = get_surfs_with_surfices(request)
 	
 	# Get a single status
 	elif action == 'get-status':
@@ -1185,9 +1419,17 @@ def dispatch(request, action=''):
 	elif action == 'get-event':
 		response = get_event(request)
 	
+	# Get a set of events
+	elif action == 'get-events':
+		response = get_events(request)
+	
 	# Get a single ding
 	elif action == 'get-ding':
 		response = get_ding(request)
+	
+	# Get a set of dings
+	elif action == 'get-dings':
+		response = get_dings(request)
 	
 	else:
 		response = ["No action called " + action]

@@ -8,7 +8,7 @@
 
 
 {% block heading %}
-<!-- START THE FEATURETTES -->
+
 <div class="container">
     <div class="jumbotron jumbotron-admin">
 		<h1>Update your Surfs</h1>
@@ -26,6 +26,8 @@
 	<div class="page-header">
 		<h2>Click on a Surf to see Details</h2>
 	</div>
+	
+	<!-- start left nav -->
 	<div class="col-sm-4">
 		<div class="list-group select">
 			<a href="#new" class="list-group-item list-group-item-success">Create New Surf<span class="glyphicon glyphicon-plus pull-right"</span></a>
@@ -35,9 +37,12 @@
 			{% endfor %}
 		</div>
 	</div>
+	<!-- /end left nav -->
+	
 	<div class="col-sm-8">
-<!--Start Tabs-->   
+		<!-- start tabs -->   
 		<div class="panel-group tab-content">
+			<!-- start new-surf tab -->
 			<div class="tab-pane fade" id="new">
 				<form action="" method="post" role="form" id="create-surf-form">
 					{# To prevent cross-site forgery, include the following required tag #}
@@ -47,7 +52,7 @@
 						<div class="col-sm-6 ">
 							<div class="form-group">
 								<label class="control-label">New Surf Name</label>
-								<input type="text" name="name" class="form-control" placeholder="Surf Name">
+								<input type="text" name="name" class="form-control" placeholder="Surf Name" data-ajax-check="surf-name">
 							</div>
 						</div>
 						<div class="col-sm-6">
@@ -75,8 +80,9 @@
 					</div>
 				</form>
 			</div>
+			<!-- /end new-surf tab -->
 			
-			
+			<!-- start all tab -->
 			<div class="tab-pane fade" id="all">
 				<div class="row">
 					<div class="col-xs-12">
@@ -147,18 +153,19 @@
 					</div>
 				</div>
 			</div>
+			<!-- /end all tab -->
 			
+			<!-- start surf tabs -->
 			{% for surf in surfs %}
 			<div class="tab-pane fade {% if forloop.first %}in active{% endif %}" id="surf-{{ surf.name|slugify }}"
 				data-ajax-update="surf-name-{{ surf.id }}"
 			>
-<!--Start Panel 1 of Accordian-->
-<!--Row: Current Information on the Surf-->
+				<!-- current surf info -->
 				<div class="row">
 					<div class="col-sm-8">
 						<h4>All Surfices in <span data-ajax-update="surf-name-{{ surf.id }}">{{ surf.name }}</span></h4>
 						<table class="table" data-ajax-update="surfs-surfices surf-surfices-{{ surf.id }} update-surfices" data-ajax-id="surf-{{ surf.id }}">
-							{% for surfice in surf.surfices %}
+							{% for surfice in surf.surfices.all %}
 							<tr class="dynamic-color" style="background-color:{{ surfice.status.data.color }}"
 								data-ajax-id="surfice-{{ surfice.id }}"
 							>
@@ -178,6 +185,9 @@
 						<p data-ajax-update="surf-description-{{ surf.id }}">{{ surf.description }}</p>
 					</div>
 				</div>
+				<!-- /end current surf info -->
+				
+				<!-- Add/Remove Surfice -->
 				<div class="row">
 					<div class="col-xs-12">
 						<form type="ajax" action="ajax/set-surf" method="post" role="form"
@@ -194,16 +204,18 @@
 							<select class="form-control multiselect-surfices" multiple name="surfices">
 								{# Show surfices that are not already in the surf #}
 								{% for surfice in surfices %}
-									<option value="{{ surfice.id }}" {% if surfice in surf.surfices %}selected{% endif %}>{{ surfice.name }}</option>
+									<option value="{{ surfice.id }}" {% if surfice in surf.surfices.all %}selected{% endif %}>{{ surfice.name }}</option>
 								{% endfor %}
 							</select>
 							<button type="submit" class="btn btn-success button-accordian pull-right">Submit</button>
 						 </form>
 					</div>
 				</div>
+				<!-- /End Add/Remove Surfice -->
 			   
 				<hr class="divider-accordian">
 				
+				<!-- Update Surf Status -->
 				<h3>Update <span data-ajax-update="surf-name-{{ surf.id }}">{{ surf.name }}</span>'s Status</h3>
 				<form type="ajax" action="ajax/set-surf-status" method="post" role="form"
 					data-ajax-action="ajax/get-surfices"
@@ -249,9 +261,11 @@
 						</div>
 					</div>
 				</form>
+				<!-- /End Update Surf Status -->
 				
 				<hr class="divider-accordian">
 				
+				<!-- Edit Surf -->
 				<h3>Edit <span data-ajax-update="surf-name-{{ surf.id }}">{{ surf.name }}</span></h3>
 				<form type="ajax" action="ajax/update-surf"
 					data-ajax-update-target="surf-name-{{ surf.id }} surf-description-{{ surf.id }} surfs"
@@ -268,7 +282,7 @@
 						<div class="col-sm-6 ">
 							<div class="form-group">
 								<label class="control-label">Update Surf Name</label>
-								<input type="text" name="name" class="form-control select-all" placeholder="Surf Name" value="{{ surf.name }}"
+								<input type="text" name="name" class="form-control" placeholder="Surf Name" value="{{ surf.name }}"
 									data-ajax-check="surf-name"
 									data-ajax-update="surf-name-{{ surf.id }}">
 							</div>
@@ -276,7 +290,7 @@
 						<div class="col-sm-6">
 							<div class="form-group">
 								<label class="control-label">Update Surf Description</label>
-								<textarea class="form-control select-all" name="description" rows="3" placeholder="(Optional) Update Description here..">{{ surf.description }}</textarea>
+								<textarea class="form-control" name="description" rows="3" placeholder="(Optional) Update Description here..">{{ surf.description }}</textarea>
 							</div>
 						</div>
 					</div>
@@ -286,23 +300,18 @@
 						</div>
 					</div>
 				</form>
+				<!-- /End Edit Surf -->
 				
 				<hr class="divider-accordian">
+				
+				<!-- Delete Surf -->
 				<h3>Delete <span data-ajax-update="surf-name-{{ surf.id }}">{{ surf.name }}</span></h3>
-				{# If there is more than one surf in the database #}
-				{# Allow them to be deleted #}
-				{% if surfs|length > 1 %}
 				<button type="submit" class="btn btn-danger" data-toggle="modal" data-target="#confirm-delete-surf-{{ surf.id }}">Delete</button>
-			
-				{# If there's only one, you cannot delete it #}
-				{% else %}
-				<p>Cannot delete {{ surf.name }} since this is the last surf available.</p>
-				<button type="submit" class="btn btn-danger disabled">Delete</button>
-				{% endif %}
+				<!-- /End Delete Surf -->
 			</div>
 					
 					
-			
+			<!-- start delete modal dialog -->
 			<div class="modal fade" id="confirm-delete-surf-{{ surf.id }}" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
 				<div class="modal-dialog">
 					<div class="modal-content">
@@ -327,8 +336,10 @@
 					</div>
 				</div>
 			</div>
+			<!-- end delete modal dialog -->
 			
 			{% endfor %}
+			<!-- end surf tabs -->
 		</div>
 		<!-- /END ACCORDION -->
 	</div>
@@ -338,16 +349,5 @@
 
 
 <hr class="featurette-divider">
-<!-- /END THE FEATURETTES -->
 
 {% endblock content %}
-
-{% block scripts %}
-<script>
-$(function() {
-	
-	
-	
-});
-</script>
-{% endblock scripts %}

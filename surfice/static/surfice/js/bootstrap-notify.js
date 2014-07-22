@@ -84,7 +84,7 @@
   };
 
   Notification.prototype.hide = function () {
-  	console.log("hide?");
+  	//console.log("hide?");
     if (this.options.fadeOut.enabled)
       this.$note.delay(this.options.fadeOut.delay || 3000).fadeOut('slow', $.proxy(Notification.onClose, this));
     else Notification.onClose.call(this);
