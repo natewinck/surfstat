@@ -36,7 +36,7 @@ $("form").submit(function(e) { //listen for submit event
 			value: JSON.stringify( data ).replace(/["]/g, "\"")
 		});
 		
-		// Delete any input in this with name=data
+		// Delete any existing input in this form with name=data
 		$(this).find("[name=data]").remove();
 		
 		// Append the input into the form
@@ -56,25 +56,15 @@ $("form").submit(function(e) { //listen for submit event
 *  submit
 *
 ------------------------------ */
-$("form[type='ajax']").on("submit", function(e) {
+$("body").on("submit", "form[type='ajax']", function(e) {
+    // Prevent the form from submitting
     e.preventDefault();
     
-    // Give some feedback to the user
-    // First get the submit button
-    var $button = $(this).find('[type="submit"]');
+    // For convenience...
     var $form = $(this);
     
-    // Disable the button and add a flash animation (in css)
-    $button.addClass("disabled");
-	$button.addClass("flash");
-	
-	// Get the button text so we can replace it later
-	$buttonText = $button.text();
-	if ($button.attr("data-value-processing")) {
-		$button.text($button.attr("data-value-processing"));
-	} else {
-		$button.text("Saving...");
-	}
+    // Give some feedback to the user when submitting the ajax request
+    ajaxProcessingDisplay($form);
     
     // Serialize all the data in the form so that it can be passed
     var data = $(this).serialize();
@@ -83,67 +73,19 @@ $("form[type='ajax']").on("submit", function(e) {
     	// Get the response from the server
     	function(data, textStatus, jqXHR) {
     		
-    		// If the submit succeeded
-    		if ($button.attr("data-value-success")) {
-    			$button.text($button.attr("data-value-success"));
-    		} else {
-				$button.text("Saved");
-			}
-			
-			// Show a notification about the POST
-			var notification = $form.attr("data-ajax-success");
-			if (notification == "" || typeof notification === "undefined") notification = "Save successful."
-			ss.notify("success", notification);
+    		// Display success to the page's form
+    		ajaxSuccessDisplay($form);
 			
 			// Since something was updated, refresh the AJAX fields on the page
 			refreshAJAXPage($form);
-			
-			// Stop the pulsing
-			$button.removeClass("flash");
-			
-			// Pause for a moment, then re-enable the submit button
-			setTimeout(function() {
-				$button.removeClass("disabled");
-				$button.text($buttonText);
-			}, 750);
     	})
 		.done(function() {
 			// Nothing here (same as above)
 		})
-		.fail(function() {
+		.fail(function(test) {
 			
-			if ($button.attr("data-value-fail")) {
-    			$button.text($button.attr("data-value-fail"));
-    		} else {
-				$button.text("Failed");
-			}
-			
-			// Get the button type so we can return to it after showing that it failed
-			var originalBtnType = "";
-			if ($button.hasClass("btn-danger")) originalBtnType = "btn-danger";
-			else if ($button.hasClass("btn-default")) originalBtnType = "btn-default";
-			else if ($button.hasClass("btn-primary")) originalBtnType = "btn-primary";
-			else if ($button.hasClass("btn-success")) originalBtnType = "btn-success";
-			else if ($button.hasClass("btn-info")) originalBtnType = "btn-info";
-			else if ($button.hasClass("btn-warning")) originalBtnType = "btn-warning";
-			else if ($button.hasClass("btn-link")) originalBtnType = "btn-link";
-			
-			$button.addClass("btn-danger").removeClass(originalBtnType);
-			$button.removeClass("flash");
-			
-			// Get the fail notification
-			var notification = $form.attr("data-ajax-fail");
-			
-			// Show the notification
-			if (notification == "" || typeof notification === "undefined") notification = "Save failed."
-			ss.notify("danger", notification);
-			
-			// Pause for a moment, then re-enable the submit button
-			setTimeout(function() {
-				$button.removeClass("disabled");
-				$button.removeClass("btn-danger").addClass(originalBtnType);
-    			$button.text($buttonText);
-			}, 750);
+			// Display to the user that the ajax operation failed
+			ajaxFailDisplay($form)
 			
 		})
 		.always(function() {
@@ -168,45 +110,6 @@ $('.modal [type="submit"]').click(function(e) {
 	$modal.find("form").submit();
 	$modal.modal("hide");
 });
-
-$('button.login[type="submit"]').click(function(e) {
-	//e.preventDefault();
-	//little validation just to check username
-	if (textfield.val() != "") {
-		//$("body").scrollTo("#output");
-		$("#output").addClass("alert alert-success animated fadeInUp").html("Welcome back " + "<span style='text-transform:uppercase'>" + textfield.val() + "</span>");
-		$("#output").removeClass(' alert-danger');
-		$("input").css({
-			"height":"0",
-			"padding":"0",
-			"margin":"0",
-			"opacity":"0"
-		});
-		//change button text 
-		$('button[type="submit"]')//.html("continue")
-			.removeClass("btn-info")
-			.addClass("btn-default").click(function(){
-				$("input").css({
-					"height":"auto",
-					"padding":"10px",
-					"opacity":"1"
-				}).val("");
-			});
-		
-		//show avatar
-		//$(".avatar").css({
-		//	"background-image": "url('http://api.randomuser.me/0.3.2/portraits/women/35.jpg')"
-		//});
-	} else {
-		//remove success mesage replaced with error message
-		$("#output").removeClass(' alert alert-success');
-		$("#output").addClass("alert alert-danger animated fadeInUp").html("sorry enter a username ");
-	}
-	//console.log(textfield.val());
-
-});
-
-
 
 
 

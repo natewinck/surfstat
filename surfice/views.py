@@ -19,17 +19,6 @@ from datetime import date, timedelta
 
 from django_auth_ldap.backend import LDAPBackend
 
-# Create your views here.
-
-# staff_required decorator
-# Checks to see if user has staff permissions
-#def staff_required(login_url=None):
-   # return False #user_passes_test(lambda u: u.is_staff, login_url=login_url)
-
-# superuser_required decorator
-# Checks to see if user has staff permissions
-#def superuser_required(login_url=None):
-    #return False #user_passes_test(lambda u: u.is_superuser, login_url=login_url)
 
 def printv(obj, title=""): # Print your variables!
 	if title != "":
@@ -66,9 +55,9 @@ def debug():
 	# First test Surfs
 	# First manually
 	surf_manual = Surf()
- 	surf_manual.name = "Manual Surf"
- 	surf_manual.description = "A description of the manual surf"
- 	surf_manual.save_new()
+	surf_manual.name = "Manual Surf"
+	surf_manual.description = "A description of the manual surf"
+	surf_manual.save_new()
 	
 	printv(surf_manual, "MANUAL SURF")
 	
@@ -187,18 +176,6 @@ def debug():
 	except: pass
 
 
-def ding(request):
-	#Not checking yet because this is a test
-	#if 'q' in request.POST:
-    #    message = 'You searched for: %r' % request.POST['q']
-    print(printv(request.POST))
-    d = request.POST
-    return HttpResponse(d['email'])
-    #return render(request, 'surfice/index.html', {})
-	#Ding.create(d['surfice'], d['status'], d['email'], d['description'])
-	#index(request)
-
-
 def index(request):
 	if DEBUG: debug()
 	
@@ -228,17 +205,6 @@ def index(request):
 	status_list = Status.get_statuses()
 	context_dict['statuses'] = status_list
 	
-	
-	
-	
-	# GET ISSUE STATUS COLOR HERE -------------------------------------
-	# SET A DEFAULT STATUS AS AN ISSUE ----------------------------------
-	
-	
-	
-	
-	
-	
 	# Query for surfs = add the list to our context dictionary.
 	#surf_list = Surf.objects.order_by('-name')[:5]
 	#context_dict = {'surfs': surf_list}
@@ -256,13 +222,9 @@ def index(request):
 
 @permission_required('is_superuser')
 def admin(request):
-	user = LDAPBackend().get_user_model()
-	print "PRINTING USER INFO"
-	#print user.__dict__
-	#print request.user.duh
-	print request.user.is_active
-	#print request.user.ldap_user.is_it_working
-	print "done----"
+
+	#user = LDAPBackend().get_user_model()
+
 	context_dict = {}
 	
 	# Query for surfs and add them to context_dict
@@ -364,10 +326,6 @@ def surfs(request):
 	# Query for surfs and add them to context_dict
 	surf_list = Surf.get_surfs().prefetch_related('surfices')
 	context_dict['surfs'] = surf_list
-	
-	# For each Surf, query for Surfices and add them to context_dict
-	#for i, surf in enumerate(context_dict['surfs']):
-		#context_dict['surfs'][i].surfices = surf_list[i].surfice_set.all()
 	
 	# Query all the Surfices and add them to context_dict
 	surfice_list = Surfice.get_surfices()
@@ -621,52 +579,6 @@ def statuses(request):
 	context_dict['statuses'] = status_list
 	
 	return render(request, 'surfice/base_statuses.html', context_dict)
-
-@permission_required('is_superuser')
-def status(request, status=''):
-	pass
-
-@permission_required('is_superuser')
-def surfice(request, surfice=''):
-	context_dict = {}
-	
-	if request.method == 'POST':
-		# Is the admin trying to delete a surfice?
-		if	(
-				'delete' in request.POST and
-				'surfice' in request.POST
-			):
-			
-			# Get the surfice that we're about to delete
-			surfice = Surfice.get_surfice(pk=request.POST['surfice'])
-			
-			# Only delete the surfice if the surfice actually exists in the database
-			# Django automatically deletes all related objects
-			# along with the surfice so go ahead and delete the surfice
-			if type(surfice) is Surfice:
-				surfice.delete()
-			
-			# Redirect to the surfices after submission to clear headers
-			return HttpResponseRedirect( reverse(surfices) )
-	
-	# Query for surfices and add them to context_dict
-	surfice = Surfice.get_surfice(pk=surfice)
-	
-	# If it does not exist, raise a 404 error
-	if type(surfice) is not Surfice:
-		raise Http404
-	
-	# Add the surfice to context_dict
-	context_dict['surfice'] = surfice
-	
-	#surfice_surfices = Surfice.get_surfices(surfice=surfice.surfice)
-	#x = 1 # Number of days
-	#start = date.today() - timedelta(x)
-	# Equivalent in SQL to SELECT ... WHERE timestamp >= start
-	#surfice_surfices = surfice_surfices.filter(timestamp__gte=start)
-	#context_dict['surfice_surfices'] = surfice_surfices.count()
-	
-	return render(request, 'surfice/base_surfice.html', context_dict)
 
 @permission_required('is_superuser')
 def ding(request, ding=''):

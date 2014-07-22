@@ -451,6 +451,30 @@ $("#confirm-delete-event").on("show.bs.modal", function(e) {
 	$modal.find("[data-event-surfice]").text( $row.find('[data-name="surfice"]').text() );
 	$modal.find('input[name="event"]').val( $deleteButton.attr("data-event-id") );
 	
+	
+	// Get the update target, both old and new
+	// First get all the selectors
+	var selectors = ($modal.find("form").attr("data-ajax-update-target")) ? $modal.find("form").attr("data-ajax-update-target").split(' ') : [];
+	
+	// We're wanting to find the one that contains "delete-event-", so loop through
+	// the selectors and find it
+	var dataAjaxUpdateTarget = "";
+	for (var key in selectors) {
+		// If we find delete-event-, replace it with the word that contains the correct id
+		if (selectors[key].contains("delete-event-")) {
+			selectors[key] = "delete-event-" + $deleteButton.attr("data-event-id");
+		}
+		
+		// Piece the string back together
+		dataAjaxUpdateTarget += selectors[key] + " ";
+	}
+	// Delete the last (unnecessary) space
+	dataAjaxUpdateTarget.slice(0, -1);
+	
+	// Now that we have the new attr, set the data-ajax-update-target attribute
+	$modal.find("form").attr("data-ajax-update-target", dataAjaxUpdateTarget);
+	
+	
 	// When clicking submit, hide the modal
 	$modal.find('[type="submit"]').off().click(function() {
 		// Hide the modal
@@ -469,6 +493,30 @@ $("#confirm-delete-ding").on("show.bs.modal", function(e) {
 	// Replace the text in the delete dialog box
 	$modal.find("[data-ding-surfice]").text( $row.find('[data-name="surfice"]').text() );
 	$modal.find('input[name="ding"]').val( $deleteButton.attr("data-ding-id") );
+	
+	
+	// Get the update target, both old and new
+	// First get all the selectors
+	var selectors = ($modal.find("form").attr("data-ajax-update-target")) ? $modal.find("form").attr("data-ajax-update-target").split(' ') : [];
+	
+	// We're wanting to find the one that contains "delete-ding-", so loop through
+	// the selectors and find it
+	var dataAjaxUpdateTarget = "";
+	for (var key in selectors) {
+		// If we find delete-ding-, replace it with the word that contains the correct id
+		if (selectors[key].contains("delete-ding-")) {
+			selectors[key] = "delete-ding-" + $deleteButton.attr("data-ding-id");
+		}
+		
+		// Piece the string back together
+		dataAjaxUpdateTarget += selectors[key] + " ";
+	}
+	// Delete the last (unnecessary) space
+	dataAjaxUpdateTarget.slice(0, -1);
+	
+	// Now that we have the new attr, set the data-ajax-update-target attribute
+	$modal.find("form").attr("data-ajax-update-target", dataAjaxUpdateTarget);
+	
 	
 	// When clicking submit, hide the modal
 	$modal.find('[type="submit"]').off().click(function() {
@@ -536,3 +584,90 @@ $(".multiselect-surfices").multiselect({
 $(".multiselect").multiselect();
 
 });
+
+/* AJAX PROCESSES DISPLAY
+-------------------------------
+*  Pulse buttons, replace text, and perform other display functions
+*  to signal to the user that processing is either happening
+*  or has happened and was successful or unsuccessful
+*
+*  INPUT
+*  $form		jQuery form object that submitted the ajax request
+*
+------------------------------- */
+function ajaxProcessingDisplay($form) {
+	var $button = $form.find('[type="submit"]');
+	
+    // Disable the button and add a flash animation (in css)
+    $button.addClass("disabled");
+	$button.addClass("flash");
+	
+	// Get the button text so we can replace it later
+	$button.attr("data-value-original", $button.text());
+	if ($button.attr("data-value-processing")) {
+		$button.text($button.attr("data-value-processing"));
+	} else {
+		$button.text("Saving...");
+	}
+}
+
+function ajaxSuccessDisplay($form) {
+	var $button = $form.find('[type="submit"]');
+	
+	if ($button.attr("data-value-success")) {
+		$button.text($button.attr("data-value-success"));
+	} else {
+		$button.text("Saved");
+	}
+	
+	// Show a notification about the POST
+	var notification = $form.attr("data-ajax-success");
+	if (notification == "" || typeof notification === "undefined") notification = "Save successful."
+	ss.notify("success", notification);
+	
+	// Stop the pulsing
+	$button.removeClass("flash");
+	
+	// Pause for a moment, then re-enable the submit button
+	setTimeout(function() {
+		$button.removeClass("disabled");
+		$button.text($button.attr("data-value-original"));
+	}, 750);
+}
+
+function ajaxFailDisplay($form) {
+	var $button = $form.find('[type="submit"]');
+	
+	if ($button.attr("data-value-fail")) {
+		$button.text($button.attr("data-value-fail"));
+	} else {
+		$button.text("Failed");
+	}
+	
+	// Get the button type so we can return to it after showing that it failed
+	var originalBtnType = "";
+	if ($button.hasClass("btn-danger")) originalBtnType = "btn-danger";
+	else if ($button.hasClass("btn-default")) originalBtnType = "btn-default";
+	else if ($button.hasClass("btn-primary")) originalBtnType = "btn-primary";
+	else if ($button.hasClass("btn-success")) originalBtnType = "btn-success";
+	else if ($button.hasClass("btn-info")) originalBtnType = "btn-info";
+	else if ($button.hasClass("btn-warning")) originalBtnType = "btn-warning";
+	else if ($button.hasClass("btn-link")) originalBtnType = "btn-link";
+	
+	$button.addClass("btn-danger").removeClass(originalBtnType);
+	$button.removeClass("flash");
+	
+	// Get the fail notification
+	var notification = $form.attr("data-ajax-fail");
+	
+	// Show the notification
+	if (notification == "" || typeof notification === "undefined") notification = "Save failed."
+	ss.notify("danger", notification);
+	
+	// Pause for a moment, then re-enable the submit button
+	setTimeout(function() {
+		$button.removeClass("disabled");
+		$button.removeClass("btn-danger").addClass(originalBtnType);
+		$button.text($button.attr("data-value-original"));
+	}, 750);
+}

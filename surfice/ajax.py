@@ -1,7 +1,7 @@
 # Import the models and their serializers
 from surfice.models import Surf, Surfice, Status, Ding, Event
 from surfice.serializers import (SurfSerializer, SurficeSerializer, StatusSerializer,
-	EventSerializer, DingSerializer, SurfWithSurficeSerializer)
+	EventSerializer, DingSerializer)
 
 # Import json renderers
 from rest_framework.renderers import JSONRenderer

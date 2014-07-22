@@ -15,29 +15,18 @@
 * 
 *  INPUT
 *  $form			The jQuery form that submitted the AJAX request
-***  data				The JSON data returned from the $.getJSON request **
 *  
 ------------------------------ */
 function refreshAJAXPage($form) {
 	
-	// Get the getData
+	// Get the getData, if any
 	var getData = ($form.attr("data-ajax-get")) ? $.parseJSON($form.attr("data-ajax-get")) : "";
 	
 	// Clear the fields labeled to be cleared
 	$form.find("input[data-ajax-clear], textarea[data-ajax-clear]").val("").text("");
-	$form.find("select[data-ajax-clear]").prop("selectedIndex", 0);
 	
-	// Delete any rows from a table that were just deleted
-	// Doesn't really work yet...
-	if ($form.find('[name="delete"]').length) {
-		var $row = $( "#tr-event-" + $form.find('[name="event"]').val() + ", " +
-					  "#tr-ding-" + $form.find('[name="ding"]').val()
-					);
-		console.log($row);
-		$row.slideRow('up', 500, function() {
-			$row.remove();
-		});
-	}
+	// Reset <selects> back to their first position
+	$form.find("select[data-ajax-clear]").prop("selectedIndex", 0);
 	
 	// Get new data from the database and then once it gets it
 	// refresh the page with the new data
@@ -631,6 +620,16 @@ function refreshStatusColor($elements, data) {
 	});
 }
 
+function deleteRow($elements, data) {
+	// Delete any rows from a table that were just deleted
+	$elements.each(function() {
+		$row = $(this);
+		$row.slideRow('up', 500, function() {
+			$row.remove();
+		});
+	});
+}
+
 /* -----------------------------------------
 *  refreshEventRow($elements, data)
 *
@@ -837,6 +836,10 @@ function refreshAJAXPageDispatcher(selector, data) {
 	else if (selector.contains("status-color"))
 		refreshStatusColor($elements, data);
 	
+	// Delete an event row
+	else if (selector.contains("delete-event") || selector.contains("delete-ding"))
+		deleteRow($elements, data);
+	
 	// Update the event table by adding a row when deleting a row
 	else if (selector.contains("event-row"))
 		refreshEventRow($elements, data);
@@ -857,7 +860,7 @@ function refreshAJAXPageDispatcher(selector, data) {
 /* -----------------------------------------
 *  addSurficeRowToSurf($table, surfice)
 *
-*  Append a surfice row to a table.
+*  Append a surfice row to a table on the surf page
 *
 *  INPUT
 *  $table		The table to append to
@@ -865,14 +868,24 @@ function refreshAJAXPageDispatcher(selector, data) {
 *
 *  ----------------------------------------- */
 function addSurficeRowToSurf($table, surfice) {
-	var $row = $("<tr class=\"dynamic-color\" style=\"background-color:" + surfice.status.data.color +"; color: " + getDynamicColor(surfice.status.data.color) + ";\" data-ajax-id='surfice-" + surfice.id + "'>");
-	$row.append("<td>" + surfice.name + "</td>");
-	$row.append("<td>" + surfice.status.name + "</td>");
+	$row = $(getSurficerow(surfice));
 
 	// Now add the created row to the table
 	$table.append($row);
 }
 
+/* -----------------------------------------
+*  getSurficeRowToSurf(surfice)
+*
+*  Get the row that will be added to a surfice table on the surf page
+*
+*  INPUT
+*  surfice		The surfice the row is being made for
+*  
+*  RETURNS
+*  <tr> element
+*
+*  ----------------------------------------- */
 function getSurficeRow(surfice) {
 	var $row = $("<tr class=\"dynamic-color\" style=\"background-color:" + surfice.status.data.color +"; color: " + getDynamicColor(surfice.status.data.color) + ";\" data-ajax-id='surfice-" + surfice.id + "'>");
 	$row.append("<td>" + surfice.name + "</td>");
@@ -882,6 +895,16 @@ function getSurficeRow(surfice) {
 	return $row[0];
 }
 
+/* -----------------------------------------
+*  getEmptySurfRow($table, surfice)
+*
+*  Create and return an empty row for the surfice table
+*  on the surf page.
+*
+*  RETURNS
+*  <tr> element
+*
+*  ----------------------------------------- */
 function getEmptySurfRow() {
 	return $("<tr><td>No Surfices in here</td></tr>")[0];
 }

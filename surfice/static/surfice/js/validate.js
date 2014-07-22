@@ -18,7 +18,6 @@
 
 /* SET UP THE LISTENERS */
 $('input[name="name"][data-ajax-check]').each(function() {
-	console.log(this);
 	$input = $(this);
 	
 	//var check = $.data($input.get(0), "ajax-check");
@@ -36,7 +35,9 @@ $('input[name="name"][data-ajax-check]').each(function() {
 		$input.keyup(function(){ statusNameField( $(this) ) });
 });
 
+/* CHECK SURF NAME FIELDS */
 function surfNameField($input) {
+	// Get the id of this object so that we don't check the name against itself
 	var surfId = $input.closest("form").find('input[name="surf"]').val();
 	
 	// If the surfs array already exists, just fire the function without getting all the info
@@ -44,45 +45,18 @@ function surfNameField($input) {
 	if (Object.size(ss.surfs) == 0) {
 		console.log("getting new surfs");
 		ss.getSurfs(function(data) {
-			checkField();
+			checkNameField($input, ss.surfs, surfId);
 		});
 		
 	} else {
-		checkField();
+		checkNameField($input, ss.surfs, surfId);
 	}
 	
-	// Create a closure for checking the field to comply with DRY programming
-	function checkField() {
-		// Loop through all the surfs to find a match
-		// not including this current surf
-		var val = $input.val().replace(/\s+/gm," ").trim();
-		console.log(val);
-		$.each(ss.surfs, function(key, surf) {
-			//console.log($input.val().replace(/^\s+|\s+$/gm,'') + " - " + surf.name);
-			//console.log($input.val().replace(/^\s+|\s+$/gm,'').iequals(surf.name));
-			
-			console.log(surfId);
-			console.log(surf.id);
-			// If the name is blank, throw an error
-			// Otherwise if the new name is the same as another
-			// surf and that I'm not checking its own name,
-			// throw an error.
-			if (	val == "" ||
-					(	surfId != surf.id &&
-						val.iequals(surf.name)
-					)
-			) {
-				$input.closest(".form-group").removeClass("has-success").addClass("has-error");
-				return false;
-			} else {
-				$input.closest(".form-group").removeClass("has-error").addClass("has-success");
-			}
-		});
-	}
 }
 
+/* CHECK SURFICE NAME FIELDS */
 function surficeNameField($input) {
-	
+	// Get the id of this object so that we don't check the name against itself
 	var surficeId = $input.closest("form").find('input[name="surfice"]').val();
 	
 	// If the surfs array already exists, just fire the function without getting all the info
@@ -90,43 +64,17 @@ function surficeNameField($input) {
 	if (Object.size(ss.surfices) == 0) {
 		console.log("getting new surfices");
 		ss.getSurfices(function(data) {
-			checkField();
+			checkNameField($input, ss.surfices, surficeId);
 		});
 		
 	} else {
-		checkField();
-	}
-	
-	// Create a closure for checking the field to comply with DRY programming
-	function checkField() {
-		// Loop through all the surfs to find a match
-		// not including this current surf
-		$.each(ss.surfices, function(key, surfice) {
-			//console.log($input.val().replace(/^\s+|\s+$/gm,'') + " - " + surfice.name);
-			//console.log($input.val().replace(/^\s+|\s+$/gm,'').iequals(surfice.name));
-			
-			var val = $input.val().replace(/\s+/gm," ").trim();
-			
-			// If the name is blank, throw an error
-			// Otherwise if the new name is the same as another
-			// surfice and that I'm not checking its own name,
-			// throw an error.
-			if (	val == "" ||
-					(	surficeId != surfice.id &&
-						val.iequals(surfice.name)
-					)
-			) {
-				$input.closest(".form-group").removeClass("has-success").addClass("has-error");
-				return false;
-			} else {
-				$input.closest(".form-group").removeClass("has-error").addClass("has-success");
-			}
-		});
+		checkNameField($input, ss.surfices, surficeId);
 	}
 }
 
+/* CHECK STATUS NAME FIELDS */
 function statusNameField($input) {
-	
+	// Get the id of this object so that we don't check the name against itself
 	var statusId = $input.closest("form").find('input[name="status"]').val();
 	
 	// If the surfs array already exists, just fire the function without getting all the info
@@ -134,37 +82,37 @@ function statusNameField($input) {
 	if (Object.size(ss.statuses) == 0) {
 		console.log("getting new surfices");
 		ss.getStatuses(function(data) {
-			checkField();
+			checkNameField($input, ss.statuses, statusId);
 		});
 		
 	} else {
-		checkField();
+		checkNameField($input, ss.statuses, statusId);
 	}
+}
+
+/* THE ACTUAL NAME CHECKER */
+function checkNameField($input, data, id) {
 	
-	// Create a closure for checking the field to comply with DRY programming
-	function checkField() {
-		// Loop through all the surfs to find a match
-		// not including this current surf
-		$.each(ss.statuses, function(key, status) {
-			//console.log($input.val().replace(/^\s+|\s+$/gm,'') + " - " + surfice.name);
-			//console.log($input.val().replace(/^\s+|\s+$/gm,'').iequals(surfice.name));
-			
-			var val = $input.val().replace(/\s+/gm," ").trim();
-			
-			// If the name is blank, throw an error
-			// Otherwise if the new name is the same as another
-			// status and that I'm not checking its own name,
-			// throw an error.
-			if (	val == "" ||
-					(	statusId != status.id &&
-						val.iequals(status.name)
-					)
-			) {
-				$input.closest(".form-group").removeClass("has-success").addClass("has-error");
-				return false;
-			} else {
-				$input.closest(".form-group").removeClass("has-error").addClass("has-success");
-			}
-		});
-	}
+	// Strip all extra whitespace from the field
+	var val = $input.val().replace(/\s+/gm," ").trim();
+	
+	// Loop through all the surfs to find a match
+	// not including this current surf
+	$.each(data, function(key, obj) {
+		
+		// If the name is blank, throw an error
+		// Otherwise if the new name is the same as another
+		// surf and that I'm not checking its own name,
+		// throw an error.
+		if (	val == "" ||
+				(	id != obj.id &&
+					val.iequals(obj.name)
+				)
+		) {
+			$input.closest(".form-group").removeClass("has-success").addClass("has-error");
+			return false;
+		} else {
+			$input.closest(".form-group").removeClass("has-error").addClass("has-success");
+		}
+	});
 }

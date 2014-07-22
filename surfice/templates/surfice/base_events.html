@@ -90,7 +90,7 @@
 			</tr>
 		</thead>
 		{% for event in events %}
-		<tr id="tr-event-{{ event.id }}">
+		<tr data-ajax-update="delete-event-{{ event.id }}">
 			<!-- timestamp -->
 			<td><a href="#" data-type="datetime" class="editable"
 					data-pk="{{ event.id }}"
@@ -186,7 +186,7 @@
 					data-ajax-fail="There was an error trying to delete this event."
 					data-ajax-action="ajax/get-event"
 					data-ajax-get='{ "page": "{{ events.number }}", "last":"" }'
-					data-ajax-update-target="event-row"
+					data-ajax-update-target="event-row delete-event-"
 				>
 					{# To prevent cross-site forgery, include the following required tag #}
 					{% csrf_token %}
