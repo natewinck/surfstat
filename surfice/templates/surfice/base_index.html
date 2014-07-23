@@ -22,95 +22,84 @@
 		<div class="col-xs-12">
 			<div class="surfices">
 				
-				<!-- START THE SURFICES -->
+				<!-- start surfices -->
 				{# Example of using the general data field #}
 				{# If color is set in data, set the color #}
 				{% for surfice in surfices %}
-				<div class="surfice surfice-success" {% if surfice.status.data.color %}style="background-color:{{ surfice.status.data.color }}"{% endif %}>
+				<div class="surfice surfice-success dynamic-color" {% if surfice.status.data.color %}style="background-color:{{ surfice.status.data.color }}"{% endif %}>
 					<h2 class="center-all featurette-heading-grid surfice-active">{{ surfice.name }}</h2><a class="btn btn-lg btn-info center-all-button featurette-heading-grid surfice-hover" role="button" data-toggle="modal" data-target="#ding-{{ surfice.id }}">Report an Issue</a>
 				</div>
 				{% endfor %}
-				
-				<!-- /END THE SURFICES -->
-<!--
-				<div class="surfice surfice-danger">
-					<h2 class="center-all featurette-heading-grid surfice-active">Discovery</h2><a class="btn btn-lg btn-info center-all-button featurette-heading-grid surfice-hover" role="button">Report an Issue</a>
-				</div>
-				
-				<div class="surfice surfice-warning">
-					<h2 class="center-all featurette-heading-grid surfice-active">xBox Live</h2><a class="btn btn-lg btn-info center-all-button featurette-heading-grid surfice-hover" role="button">Report an Issue</a>
-				</div>
--->
+				<!-- /end surfices -->
 				
 				
-				
-				<!-- DING MODAL DIALOG BOX -->
+				<!-- ding modal dialog -->
 				{% for surfice in surfices %}
-				<div class="modal fade" id="ding-{{ surfice.id }}" tabindex="-1" role="dialog" aria-labelledby="Ding Label" aria-hidden="true">
-				  <div class="modal-dialog">
-					<div class="modal-content">
-					  <div class="modal-header">
-						<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-						<h4 class="modal-title" id="myModalLabel">What's up with {{ surfice.name }}?</h4>
-					  </div>
-					  <div class="modal-body">
+				<div class="modal fade ding" id="ding-{{ surfice.id }}" tabindex="-1" role="dialog" aria-labelledby="Ding Label" aria-hidden="true">
+					<div class="modal-dialog">
+						<div class="modal-content">
+							<div class="modal-header">
+								<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+								<h4 class="modal-title" id="myModalLabel">What's up with {{ surfice.name }}?</h4>
+							</div>
+							<div class="modal-body">
 						
-						<form id="ding-form-{{ surfice.id }}" class="form-horizontal text-left" role="form" action="ajax/submit-ding" type="ajax" method="post">
-							{# To prevent cross-site forgery, include the following required tag #}
-							{% csrf_token %}
-							<input type="hidden" name="surfice" value="{{ surfice.id }}">
-						  	<div class="form-group"> 
-								<label class="col-sm-2 control-label" for="exampleInputEmail1">Email</label>
-								<div class="col-sm-6">
-									<input type="email" class="form-control" name="email" placeholder="Enter email">
-								</div>
-						  	</div>
+								<form id="ding-form-{{ surfice.id }}" class="form-horizontal text-left" role="form" action="ajax/submit-ding" type="ajax" method="post"
+									data-ajax-success="Issue submitted!"
+									data-ajax-fail="Could not submit issue :("
+								>
+									{# To prevent cross-site forgery, include the following required tag #}
+									{% csrf_token %}
+									<input type="hidden" name="surfice" value="{{ surfice.id }}">
+									<div class="form-group"> 
+										<label class="col-sm-2 control-label">Email</label>
+										<div class="col-sm-6">
+											<input type="email" class="form-control" name="email" placeholder="Enter email" data-ajax-clear>
+										</div>
+									</div>
 							
 							
 							
 						  
-							<div class="form-group">
-								<label class="col-sm-2 control-label">Status</label>
-								<div class="col-sm-10">
-									<div class="input-group">
-										<input type="text" name="description" class="form-control" placeholder="(Optional) Feed me more detail...">
-										<div class="input-group-btn dropdown-select">
-											<input type="hidden" name="status" value="{{ statuses.0.id }}">
-											<button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown"><span data-bind="label">{{ statuses.0.name }}</span> <span class="caret"></span></button>
-											<ul class="dropdown-menu pull-right">
-											  {% for status in statuses %}
-											  <li value="{{ status.id }}"><a href="#">{{ status.name }}</a></li>
-											  {% endfor %}
+									<div class="form-group">
+										<label class="col-sm-2 control-label">Status</label>
+										<div class="col-sm-10">
+											<div class="input-group">
+												<input type="text" name="description" class="form-control" placeholder="(Optional) Feed me more detail..." data-ajax-clear>
+												<div class="input-group-btn dropdown-select">
+													<input type="hidden" name="status" value="{{ statuses.0.id }}">
+													<button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown"><span data-bind="label">{{ statuses.0.name }}</span> <span class="caret"></span></button>
+													<ul class="dropdown-menu pull-right">
+														{% for status in statuses %}
+														<li value="{{ status.id }}"><a href="#">{{ status.name }}</a></li>
+														{% endfor %}
 												
-											</ul>
-										</div><!-- /btn-group -->
-									</div><!-- /input-group -->
-								</div><!-- /.col-lg-6 -->
-							</div><!-- /.row -->
+													</ul>
+												</div><!-- /.btn-group -->
+											</div><!-- /.input-group -->
+										</div><!-- /.col-sm-10 -->
+									</div><!-- /.form-group -->
 							
-						</form>
+								</form>
 						  
-					  </div>
-					  <div class="modal-footer">
-						<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-						<button type="submit" class="btn btn-primary">Report Issue</button>
-					  </div>
+							</div>
+							<div class="modal-footer">
+								<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+								<button type="submit" class="btn btn-primary">Report Issue</button>
+							</div>
+						</div>
 					</div>
-				  </div>
 				</div>
 				{% endfor %}
-				<!-- / END MODAL DIALOG BOX -->
+				<!-- /end ding modal dialog -->
 				
-				
-				
-		 </div>
-	   </div>
+			</div>
+		</div>
 	</div>
 </div>
 
 
-<!-- START THE FEATURETTES -->
-
+<!-- start information -->
 <hr class="featurette-divider">
 
 <div class="row featurette">
@@ -139,7 +128,7 @@
 </div>
 
 <hr class="featurette-divider">
-<!-- /END THE FEATURETTES -->
+<!-- /end information -->
 
 
 <script>

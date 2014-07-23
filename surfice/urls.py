@@ -33,10 +33,7 @@ urlpatterns = patterns('',
 	url(r'^admin/dings/$', views.dings, name='dings'),
 	
 	# Need to comment out because I'm not going to use any except ding
-	url(r'^admin/surfice/(?P<surfice>.*)/$', views.surfice, name='surfice'),
-	url(r'^admin/status/(?P<status>.*)/$', views.status, name='status'),
+	#url(r'^admin/surfice/(?P<surfice>.*)/$', views.surfice, name='surfice'),
+	#url(r'^admin/status/(?P<status>.*)/$', views.status, name='status'),
 	url(r'^admin/ding/(?P<ding>.*)', views.ding, name='ding'),
-	
-	#url(r'^admin/dings/$', views.dings, name='dings'),
-	#url(r'^admin/login/$', views.login, name='login'),
 )

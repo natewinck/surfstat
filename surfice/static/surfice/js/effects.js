@@ -1,39 +1,18 @@
-// bg color is in rgb format "rgb(255, 255, 255)"
-function getDynamicColor(rgb) {
-	// If they entered a hex code by accident...
-	if (rgb.indexOf("#") > -1) {
-		var hex = rgb;
-		var result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
-		rgb = (result) ? [
-			parseInt(result[1], 16),
-			parseInt(result[2], 16),
-			parseInt(result[3], 16)
-		] : null;
-	
-	} else {
-		rgb = rgb.match(/^rgb\((\d+),\s*(\d+),\s*(\d+)\)$/);
-		rgb.shift();
-	}
-
-	var total = 0;
-	for (var i = 0; i < rgb.length; i++) {
-		total += parseInt(rgb[i]);
-	}
-	
-	var avg = total / 3.0;
-	
-	// If the average is less than halfway to dark
-	// change the color of the text to white
-	if (avg / 255 < 0.4) {
-		return "rgb(255, 255, 255)";
-	} else {
-		return "inherit";
-	}
-}
-
 $(function() {
 
 
+/* $().fadeSlide
+------------------------------ 
+*  If an element is hidden, this slides the element down and then fades in.
+*  If an element is visible, this fades the element out and then slides up
+*  
+*  INPUT
+*  speed		Speed of transitions
+*  easing		jQuery easing options
+*  callback		function called after transitions
+*  
+*  
+------------------------------ */
 jQuery.fn.fadeSlide = function(speed, easing, callback) {
   if (this.is(":hidden")) {
     return this.slideDown(speed, easing).fadeTo(speed, 1, easing, callback);
@@ -42,7 +21,17 @@ jQuery.fn.fadeSlide = function(speed, easing, callback) {
   }
 };
 
-
+/* $().slideRow
+------------------------------ 
+*  Using options "up" or "down", this collapses an element up or down.
+*  
+*  INPUT
+*  speed		Speed of transition
+*  easing		jQuery easing options
+*  callback		function called after transitions
+*  
+*  
+------------------------------ */
 (function($) {
 var sR = {
     defaults: {
@@ -152,7 +141,7 @@ $.fn.slideRow = function(method,arg1,arg2,arg3) {
 };
 })(jQuery);
 
-
+// Prevent css animations from loading, then remove the preload class so they work
 $(window).load(function() {
 	// Remove the class from body that prevents animations onload
 	$("body").removeClass("preload");
@@ -293,62 +282,6 @@ $('.nav a[data-toggle]').click(function (e) {
 })
 
 
-
-/* SURFICE BUTTONS
------------------------------- 
-*  Assigns a mouseover and mouseout event to all .surfice elements.
-*  The first element inside .surfice will fade out when hovering over .surfice
-*  while the second element will fade in.  The opposite is true on mouseout
-*  
-*  INPUT
-* .surfice
-* 
-*  EVENT
-*  hover (mouseover and mouseout)
-*
------------------------------- */
-/*
-$(".surfice").hover(
-    // Mouseover the Surfice element
-    function() {
-        // The First element of the Surfice is 
-        // what is supposed to be displayed always
-        // The Second element is hidden initially.
-        // When hovering over Surfice, stop any animation
-        // that might be happening (like fading in)
-        
-        $(this).children().first().stop().fadeOut(200);
-        $(this).children().last().stop().fadeIn(200);
-    },
-    
-    // Mouseout of the Surfice element
-    function() {
-        // When mousing out of a Surfice element,
-        // Fade out the second element and fade in the
-        // first (original) element.  But before that,
-        // Stop any animation that might be happening (so
-        // that it doesn't keep queueing up)
-        
-        $(this).children().last().stop().fadeOut(200);
-        $(this).children().first().stop().fadeIn(200);
-    }
-);
-*/
-
-
-
-/* ON/OFF TOGGLE
------------------------------- 
-*  Creates an on/off toggle switch out of checkbox inputs with .onoff-toggle
-*  
-*  INPUT
-* .onoff-toggle
-*
------------------------------- */
-//$(".onoff-toggle").bootstrapSwitch();
-
-
-
 /* DROPDOWN SELECT
 ------------------------------ 
 *  Takes a bootstrap group button selector and turns it into
@@ -370,14 +303,8 @@ $(".surfice").hover(
 ------------------------------ */
 $(".dropdown-select .dropdown-menu li").click(function(event) {
     var $target = $( event.currentTarget );
-    var $group = $target.closest( '.dropdown-select' )
-    $group
-        .find( '[data-bind="label"]' ).text( $target.text() )
-        .end()
-        .children( '.dropdown-toggle' ).dropdown( 'toggle' );
-    
-    $group.find( 'input[type="hidden"]' ).val( $target.attr("value") )
-    
+    var $group = $target.closest( '.dropdown-select' );
+    dropdownSelect($target);
     // If the dropdown autosubmits the form, submit it now!
     if ($group.hasClass("autosubmit")) {
         $(this).parents("form").submit();
@@ -386,41 +313,30 @@ $(".dropdown-select .dropdown-menu li").click(function(event) {
     return false;
  
 });
-    
 
-/* AUTOSUBMIT DROPDOWN
------------------------------- */
-//$("form .dropdown-select.autosubmit .dropdown-menu li a").click(function(e) {
-//    console.log("HI");
-//    e.preventDefault();
-//    
-//    $(this).parents("form").submit();
-//});
-
-
-/* SELECT ALL
------------------------------- 
-*  Finds all inputs that have the class select-all
-*  When the user focuses on the input, select everything inside
-*  
-*  INPUT
-*  input.select-all        input elements with class "select-all"
+/* dropdownSelect($li)
+-----------------------
+*  The heart of the dropdown select functionality.
+*  Selects a list element.
 *
------------------------------- */
-// $("input.select-all").click(function() {
-// 	$(this).select();
-// });
-    
-
-// $('#confirm-delete').on('show.bs.modal', function(e) {
-//     $(this).find('form').attr('action', $(e.relatedTarget).data('href'));
-//     console.log("here");
-// });
-
+*  INPUT
+*  $li		jQuery list object
+----------------------- */
+function dropdownSelect($li) {
+	var $target = $li;
+    var $group = $target.closest( '.dropdown-select' );
+    $group
+        .find( '[data-bind="label"]' ).text( $target.text() )
+        .end()
+        .children( '.dropdown-toggle' ).dropdown( 'toggle' );
+    $group.find( 'input[type="hidden"]' ).val( $target.attr("value") )
+}
 
 /* LIST GROUP SELECT
 ------------------------------ 
-*  Selects all list groups that the .select class and makes them a select
+*  Selects all list groups that the .select class and makes them a select.
+*  Automatically finds the tabs associated with the href (by id)
+*  and hides/shows them
 *  
 *  INPUT
 *  .list-group.select .list-group-item       The list elements (links)
@@ -431,21 +347,13 @@ $(".list-group.select .list-group-item").click(function(e) {
 	e.preventDefault();
 	
 	if (!$(this).hasClass("active")) {
-		// Find the previous element that was selected
+		// Find the previous element that was selected and remove classes
 		var old_id = $(this).closest(".list-group.select").find(".list-group-item.active").removeClass("active").attr("href");
+		
+		// Find the element new element taht was clicked and add the active class to it
 		var new_id = $(this).addClass("active").attr("href");
-	
-		// Using the id of the old selected item, fade out the corresponding panel
-		// and fade in the new one
-		//$(old_id).fadeSlide(750, "swing", $(new_id).fadeSlide());
-		// $(old_id).fadeSlide(200, "swing", function() {
-// 			$(this).removeClass("in");
-// 			$(new_id).addClass("in").fadeSlide(200, "swing", function() {
-// 				//$(this).addClass("in");
-// 			});
-// 		});
-		//console.log($(old_id));
-		//console.log($(new_id));
+		
+		// Hide the old tab and show the new one
 		$(old_id).removeClass("active in");
 		$(new_id).addClass("active in");
 		
@@ -453,48 +361,86 @@ $(".list-group.select .list-group-item").click(function(e) {
 	
 });
 
-
-$(".navbar-nav a").click(function(e) {
-	//e.preventDefault();
-	var html;
-	//console.log($(this).attr("href"));
-	$.get($(this).attr("href"), function(html) {
-		//var html = $.load($(this).attr("href"));
-		console.log(html);
-		//window.history.pushState({"html": html},"A new one", $(this).attr("href"));
-	});
-});
-
+/* DYNAMIC COLOR
+------------------------------
+*  Adjust the color of the text based on 
+*  the background color.
+*  
+*  INPUT
+*  .dynamic-color
+*
+*  EVENT
+*  onload
+------------------------------ */
 $(".dynamic-color").each(function() {
-	
 	// If the average is less than halfway to dark
 	// change the color of the text to white
 	$(this).css("color", getDynamicColor($(this).css("background-color")));
 });
 
-
-// Replace the info in the dialog box before showing the confirm-delete modal dialog
+/* DELETE DIALOG MODALS
+------------------------------ 
+*  Replace informational and AJAX information in the
+*  confirm delete dialog boxes when showing a dialog box.
+*  This way, only one delete dialog box needs to be loaded
+*  instead of one for every object.
+*  
+*  INPUT
+*  #confirm-delete-event
+*  #confirm-delete-ding
+*  
+*  EVENT
+*  show.bs.modal		Bootstrap trigger for showing a modal dialog
+*  
+------------------------------ */
 $("#confirm-delete-event").on("show.bs.modal", function(e) {
+	// Get the delete button
 	var $deleteButton = $(e.relatedTarget);
+	
+	// Get the event row that was clicked
 	var $row = $(e.relatedTarget).closest("tr");
+	
+	// For convenience
 	var $modal = $(this);
 	
 	// Replace the text in the delete dialog box
 	$modal.find("[data-event-surfice]").text( $row.find('[data-name="surfice"]').text() );
 	$modal.find('input[name="event"]').val( $deleteButton.attr("data-event-id") );
 	
+	
+	// Get the update target, both old and new
+	// First get all the selectors
+	var selectors = ($modal.find("form").attr("data-ajax-update-target")) ? $modal.find("form").attr("data-ajax-update-target").split(' ') : [];
+	
+	// We're wanting to find the one that contains "delete-event-", so loop through
+	// the selectors and find it
+	var dataAjaxUpdateTarget = "";
+	for (var key in selectors) {
+		// If we find delete-event-, replace it with the word that contains the correct id
+		if (selectors[key].contains("delete-event-")) {
+			selectors[key] = "delete-event-" + $deleteButton.attr("data-event-id");
+		}
+		
+		// Piece the string back together
+		dataAjaxUpdateTarget += selectors[key] + " ";
+	}
+	// Delete the last (unnecessary) space
+	dataAjaxUpdateTarget.slice(0, -1);
+	
+	// Now that we have the new attr, set the data-ajax-update-target attribute
+	$modal.find("form").attr("data-ajax-update-target", dataAjaxUpdateTarget);
+	
+	
 	// When clicking submit, hide the modal
 	$modal.find('[type="submit"]').off().click(function() {
+		// Hide the modal
 		$modal.modal("hide");
 		
-		// Since it's been clicked
+		// Since submit was clicked, we don't need this event listener anymore
 		$(this).off();
 	});
-	
-	//$(this).wait(1000).trigger("hide.bs.modal");
 });
 
-// Replace the info in the dialog box before showing the confirm-delete modal dialog
 $("#confirm-delete-ding").on("show.bs.modal", function(e) {
 	var $deleteButton = $(e.relatedTarget);
 	var $row = $(e.relatedTarget).closest("tr");
@@ -504,6 +450,30 @@ $("#confirm-delete-ding").on("show.bs.modal", function(e) {
 	$modal.find("[data-ding-surfice]").text( $row.find('[data-name="surfice"]').text() );
 	$modal.find('input[name="ding"]').val( $deleteButton.attr("data-ding-id") );
 	
+	
+	// Get the update target, both old and new
+	// First get all the selectors
+	var selectors = ($modal.find("form").attr("data-ajax-update-target")) ? $modal.find("form").attr("data-ajax-update-target").split(' ') : [];
+	
+	// We're wanting to find the one that contains "delete-ding-", so loop through
+	// the selectors and find it
+	var dataAjaxUpdateTarget = "";
+	for (var key in selectors) {
+		// If we find delete-ding-, replace it with the word that contains the correct id
+		if (selectors[key].contains("delete-ding-")) {
+			selectors[key] = "delete-ding-" + $deleteButton.attr("data-ding-id");
+		}
+		
+		// Piece the string back together
+		dataAjaxUpdateTarget += selectors[key] + " ";
+	}
+	// Delete the last (unnecessary) space
+	dataAjaxUpdateTarget.slice(0, -1);
+	
+	// Now that we have the new attr, set the data-ajax-update-target attribute
+	$modal.find("form").attr("data-ajax-update-target", dataAjaxUpdateTarget);
+	
+	
 	// When clicking submit, hide the modal
 	$modal.find('[type="submit"]').off().click(function() {
 		$modal.modal("hide");
@@ -511,18 +481,167 @@ $("#confirm-delete-ding").on("show.bs.modal", function(e) {
 		// Since it's been clicked
 		$(this).off();
 	});
-	
-	//$(this).wait(1000).trigger("hide.bs.modal");
 });
 
-// Table rows link to a webpage
-$("tr[data-href]").click(function() {
-	//$td = $("<td style='display:none'>").append("<a href='" + $(this).attr("data-href") + "'>");
-	//$(this).append($td);
-	//$td.trigger("click");
-	
-	
-	//window.location = $(this).attr("data-href");
+$(".modal").on("show.bs.modal", onModalShow);
+$(".modal").on("hide.bs.modal", onModalHide);
+
+function onModalShow(e) {
+	$modal = $(this);
+	$modal.on("keydown", function(e) {
+		// If the user presses enter, submit the form
+		if(e.which == 13) {
+			$modal.find('[type="submit"]').trigger("click");
+		}
+	});
+}
+
+function onModalHide(e) {
+	$modal = $(this);
+	$modal.off("keydown");
+}
+
+/* MULTISELECT
+------------------------------ 
+*  Replace all <select>s in the HTML with a prettier
+*  and more user-friendly version.  Multiselect has
+*  numerous options and can be found at
+*  http://davidstutz.github.io/bootstrap-multiselect/
+*  
+*  INPUT
+*  .multiselect-surfs
+*  .multiselect-surfices
+*  .multiselect
+*  
+*  EVENT
+*  onload
+*  
+------------------------------ */
+$(".multiselect").multiselect();
+
+$(".multiselect-surfs").multiselect({
+	buttonContainer: '<br><div class="btn-group" />',
+	enableFiltering: true,
+	enableCaseInsensitiveFiltering: true,
+	onChange: function($element, checked) {
+		// Get how many elements are selected
+		var length = 0;
+		
+		// If there are more than 0 in the select, set the length
+		if ( this.$select.val() != null )
+			length = this.$select.val().length;
+		
+		// If the user deselected an option and now the length is zero,
+		// create the hidden input
+		var $input = $('<input id="hiddenNoneSurf" type="hidden" name="surf" value="-1">');
+		if (!checked && length == 0) {
+			this.$select.closest("form").append($input);
+		}
+		
+		// If the user checked an option and now the length is one
+		// (meaning that it was just empty), delete the hidden input
+		else if (checked && length == 1) {
+			$("#hiddenNoneSurf").remove();
+		}
+	}
+});
+
+$(".multiselect-surfices").multiselect({
+	buttonContainer: '<div class="btn-group btn-group-justified" />',
+	// Bootstrap buttons need to be wrapped in another div
+	// That option is not given however...
+	//buttonClass: "btn btn-block btn-default",
+	buttonWidth: "100%",
+	enableFiltering: true,
+	enableCaseInsensitiveFiltering: true,
+	includeSelectAllOption: true
 });
 
 });
+
+/* AJAX PROCESSES DISPLAY
+-------------------------------
+*  Pulse buttons, replace text, and perform other display functions
+*  to signal to the user that processing is either happening
+*  or has happened and was successful or unsuccessful
+*
+*  INPUT
+*  $form		jQuery form object that submitted the ajax request
+*
+------------------------------- */
+function ajaxProcessingDisplay($form) {
+	var $button = $form.find('[type="submit"]');
+	
+    // Disable the button and add a flash animation (in css)
+    $button.addClass("disabled");
+	$button.addClass("flash");
+	
+	// Get the button text so we can replace it later
+	$button.attr("data-value-original", $button.text());
+	if ($button.attr("data-value-processing")) {
+		$button.text($button.attr("data-value-processing"));
+	} else {
+		$button.text("Saving...");
+	}
+}
+
+function ajaxSuccessDisplay($form) {
+	var $button = $form.find('[type="submit"]');
+	
+	if ($button.attr("data-value-success")) {
+		$button.text($button.attr("data-value-success"));
+	} else {
+		$button.text("Saved");
+	}
+	
+	// Show a notification about the POST
+	var notification = $form.attr("data-ajax-success");
+	if (notification == "" || typeof notification === "undefined") notification = "Save successful."
+	ss.notify("success", notification);
+	
+	// Stop the pulsing
+	$button.removeClass("flash");
+	
+	// Pause for a moment, then re-enable the submit button
+	setTimeout(function() {
+		$button.removeClass("disabled");
+		$button.text($button.attr("data-value-original"));
+	}, 750);
+}
+
+function ajaxFailDisplay($form) {
+	var $button = $form.find('[type="submit"]');
+	
+	if ($button.attr("data-value-fail")) {
+		$button.text($button.attr("data-value-fail"));
+	} else {
+		$button.text("Failed");
+	}
+	
+	// Get the button type so we can return to it after showing that it failed
+	var originalBtnType = "";
+	if ($button.hasClass("btn-danger")) originalBtnType = "btn-danger";
+	else if ($button.hasClass("btn-default")) originalBtnType = "btn-default";
+	else if ($button.hasClass("btn-primary")) originalBtnType = "btn-primary";
+	else if ($button.hasClass("btn-success")) originalBtnType = "btn-success";
+	else if ($button.hasClass("btn-info")) originalBtnType = "btn-info";
+	else if ($button.hasClass("btn-warning")) originalBtnType = "btn-warning";
+	else if ($button.hasClass("btn-link")) originalBtnType = "btn-link";
+	
+	$button.addClass("btn-danger").removeClass(originalBtnType);
+	$button.removeClass("flash");
+	
+	// Get the fail notification
+	var notification = $form.attr("data-ajax-fail");
+	
+	// Show the notification
+	if (notification == "" || typeof notification === "undefined") notification = "Save failed."
+	ss.notify("danger", notification);
+	
+	// Pause for a moment, then re-enable the submit button
+	setTimeout(function() {
+		$button.removeClass("disabled");
+		$button.removeClass("btn-danger").addClass(originalBtnType);
+		$button.text($button.attr("data-value-original"));
+	}, 750);
+}

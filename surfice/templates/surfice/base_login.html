@@ -31,12 +31,23 @@
 		<div class="form-box">
 			<form action="{% url 'django.contrib.auth.views.login' %}" method="post">
 				{% csrf_token %}
-				<input name="username" type="text" placeholder="username">
-				<input name="password" type="password" placeholder="password">
+				<input id="username" name="username" type="text" placeholder="username">
+				<input id="password" name="password" type="password" placeholder="password">
 				<button class="btn btn-info btn-block login" type="submit">Login</button>
 				<input type="hidden" name="next" value="{{ next }}" />
 			</form>
 		</div>
 	</div> 
 </div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+$(function() {
+
+// Focus on the username input onload
+$("#username").focus();
+
+});
+</script>
 {% endblock %}

@@ -2,6 +2,10 @@ from surfice.models import *
 from rest_framework import serializers
 
 class SurfSerializer(serializers.ModelSerializer):
+	""" Serialize a surf and its components
+		
+	"""
+	
 	data = serializers.SerializerMethodField('get_data_field')
 	
 	# To get data, we have to go through the method or else
@@ -13,6 +17,9 @@ class SurfSerializer(serializers.ModelSerializer):
 		model = Surf
 
 class StatusSerializer(serializers.ModelSerializer):
+	""" Serialize a status and its components
+	"""
+	
 	data = serializers.SerializerMethodField('get_data_field')
 	
 	# To get data, we have to go through the method or else
@@ -24,7 +31,10 @@ class StatusSerializer(serializers.ModelSerializer):
 		model = Status
 
 class SurficeSerializer(serializers.ModelSerializer):
-	surf = SurfSerializer(many=False)
+	""" Serialize a surfice and its components
+	"""
+	
+	surfs = SurfSerializer(many=True)
 	status = StatusSerializer()
 	
 	data = serializers.SerializerMethodField('get_data_field')
@@ -38,6 +48,11 @@ class SurficeSerializer(serializers.ModelSerializer):
 		model = Surfice
 
 class EventSerializer(serializers.ModelSerializer):
+	""" Serialize an event and its components
+		
+		Includes status and surfice serialized as well
+	"""
+	
 	status = StatusSerializer()
 	surfice = SurficeSerializer()
 	data = serializers.SerializerMethodField('get_data_field')
@@ -51,6 +66,11 @@ class EventSerializer(serializers.ModelSerializer):
 		model = Event
 
 class DingSerializer(serializers.ModelSerializer):
+	""" Serialize a ding and its components
+		
+		Includes status and surfice serializers also
+	"""
+	
 	status = StatusSerializer()
 	surfice = SurficeSerializer()
 	data = serializers.SerializerMethodField('get_data_field')
@@ -62,14 +82,3 @@ class DingSerializer(serializers.ModelSerializer):
 	
 	class Meta:
 		model = Ding
-
-class SurfWithSurficeSerializer(serializers.ModelSerializer):
-	surfices = serializers.SerializerMethodField('get_surfices_field')
-	
-	def get_surfices_field(self, obj):
-		# For each Surf, query for Surfices and add them to context_dict
-		return SurficeSerializer(obj.get_surfices()).data
-	
-	class Meta:
-		model = Surf
-		

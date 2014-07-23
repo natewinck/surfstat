@@ -8,7 +8,7 @@
 
 
 {% block heading %}
-<!-- START THE FEATURETTES -->
+
 <div class="container">
     <div class="jumbotron jumbotron-admin">
 		<h1>Update your Surfs</h1>
@@ -26,214 +26,292 @@
 	<div class="page-header">
 		<h2>Click on a Surf to see Details</h2>
 	</div>
+	
+	<!-- start left nav -->
 	<div class="col-sm-4">
 		<div class="list-group select">
 			<a href="#new" class="list-group-item list-group-item-success">Create New Surf<span class="glyphicon glyphicon-plus pull-right"</span></a>
+			<a href="#all" class="list-group-item"><em>(all)</em><span class="glyphicon glyphicon-chevron-right pull-right"</span></a>
 			{% for surf in surfs %}
 			<a href="#surf-{{ surf.name|slugify }}" data-ajax-update="surf-name-{{ surf.id }}" class="list-group-item {% if forloop.first %}active{% endif %}">{{ surf.name }}<span class="glyphicon glyphicon-chevron-right pull-right"></span></a>
 			{% endfor %}
 		</div>
 	</div>
+	<!-- /end left nav -->
+	
 	<div class="col-sm-8">
-<!--Start Tabs-->   
+		<!-- start tabs -->   
 		<div class="panel-group tab-content">
+			<!-- start new-surf tab -->
 			<div class="tab-pane fade" id="new">
-				<div class="col-xs-12">
-					<form action="" method="post" role="form" id="create-surf-form">
-						{# To prevent cross-site forgery, include the following required tag #}
-						{% csrf_token %}
-						<h3>Create a Surf</h3>
-						<div class="row">
-							<div class="col-sm-6 ">
-								<div class="form-group">
-									<label class="control-label">New Surf Name</label>
-									<input type="text" name="name" class="form-control" placeholder="Surf Name">
-								</div>
-							</div>
-							<div class="col-sm-6">
-								<div class="form-group">
-									<label class="control-label">New Surf Description</label>
-									<textarea class="form-control" name="description" rows="3" placeholder="Update Description here.."></textarea>
-								</div>
+				<form action="" method="post" role="form" id="create-surf-form">
+					{# To prevent cross-site forgery, include the following required tag #}
+					{% csrf_token %}
+					<h3>Create a Surf</h3>
+					<div class="row">
+						<div class="col-sm-6 ">
+							<div class="form-group">
+								<label class="control-label">New Surf Name</label>
+								<input type="text" name="name" class="form-control" placeholder="Surf Name" data-ajax-check="surf-name">
 							</div>
 						</div>
-						<div class="row">
-							<div class="col-xs-offset-10 col-xs-2 button-accordian">
-								<button type="submit" class="btn btn-success pull-right">Submit</button>
+						<div class="col-sm-6">
+							<div class="form-group">
+								<label class="control-label">New Surf Description</label>
+								<textarea class="form-control" name="description" rows="3" placeholder="Update Description here.."></textarea>
 							</div>
 						</div>
-					</form>
+					</div>
+					<div class="row">
+						<div class="col-sm-12 form-group">
+							<label>Surfices in New Surf</label>
+							<select class="form-control multiselect-surfices" multiple name="surfices">
+								{# Show surfices that are not already in the surf #}
+								{% for surfice in surfices %}
+									<option value="{{ surfice.id }}" {% if surfice in surf.surfices %}selected{% endif %}>{{ surfice.name }}</option>
+								{% endfor %}
+							</select>
+						</div>
+					</div>
+					<div class="row">
+						<div class="col-xs-offset-10 col-xs-2 button-accordian">
+							<button type="submit" class="btn btn-success pull-right">Submit</button>
+						</div>
+					</div>
+				</form>
+			</div>
+			<!-- /end new-surf tab -->
+			
+			<!-- start all tab -->
+			<div class="tab-pane fade" id="all">
+				<div class="row">
+					<div class="col-xs-12">
+						<h4>All Surfices <span data-ajax-update="surf-name-{{ surf.id }}">{{ surf.name }}</span></h4>
+						<table class="table" data-ajax-update="surfs-surfices surf-surfices-{{ surf.id }} update-surfices" data-ajax-id="surf-{{ surf.id }}">
+							{% for surfice in surfices %}
+							<tr class="dynamic-color" style="background-color:{{ surfice.status.data.color }}"
+								data-ajax-id="surfice-{{ surfice.id }}"
+							>
+								<td>{{ surfice.name }}</td>
+								<td>{{ surfice.status.name }}</td>
+							</tr>
+							{% empty %}
+							<tr>
+								<td>No Surfices in here</td>
+							</tr>
+							{% endfor %}
+						</table>
+					</div>
+				</div>
+				<div class="row">
+					<div class="col-xs-12">
+						<h3>Update all Surfices' Status</h3>
+						<form type="ajax" action="ajax/set-surf-status" method="post" role="form"
+							data-ajax-action="ajax/get-surfices"
+							data-ajax-update-target="update-surfices"
+						>
+							<div class="row">
+								<div class="col-sm-6">
+									{# To prevent cross-site forgery, include the following required tag #}
+									{% csrf_token %}
+									<input type="hidden" name="surf">
+									<input type="hidden" name="all">
+									<div class="form-group">
+										<label class="control-label">Select Status</label>
+										<select name="status" class="form-control">
+											{% for status in statuses %}
+											<option value="{{ status.id }}">{{ status.name }}</option>
+											{% endfor %}
+										</select>
+									</div>
+								</div>
+								<div class="col-sm-6">
+									<div class="form-group">
+										<label class="control-label">Status Description</label>
+										<textarea name="description" class="form-control" data-ajax-clear="clear" rows="3" placeholder="(Optional) Add your status description..."></textarea>
+									</div>
+									
+									<div class="form-group">
+										<label class="control-label">Create Event</label>
+										<div class="btn-group btn-group-justified" data-toggle="buttons">
+											<label class="btn btn-default active">
+												<input name="event" value="1" type="radio" checked> Yes
+											</label>
+											<label class="btn btn-default">
+												<input name="event" value="0" type="radio"> No
+											</label>
+										</div>
+									</div>
+								</div>
+							</div>
+							<div class="row">
+								<div class="col-xs-offset-10 col-xs-2">
+									<button type="submit" data-value-processing="Submitting..." data-value-success="Submitted" class="btn btn-success button-accordian pull-right">Submit</button>
+								</div>
+							</div>
+						</form>
+					</div>
 				</div>
 			</div>
+			<!-- /end all tab -->
 			
+			<!-- start surf tabs -->
 			{% for surf in surfs %}
 			<div class="tab-pane fade {% if forloop.first %}in active{% endif %}" id="surf-{{ surf.name|slugify }}"
 				data-ajax-update="surf-name-{{ surf.id }}"
 			>
-<!--Start Panel 1 of Accordian-->
-				<div class="col-xs-12">
-<!--Row: Current Information on the Surf-->
-					<div class="row">
-						<div class="col-sm-8">
-							<h4>All Surfices in <span data-ajax-update="surf-name-{{ surf.id }}">{{ surf.name }}</span></h4>
-							<table class="table" data-ajax-update="surfs-surfices surf-surfices-{{ surf.id }}" data-ajax-id="surf-{{ surf.id }}">
-								{% for surfice in surf.surfices %}
-								<tr class="dynamic-color" style="background-color:{{ surfice.status.data.color }}">
-									<td>{{ surfice.name }}</td>
-									<td>{{ surfice.status.name }}</td>
-								</tr>
-								{% empty %}
-								<tr>
-									<td>No Surfices in here</td>
-								</tr>
-								{% endfor %}
-							</table>
-						</div>
-						
-						<div class="col-sm-4">
-							<h4>Description</h4>
-							<p data-ajax-update="surf-description-{{ surf.id }}">{{ surf.description }}</p>
-						</div>
+				<!-- current surf info -->
+				<div class="row">
+					<div class="col-sm-8">
+						<h4>All Surfices in <span data-ajax-update="surf-name-{{ surf.id }}">{{ surf.name }}</span></h4>
+						<table class="table" data-ajax-update="surfs-surfices surf-surfices-{{ surf.id }} update-surfices" data-ajax-id="surf-{{ surf.id }}">
+							{% for surfice in surf.surfices.all %}
+							<tr class="dynamic-color" style="background-color:{{ surfice.status.data.color }}"
+								data-ajax-id="surfice-{{ surfice.id }}"
+							>
+								<td>{{ surfice.name }}</td>
+								<td>{{ surfice.status.name }}</td>
+							</tr>
+							{% empty %}
+							<tr>
+								<td>No Surfices in here</td>
+							</tr>
+							{% endfor %}
+						</table>
 					</div>
-<!-- Row: Current Surfices-->
-<!--
-					<div class="row">
-						<div class="col-xs-offset-2 col-xs-8">
-							<h4 style="padding-top:10px">Current Surfices</h4>
-							<p>Click to remove a Surfice from this Surf</p>
---><!-- List of Surfices included in the Surf --><!--
-							<form type="ajax" method="post" role="form" id="delete-surfices-surf">
-							<div class="form-group has-success has-feedback">
-
-							   
-</div>
-					<ul class="list-group surfices-list">
-						{% for surfice in surf.surfices %}
-						<li class="list-group-item" value="{{ surfice.id }}">{{ surfice.name }}&nbsp;<span class="glyphicon glyphicon-remove pull-right"></span></li>
-						{% endfor %}
-					</ul>
-					</form>
-						</div>
-					</div>-->
-					<div class="row">
-						<div class="col-xs-12">
-							<form type="ajax" action="ajax/set-surf" method="post" role="form"
-							data-ajax-action="ajax/get-surfs-with-surfices"
-							data-ajax-update-target="surfs-surfices surfices-select surf-delete"
-							data-ajax-success="Surfice successfully added."
-							data-ajax-id="{{ surf.id }}">
-								{# To prevent cross-site forgery, include the following required tag #}
-								{% csrf_token %}
-								<input type="hidden" name="surf" value="{{ surf.id }}">
-								<h3>Add a Surfice</h3>
-								<p>Use the dropdown to add an existing Surfice to the Surf</p>
-								<select data-ajax-remove data-ajax-update="surfices-select" data-ajax-id="surf-{{ surf.id }}" data-ajax-surfices name="surfice" class="form-control">
-									{# Show surfices that are not already in the surf #}
-									{% for surfice in surfices %}
-										{% if surfice not in surf.surfices %}
-										<option value="{{ surfice.id }}">{{ surfice.name }}</option>
-										{% endif %}
-									{% endfor %}
-								</select>
-								<button type="submit" class="btn btn-success button-accordian pull-right">Submit</button>
-							 </form>
-						</div>
-					</div>
-				   
-					<hr class="divider-accordian">
 					
-					<h3>Update <span data-ajax-update="surf-name-{{ surf.id }}">{{ surf.name }}</span>'s Status</h3>
-					<form type="ajax" action="ajax/set-surf-status" method="post" role="form"
-						data-ajax-action="ajax/get-surfices"
-						data-ajax-get='{"surf": {{ surf.id }}}'
-						data-ajax-update-target="surf-surfices-{{ surf.id }}"
-						data-ajax-id="surf-{{ surf.id }}">
-						<div class="row">
-							<div class="col-sm-6">
-								{# To prevent cross-site forgery, include the following required tag #}
-								{% csrf_token %}
-								<input type="hidden" name="surf" value="{{ surf.id }}">
-								<div class="form-group">
-									<label class="control-label">Select Status</label>
-									<select name="status" class="form-control">
-										{% for status in statuses %}
-										<option value="{{ status.id }}">{{ status.name }}</option>
-										{% endfor %}
-									</select>
-								</div>
-							</div>
-							<div class="col-sm-6">
-								<div class="form-group">
-									<label class="control-label">Status Description</label>
-									<textarea name="description" class="form-control" data-ajax-clear="clear" rows="3" placeholder="(Optional) Add your status description..."></textarea>
-								</div>
-							</div>
-						</div>
-						<div class="row">
-							<div class="col-xs-offset-10 col-xs-2">
-								<button type="submit" data-value-processing="Submitting..." data-value-success="Submitted" class="btn btn-success button-accordian pull-right">Submit</button>
-							</div>
-						</div>
-					</form>
-					
-					<hr class="divider-accordian">
-					
-					<h3>Edit <span data-ajax-update="surf-name-{{ surf.id }}">{{ surf.name }}</span></h3>
-					<form type="ajax" action="ajax/update-surf"
-						data-ajax-update-target="surf-name-{{ surf.id }} surf-description-{{ surf.id }} surfs"
-						data-ajax-action="ajax/get-surf"
-						data-ajax-get='{"surf": {{ surf.id }} }'
-						data-ajax-success="The name and description were successfully updated."
-						data-ajax-fail="The name and description were unable to be updated."
-						method="post">
-						
-						{# To prevent cross-site forgery, include the following required tag #}
-						{% csrf_token %}
-						<input type="hidden" name="surf" value="{{ surf.id }}">
-						<div class="row">
-							<div class="col-sm-6 ">
-								<div class="form-group">
-									<label class="control-label">Update Surf Name</label>
-									<input type="text" name="name" class="form-control select-all" placeholder="Surf Name" value="{{ surf.name }}"
-										data-ajax-check="surf-name"
-										data-ajax-update="surf-name-{{ surf.id }}">
-								</div>
-							</div>
-							<div class="col-sm-6">
-								<div class="form-group">
-									<label class="control-label">Update Surf Description</label>
-									<textarea class="form-control select-all" name="description" rows="3" placeholder="(Optional) Update Description here..">{{ surf.description }}</textarea>
-								</div>
-							</div>
-						</div>
-						<div class="row">
-							<div class="col-xs-offset-10 col-xs-2 button-accordian">
-								<button type="submit" class="btn btn-success pull-right">Submit</button>
-							</div>
-						</div>
-					</form>
-					
-					<hr class="divider-accordian">
-					<div class="col-xs-12">
-						<h3>Delete <span data-ajax-update="surf-name-{{ surf.id }}">{{ surf.name }}</span></h3>
-						{# If there is more than one surf in the database #}
-						{# Allow them to be deleted #}
-						{% if surfs|length > 1 %}
-						<button type="submit" class="btn btn-danger" data-toggle="modal" data-target="#confirm-delete-surf-{{ surf.id }}">Delete</button>
-					
-						{# If there's only one, you cannot delete it #}
-						{% else %}
-						<p>Cannot delete {{ surf.name }} since this is the last surf available.</p>
-						<button type="submit" class="btn btn-danger disabled">Delete</button>
-						{% endif %}
+					<div class="col-sm-4">
+						<h4>Description</h4>
+						<p data-ajax-update="surf-description-{{ surf.id }}">{{ surf.description }}</p>
 					</div>
 				</div>
+				<!-- /end current surf info -->
+				
+				<!-- Add/Remove Surfice -->
+				<div class="row">
+					<div class="col-xs-12">
+						<form type="ajax" action="ajax/set-surf" method="post" role="form"
+						data-ajax-action="ajax/get-surfices"
+						data-ajax-get='{ "surf":"{{ surf.id }}" }'
+						data-ajax-update-target="surf-surfices-{{ surf.id }} surfices-select surf-delete"
+						data-ajax-success="Surfice successfully added."
+						data-ajax-id="{{ surf.id }}">
+							{# To prevent cross-site forgery, include the following required tag #}
+							{% csrf_token %}
+							<input type="hidden" name="surf" value="{{ surf.id }}">
+							<h3>Add or Remove Surfices</h3>
+							<p>Use the dropdown to add or remove existing Surfices to the Surf</p>
+							<select class="form-control multiselect-surfices" multiple name="surfices">
+								{# Show surfices that are not already in the surf #}
+								{% for surfice in surfices %}
+									<option value="{{ surfice.id }}" {% if surfice in surf.surfices.all %}selected{% endif %}>{{ surfice.name }}</option>
+								{% endfor %}
+							</select>
+							<button type="submit" class="btn btn-success button-accordian pull-right">Submit</button>
+						 </form>
+					</div>
+				</div>
+				<!-- /End Add/Remove Surfice -->
+			   
+				<hr class="divider-accordian">
+				
+				<!-- Update Surf Status -->
+				<h3>Update <span data-ajax-update="surf-name-{{ surf.id }}">{{ surf.name }}</span>'s Status</h3>
+				<form type="ajax" action="ajax/set-surf-status" method="post" role="form"
+					data-ajax-action="ajax/get-surfices"
+					data-ajax-get='{"surf": {{ surf.id }}}'
+					data-ajax-update-target="surf-surfices-breakit-{{ surf.id }} update-surfices"
+					data-ajax-id="surf-{{ surf.id }}">
+					<div class="row">
+						<div class="col-sm-6">
+							{# To prevent cross-site forgery, include the following required tag #}
+							{% csrf_token %}
+							<input type="hidden" name="surf" value="{{ surf.id }}">
+							<div class="form-group">
+								<label class="control-label">Select Status</label>
+								<select name="status" class="form-control">
+									{% for status in statuses %}
+									<option value="{{ status.id }}">{{ status.name }}</option>
+									{% endfor %}
+								</select>
+							</div>
+						</div>
+						<div class="col-sm-6">
+							<div class="form-group">
+								<label class="control-label">Status Description</label>
+								<textarea name="description" class="form-control" data-ajax-clear="clear" rows="3" placeholder="(Optional) Add your status description..."></textarea>
+							</div>
+							
+							<div class="form-group">
+								<label class="control-label">Create Event</label>
+								<div class="btn-group btn-group-justified" data-toggle="buttons">
+									<label class="btn btn-default active">
+										<input name="event" value="1" type="radio" checked> Yes
+									</label>
+									<label class="btn btn-default">
+										<input name="event" value="0" type="radio"> No
+									</label>
+								</div>
+							</div>
+						</div>
+					</div>
+					<div class="row">
+						<div class="col-xs-offset-10 col-xs-2">
+							<button type="submit" data-value-processing="Submitting..." data-value-success="Submitted" class="btn btn-success button-accordian pull-right">Submit</button>
+						</div>
+					</div>
+				</form>
+				<!-- /End Update Surf Status -->
+				
+				<hr class="divider-accordian">
+				
+				<!-- Edit Surf -->
+				<h3>Edit <span data-ajax-update="surf-name-{{ surf.id }}">{{ surf.name }}</span></h3>
+				<form type="ajax" action="ajax/update-surf"
+					data-ajax-update-target="surf-name-{{ surf.id }} surf-description-{{ surf.id }} surfs"
+					data-ajax-action="ajax/get-surf"
+					data-ajax-get='{"surf": {{ surf.id }} }'
+					data-ajax-success="The name and description were successfully updated."
+					data-ajax-fail="The name and description were unable to be updated."
+					method="post">
+					
+					{# To prevent cross-site forgery, include the following required tag #}
+					{% csrf_token %}
+					<input type="hidden" name="surf" value="{{ surf.id }}">
+					<div class="row">
+						<div class="col-sm-6 ">
+							<div class="form-group">
+								<label class="control-label">Update Surf Name</label>
+								<input type="text" name="name" class="form-control" placeholder="Surf Name" value="{{ surf.name }}"
+									data-ajax-check="surf-name"
+									data-ajax-update="surf-name-{{ surf.id }}">
+							</div>
+						</div>
+						<div class="col-sm-6">
+							<div class="form-group">
+								<label class="control-label">Update Surf Description</label>
+								<textarea class="form-control" name="description" rows="3" placeholder="(Optional) Update Description here..">{{ surf.description }}</textarea>
+							</div>
+						</div>
+					</div>
+					<div class="row">
+						<div class="col-xs-offset-10 col-xs-2 button-accordian">
+							<button type="submit" class="btn btn-success pull-right">Submit</button>
+						</div>
+					</div>
+				</form>
+				<!-- /End Edit Surf -->
+				
+				<hr class="divider-accordian">
+				
+				<!-- Delete Surf -->
+				<h3>Delete <span data-ajax-update="surf-name-{{ surf.id }}">{{ surf.name }}</span></h3>
+				<button type="submit" class="btn btn-danger" data-toggle="modal" data-target="#confirm-delete-surf-{{ surf.id }}">Delete</button>
+				<!-- /End Delete Surf -->
 			</div>
 					
 					
-			{# If there is more than one surf in the database #}
-			{# Allow them to be deleted #}
-			{% if surfs|length > 1 %}
+			<!-- start delete modal dialog -->
 			<div class="modal fade" id="confirm-delete-surf-{{ surf.id }}" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
 				<div class="modal-dialog">
 					<div class="modal-content">
@@ -247,32 +325,7 @@
 							<input type="hidden" name="delete" value="1">
 							
 							<div class="modal-body">
-								<p>Are you sure you want to delete <span data-ajax-update="surf-name-{{ surf.id }}">{{ surf.name }}</span>?</p>
-								
-								<div data-ajax-update="surf-delete" data-ajax-id="surf-{{ surf.id }}">
-									{% if surf.surfices|length_is:"0" %}
-									<p>There aren't any surfices in <span data-ajax-update="surf-name-{{ surf.id }}">{{ surf.name }}</span>, so it will be deleted and nothing else will happen.</p>
-									<input name="is_empty" type="hidden">
-									{% else %}
-								
-									<p>All surfices included in this surf will be pushed to another surf.</p>
-									<div class="form-group">
-										<label class="col-sm-4 control-label" for="new-surf-{{ surf.id }}">Reassign Surfices to...</label>
-										<div class="col-sm-6">
-											<select name="new_surf" class="form-control" id="new-surf-{{ surf.id }}">
-												<option disabled selected>Select a surf...</option>
-												{% for new_surf in surfs %}
-													{% if new_surf != surf %}
-													<option value="{{ new_surf.id }}"
-														data-ajax-update="surf-name-{{ new_surf.id }}"
-													>{{ new_surf.name }}</option>
-													{% endif %}
-												{% endfor %}
-											</select>
-										</div>
-									</div>
-									{% endif %}
-								</div>
+								<p>Are you sure you want to delete <span data-ajax-update="surf-name-{{ surf.id }}">{{ surf.name }}</span>?  All data related to this surf including all events and dings assigned to it will be deleted!</p>
 								
 							</div>
 							<div class="modal-footer">
@@ -283,9 +336,10 @@
 					</div>
 				</div>
 			</div>
-			{% endif %}
+			<!-- end delete modal dialog -->
 			
 			{% endfor %}
+			<!-- end surf tabs -->
 		</div>
 		<!-- /END ACCORDION -->
 	</div>
@@ -295,16 +349,5 @@
 
 
 <hr class="featurette-divider">
-<!-- /END THE FEATURETTES -->
 
 {% endblock content %}
-
-{% block scripts %}
-<script>
-$(function() {
-	
-	
-	
-});
-</script>
-{% endblock scripts %}

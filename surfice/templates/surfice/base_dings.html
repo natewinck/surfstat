@@ -21,8 +21,6 @@
 
 
 {% block heading %}
-<!-- JUMBOTRON HEADER
-================================================== -->
 <div class="container">
 	<div class="jumbotron jumbotron-admin">
 		<h1>Check the latest Dings</h1>
@@ -32,20 +30,21 @@
 		</div>
 	</div>
 </div>
-{% endblock heading %} {% block content %} <!-- Start Edit Accordian
-==================================================
-Each of the <row> act as a different function of the Edit process
--->
+{% endblock heading %}
+
+{% block content %}
 <div class="container">
-	<!-- Create a Status Section, text details-->
 	
 	<div class="page-header">
 		<h2>Click on a Ding's details to edit</h2>
 	</div>
 	
+	<!-- start ding table -->
 	<table class="table table-hover" data-ajax-update="ding-row">
 		<thead>
+			<!-- table headers -->
 			<tr>
+				<!-- timestamp header -->
 				<th>
 					{% if 'timestamp' in order_by %}
 					<a href="{% url 'dings' page=dings.number order_by=order_by_reverse %}/">
@@ -54,6 +53,8 @@ Each of the <row> act as a different function of the Edit process
 					{% endif %}
 					Time <span class="glyphicon glyphicon-sort"></span></a>
 				</th>
+				
+				<!-- surfice header -->
 				<th aria-sort="ascending">
 					{% if 'surfice' in order_by %}
 					<a href="{% url 'dings' page=dings.number order_by=order_by_reverse %}/">
@@ -62,6 +63,8 @@ Each of the <row> act as a different function of the Edit process
 					{% endif %}
 					Surfice <span class="glyphicon glyphicon-sort"></span></a>
 				</th>
+				
+				<!-- description header -->
 				<th>
 					{% if 'description' in order_by %}
 					<a href="{% url 'dings' page=dings.number order_by=order_by_reverse %}/">
@@ -70,6 +73,8 @@ Each of the <row> act as a different function of the Edit process
 					{% endif %}
 					Description of Ding <span class="glyphicon glyphicon-sort"></span></a>
 				</th>
+				
+				<!-- status header -->
 				<th>
 					{% if 'status' in order_by %}
 					<a href="{% url 'dings' page=dings.number order_by=order_by_reverse %}/">
@@ -78,6 +83,8 @@ Each of the <row> act as a different function of the Edit process
 					{% endif %}
 					Status <span class="glyphicon glyphicon-sort"></span></a>
 				</th>
+				
+				<!-- email header -->
 				<th>
 					{% if 'email' in order_by %}
 					<a href="{% url 'dings' page=dings.number order_by=order_by_reverse %}/">
@@ -86,22 +93,33 @@ Each of the <row> act as a different function of the Edit process
 					{% endif %}
 					Email <span class="glyphicon glyphicon-sort"></span></a>
 				</th>
+				
+				<!-- no headers -->
 				<th colspan="2"></th>
 			</tr>
 		</thead>
 		{% for ding in dings %}
 		<tr id="tr-ding-{{ ding.id }}" data-href="{% url 'ding' ding=ding.id %}">
+			<!-- timestamp -->
 			<td>{{ ding.timestamp|date:"M j, Y f a"|cut:"." }}</td>
+			
+			<!-- surfice -->
 			<td>
-				<a data-name="surfice" href="{% url 'surfice' surfice=ding.surfice.name|slugify %}">{{ ding.surfice.name }}</a>
+				<a data-name="surfice" href="{% url 'ding' ding=ding.id %}">{{ ding.surfice.name }}</a>
 			</td>
+			
+			<!-- description -->
 			<td>{{ ding.description|truncatechars:140 }}</td>
 			<td class="dynamic-color" style="background-color:{{ ding.status.data.color }}">
-				<a class="dynamic-color" style="background-color:{{ ding.status.data.color }}" href="{% url 'status' status=ding.status.name|slugify %}">{{ ding.status }}</a>
+				<a class="dynamic-color" style="background-color:{{ ding.status.data.color }}" href="{% url 'ding' ding=ding.id %}">{{ ding.status }}</a>
 			</td>
+			
+			<!-- email -->
 			<td>
 				<a href="mailto:{{ ding.email }}">{{ ding.email }}</a>
 			</td>
+			
+			<!-- delete -->
 			<td>
 				<a class="delete" href="#"
 					data-toggle="modal"
@@ -109,14 +127,16 @@ Each of the <row> act as a different function of the Edit process
 					data-ding-id="{{ ding.id }}"
 				><span class="glyphicon glyphicon-remove text-danger"></span></a>
 			</td>
+			
+			<!-- open -->
 			<td>
-			<a href="{% url 'ding' ding=ding.id %}"><span class="glyphicon glyphicon-eye-open"></span></a>
+				<a href="{% url 'ding' ding=ding.id %}"><span class="glyphicon glyphicon-eye-open"></span></a>
 			</td>
 		</tr>
 		{% endfor %}
 	</table>
 	
-	<!-- BEGIN PAGINATION -->
+	<!-- start pagination -->
 	<ul class="pager">
 		{% if dings.has_next %}
 			<li class="previous">
@@ -139,11 +159,12 @@ Each of the <row> act as a different function of the Edit process
 		</li>
 		{% endif %}
 	</ul>
-	<!-- /END PAGINATION -->
+	<!-- /end pagination -->
 </div>
-<hr class="featurette-divider">
-<!-- /END THE FEATURETTES -->
 
+<hr class="featurette-divider">
+
+<!-- delete ding modal -->
 <div class="modal fade" id="confirm-delete-ding" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
 	<div class="modal-dialog">
 		<div class="modal-content">
@@ -172,6 +193,7 @@ Each of the <row> act as a different function of the Edit process
 		</div>
 	</div>
 </div>
+<!-- /end delete ding modal -->
 
 {% endblock content %}
 

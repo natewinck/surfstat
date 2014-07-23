@@ -15,8 +15,6 @@
 
 
 {% block heading %}
-<!-- JUMBOTRON HEADER
-================================================== -->
 <div class="container">
 	<div class="jumbotron jumbotron-admin">
 		<h1>Update your Statuses</h1>
@@ -26,16 +24,18 @@
 		</div>
 	</div>
 </div>
-{% endblock heading %} {% block content %} <!-- Start Edit Accordian
-==================================================
-Each of the <row> act as a different function of the Edit process
--->
+{% endblock heading %}
+
+
+{% block content %}
+
 <div class="container">
-	<!-- Create a Status Section, text details-->
 	
 	<div class="page-header">
 		<h2>Click on a Status to see Details</h2>
 	</div>
+	
+	<!-- start left nav -->
 	<div class="col-sm-4">
 		<div class="list-group select">
 			<a href="#new" class="list-group-item list-group-item-success">Create New Status<span class="glyphicon glyphicon-plus pull-right"></span></a>
@@ -46,8 +46,12 @@ Each of the <row> act as a different function of the Edit process
 			{% endfor %}
 		</div>
 	</div>
+	<!-- /end left nav -->
+	
 	<div class="col-sm-8">
 		<div class="panel-group tab-content">
+			
+			<!-- start new-status tab -->
 			<div class="tab-pane fade" id="new">
 				<h3>Create a Status</h3>
 
@@ -83,11 +87,14 @@ Each of the <row> act as a different function of the Edit process
 					</div>
 				</form>
 			</div>
+			<!-- /end new-status tab -->
 			
+			<!-- start status tabs -->
 			{% for status in statuses %}
 			<div class="tab-pane fade {% if forloop.first %}in active{% endif %}" id="status-{{ status.name|slugify }}"
 				data-ajax-update="status-name-{{ status.id }}"
 			>
+				<!-- start edit status -->
 				<h3>Edit Your Status</h3>
 				<form type="ajax" action="ajax/update-status" method="post"
 					data-ajax-action="ajax/get-status"
@@ -135,11 +142,14 @@ Each of the <row> act as a different function of the Edit process
 						</div>
 					</div>
 				</form>
+				<!-- /end edit status -->
+				
 			</div>
 			
 			{# If there is more than one status in the database #}
 			{# Allow them to be deleted #}
 			{% if statuses|length > 1 %}
+			<!-- delete status modal -->
 			<div class="modal fade" id="confirm-delete-status-{{ status.id }}" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
 				<div class="modal-dialog">
 					<div class="modal-content">
@@ -182,16 +192,16 @@ Each of the <row> act as a different function of the Edit process
 					</div>
 				</div>
 			</div>
+			<!-- /end delete status modal -->
 			{% endif %}
 			
-			
 			{% endfor %}
+			<!-- /end status tabs -->
 			
 		</div>
 	</div>
 </div>
 <hr class="featurette-divider">
-<!-- /END THE FEATURETTES -->
 
 {% endblock content %}
 

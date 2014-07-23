@@ -5,55 +5,52 @@ from yamlfield.fields import YAMLField
 from datetime import date, timedelta
 
 
-# -------------------------------------
-# Surf Class
-#
-# Group container for a set of Surfices
-#
-# CLASS VARIABLES
-# name			Name of the Surf
-# description	Description of the Surf
-# data			Generic data field stored as separate keys
-#
-# METHODS
-# String		__unicode__(self)
-# Surf			create(name, description)
-# void			delete(self, *args, **kwargs)
-# Surf			get_surf(name, pk, id)
-# *Surf			get_surfs(name)
-# *Surfice 		get_surfices(self, name)
-# void			set(self, name, description, **kwargs)
-# bool			set_name(self, name)
-# void			set_description(self, description)
-# bool			save_new(self, *args, **kwargs)
-# bool			is_saved(name, pk, surf)
-#
-# -------------------------------------
 class Surf(models.Model):
+	""" Group container for a set of Surfices
+		
+		CLASS VARIABLES
+		name			Name of the Surf
+		description		Description of the Surf
+		data			Generic data field stored as separate keys
+		
+		METHODS
+		String			__unicode__(self)
+		Surf			create(name, description, **kwargs)
+		void			delete(self, *args, **kwargs)
+		Surf			get_surf(name, pk, id)
+		*Surf			get_surfs(name)
+		*Surfice		get_surfices(self, name)
+		void			set(self, name, description, **kwargs)
+		bool			set_name(self, name)
+		void			set_description(self, description)
+		bool			save_new(self, *args, **kwargs)
+		bool			is_saved(name, pk, surf)
+	"""
+	
 	# Class variables
 	name 		= models.CharField(max_length=512, unique=True)
-	description = models.TextField()
+	description = models.TextField(blank=True)
 	data		= YAMLField()
 	
 	# Class methods
 	def __unicode__(self):
 		return self.name
 	
-	# -------------------------------------
-	# @staticmethod create(name, description, **kwargs)
-	#
-	# Creates a Surf object in the database defined by the given name and description
-	# 
-	# INPUT
-	# name (required)			A string that gives the name of the surf
-	# description (optional)	A string that describes the surf
-	# kwargs					Generic data to be stored in the database as separate keys
-	#
-	# RETURNS
-	# The created surf
-	# -------------------------------------
 	@staticmethod
 	def create(name, description='', **kwargs):
+		""" Create a Surf object in the database
+			
+			Uses the given name and description to set the attributes
+			
+			INPUT
+			name (required)			A string that gives the name of the surf
+			description (optional)	A string that describes the surf
+			kwargs					Generic data to be stored in the database as separate keys
+			
+			RETURNS
+			the created surf
+		"""
+		
 		surf = None
 		
 		# Check to make sure another Surf object with the same name isn't
@@ -76,15 +73,13 @@ class Surf(models.Model):
 		# Return the created surf
 		return surf
 	
-	# -------------------------------------
-	# delete(self, *args, **kwargs)
-	#
-	# INPUT
-	# args, kwargs			Only for extension of built-in delete() function
-	# 
-	# Deletes this surf from the database
-	# -------------------------------------
 	def delete(self, *args, **kwargs):
+		""" Delete this surf from the database
+			
+			INPUT
+			*args, **kwargs		For extension of the built-in delete() function
+		"""
+		
 		# Check to make sure the Surf object is in the database first
 		try:
 			if Surf.objects.filter(pk=self.pk).count() != 0:
@@ -93,21 +88,19 @@ class Surf(models.Model):
 		except Surf.DoesNotExist:
 			pass
 	
-	# --------------------------
-	# @staticmethod get_surf(name)
-	#
-	# Get a Surf object by name OR id/pk from the database
-	#
-	# INPUT
-	# name			The name of the Surf object
-	# id = pk		The id/primary key of the Surf object
-	#
-	# RETURNS
-	# A Surf object
-	# None if no object found
-	# ---------------------------
 	@staticmethod
 	def get_surf(name=None, pk=None, id=None):
+		""" Get a surf object by name or id from the database
+			
+			INPUT
+			name		Name of the surf object
+			id/pk		The primary key of the surf object
+			
+			RETURNS
+			Surf object
+			None if no object found
+		"""
+		
 		surf = None
 		
 		if name != None:
@@ -129,21 +122,21 @@ class Surf(models.Model):
 
 		return surf
 	
-	# --------------------------
-	# @staticmethod get_surfs()
-	#
-	# Get Surf objects that contain a name.  If no name is given, all Surfs are returned
-	#
-	# INPUT
-	# name			The name of Surf to search for
-	# [none]		Get all Surfs
-	#
-	# RETURNS
-	# An array of Surf objects
-	# Empty array if none found
-	# ---------------------------
 	@staticmethod
 	def get_surfs(name=None):
+		""" Get surfs from the database
+			
+			If name is set, find all surfs that contain the name (case insensitive).
+			If nothing is set, get all surfs from the database.
+			
+			INPUT
+			name (optional)		The name of the surf to search for
+			
+			RETURNS
+			*Surf
+			Empty array if none found
+		"""
+		
 		surfs = []
 		
 		try:
@@ -160,64 +153,59 @@ class Surf(models.Model):
 		
 		return surfs
 	
-	# -------------------------------------
-	# get_surfices(self)			
-	#
-	# Gets all surfices in the current surf object.
-	# Optionally include a name to filter by surfices that contain the name
-	#
-	# INPUT
-	# name (optional)		Filter surfices to find all that contain name (case insensitive)
-	#
-	# RETURNS
-	# An Array of surfices if they are found
-	# -------------------------------------
 	def get_surfices(self, name=None):
+		""" Get surfices from the database
+			
+			If name is set, filter surfices to ones that contain that name (case
+			insensitive).  If nothing is set, get all surfices from the database.
+			
+			INPUT
+			name (optional)		The name of the surfice to filter by
+			
+			RETURNS
+			*Surfice
+			Empty array if none found
+		"""
+		
 		surfices = []
 		try:
 			# Find all Surfice objects that are in this surf
 			# and that also contain the name param
 			if name != None:
-				surfices = Surf.objects.get(id=self.id).surfice_set.filter(name__icontains=name)
+				# surfices is a reverse lookup defined by the related name in the Surfice class
+				surfices = Surf.objects.get(id=self.id).surfices.filter(name__icontains=name)
 			
 			# If name is not set, get all Surfices under this Surf
 			else:
-				surfices = Surf.objects.get(id=self.id).surfice_set.all()
+				surfices = Surf.objects.get(id=self.id).surfices.all()
 		
-		except Surfice.DoesNotExist:
+		except Surf.DoesNotExist:
 			# We get here if we didn't find the specified category.
 			# Don't do anything - the template displays the "no category" message for us.
 			pass
 		
 		return surfices
 	
-	# -------------------------------------
-	# set(self, name, description, **kwargs)
-	#
-	# Generic setter function. All fields are optional, but nothing happens
-	# if no parameters are passed
-	#
-	# INPUT
-	# name (optional)			The new name of the surf object
-	# description (optional)	The new description of the surf object
-	# kwargs					Any other fields that would go into the generic data field as keys
-	# -------------------------------------
 	def set(self, name=None, description=None, **kwargs):
+		""" Set components of this surf object
+			
+			Generic setter function. All fields are optional, but
+			nothing happens if no parameters are passed.
+			
+			INPUT
+			name (optional)			The new name of the surf object
+			description (optional)	The new description of the surf object
+			**kwargs				Any fields that will go into the generic data field as keys
+		"""
 		
 		# If name is set, name hasn't changed, name isn't blank, and there isn't another object
 		# with the same name (case insensitive), update the name
-		if	(
-				name != None 							and
-				name.strip() != ''						and
-				' '.join(name.split()) != self.name 	and
-				Surf.objects.filter(name__iexact='name').count() == 0
-			):
-			# Get rid of extra spaces in the name
-			self.name = ' '.join(name.split())
+		if name != None:
+			self.set_name()
 		
 		# If description is set, change the description
 		if description != None:
-			self.description = description
+			self.set_description(description)
 		
 		# Go through the generic data and put it in their respective fields
 		for key in kwargs:
@@ -226,62 +214,65 @@ class Surf(models.Model):
 		# Save the object to the database
 		self.save()
 	
-	# -------------------------------------
-	# set_name(self, name)
-	#
-	# Sets the name of the surf to a new unique name and saves it to the database
-	#
-	# INPUT
-	# name			The new name of the surf object
-	#
-	# RETURNS
-	# True if set worked
-	# False if failed due to name already existing
-	# -------------------------------------
 	def set_name(self, name):
+		""" Set name of the surf
+			
+			Set the name of the surf to a new unique name and save
+			it to the database
+			
+			INPUT
+			name			The new name of the surf object
+			
+			RETURNS
+			True if set was successful
+			False if failed
+		"""
+		
 		code = False
 		
 		# If you aren't changing the name, don't change it!
 		if ' '.join(name.split()) == self.name:
-			code = False
+			code = True
 		
 		# Check if new name already exists in database
 		# If new name doesn't exist, set this object to that name	
-		elif not Surf.is_saved(name=name) and name.strip() != '':
+		elif not Surf.is_saved(name=name, exclude=self.id) and name.strip() != '':
 			self.name = ' '.join(name.split())
 			self.save()
 			code = True
 		return code
 	
-	# -------------------------------------
-	# set_description(self, description)
-	#
-	# Sets the description of the surf and saves it to the database
-	#
-	# INPUT
-	# description			The new description of the surf object
-	# -------------------------------------
 	def set_description(self, description):
+		""" Set description of the surf
+			
+			Set the description of the surf and save it to the database
+			
+			INPUT
+			description 		The new description of the surf object
+		"""
+		
 		# Set this description to the new one
 		self.description = description
 		
 		# Save this surf to the database
 		self.save()
 	
-	# -------------------------------------
-	# save_new(self, *args, **kwargs)
-	#
-	# Saves a NEW Surf object to the database. If a Surf with the same name
-	# already exists, nothing happens.
-	#
-	# INPUT
-	# args, kwargs		Only for future extension of the save() function
-	# 
-	# RETURNS
-	# True if saved
-	# False if not
-	# -------------------------------------
 	def save_new(self, *args, **kwargs):
+		""" Save a new surf to the database
+			
+			This method exists so that you can create a
+			surf object manually without using the create() method.
+			This saves a new object to the database. If it already exists
+			in the database, don't do anything and return False.
+			
+			INPUT
+			*args, **kwargs		Only for future extension of the save() function
+			
+			RETURNS
+			True if saved
+			Falsed if failed
+		"""
+		
 		# Check to see if Surf object is already in database. Don't do anything if so
 		if Surf.is_saved(name=self.name):
 			# Do nothing
@@ -294,25 +285,31 @@ class Surf(models.Model):
 		
 		return flag
 	
-	# -------------------------------------
-	# @staticmethod is_saved(name, pk, surf)
-	# 
-	# Checks to see if Surf object is already in database.
-	# 
-	# INPUT
-	# name (optional)	Name of the Surf object
-	# pk (optional)		Private key of the Surf object
-	# surf (optional)	Surf object
-	# 
-	# RETURNS
-	# True if Surf object is in database
-	# False if Surf object is not in database
-	# -------------------------------------
 	@staticmethod
-	def is_saved(name=None, pk=None, surf=None):
+	def is_saved(name=None, pk=None, surf=None, exclude=-1):
+		""" Check if surf is saved in database
+			
+			This method checks by name, pk, or surf.  If checking
+			by name, you have a second option: to exclude a pk. This
+			is useful when checking to see if a name exists in the
+			database but you don't want to check the name of your current
+			surf (i.e. in form validation, you don't want to check if a surf's
+			own name exists in the database...we already know it does)
+			
+			INPUT
+			name (optional)		Name of the Surf object
+			pk (optional)		Private key of the Surf object
+			surf (optional)		Surf object
+			exclude (optional)	pk of surf object to exclude from name search
+			
+			RETURNS
+			True if Surf object is in database
+			False if Surf object is not in database
+		"""
+		
 		exists = False
 		
-		if name != None and Surf.objects.filter(name__iexact=' '.join(name.split())).count() > 0:
+		if name != None and Surf.objects.filter(name__iexact=' '.join(name.split())).exclude(pk=exclude).count() > 0:
 			exists = True
 		
 		elif pk != None and Surf.objects.filter(pk=pk).count() > 0:
@@ -324,83 +321,85 @@ class Surf(models.Model):
 		return exists
 
 
-# -------------------------------------
-# Surfice Class
-# The main class. Contains information connected to various services
-# that you run.  Each has the following class variables and methods
-#
-# CLASS VARIABLES
-# name			Name of the service. Needs to be unique within its
-#				group
-# surf			Which Surf group this belongs to. Defaults to NULL
-# description	Description of the service
-# status		Status of the Surfice
-# data			Generic data stored as keys
-#
-# METHODS
-# String			__unicode__(self)
-# Surfice			create(name, surf, description, **kwargs)
-# void				delete(self, *args, **kwargs)
-# Surfice			get_surfice(name, pk, id)
-# *Surfice			get_surfices(...)
-# Status			get_status(self)
-# *Event			get_events(self, ...)
-# void				set(self, name, surf, description, **kwargs)
-# bool				set_name(self, name)
-# void				set_surf(self, surf)
-# void				set_description(self, description)
-# void				set_status(self, status, description)
-# bool				save_new(self, *args, **kwargs)
-# bool				is_saved(name, pk, surfice)
-# 
-# -------------------------------------
+
 class Surfice(models.Model):
+	""" The main class.
+		
+		Contains information connected to various surfices that you run.
+		Each has the following class variables and methods.
+		
+		CLASS VARIABLES
+		name		Name of the surfice. Needs to be unique (case insensitive)
+		surfs		Which surfs this surfice belongs to.
+		description	Description of the surfice
+		status		Status of Surfice
+		data		Generic data stored as keys
+		
+		METHODS
+		String		__unicode__(self)
+		Surfice		create(name, surfs, description, **kwargs)
+		void		delete(self, *args, **kwargs)
+		Surfice		get_surfice(name, pk, id)
+		*Surfice	get_surfices(surf, name, status)
+		Status		get_status(self)
+		*Event		get_events(self, ...)
+		void		set(self, name, surfs, description, **kwargs)
+		bool		set_name(self, name)
+		void		set_surf(self, surf)
+		void		set_surfs(self, surfs)
+		void		add_surf(self, surf)
+		void		add_surfs(self, surfs)
+		void		set_description(self, description)
+		void		set_status(self, *args, **kwargs)
+		bool		save_new(self, *args, **kwargs)
+		bool		is_saved(name, pk, surfice)
+	"""
+	
 	# Class variables
 	name 		= models.CharField(max_length=512, unique=True)
-	surf 		= models.ForeignKey(Surf)
-	description = models.TextField()
+	
+	# Reason for not using related_name:
+	# In this case, the related_name would be 'surfices' so 
+	# that you can do things like surf.surfices and it looks clean.
+	# Unfortunately when it came to templating, I need the 'surfices'
+	# namespace to make it clear there. I figured if there was a place
+	# to be more clear, it would be on the design side.
+	# Thus, instead of using 'surfices' we use the default 'surfice_set'
+	surfs 		= models.ManyToManyField(Surf, blank=True, related_name='surfices')
+	
+	description = models.TextField(blank=True)
 	status		= models.ForeignKey('Status')
 	data		= YAMLField()
 	
 	def __unicode__(self):
 		return self.name
 	
-	#def __init__(self):
-	#	self.name = "Default"
-	#	self.description = "Default description"
-	#	self.group = Surf()
-	
-	# -------------------------------------
-	# @staticmethod create(name, surf, description, **kwargs)
-	# 
-	# Create a new Surfice object and store it in the database
-	# 
-	# INPUT
-	# name						Name of the Surfice
-	# surf						Surf object that this Surfice belongs to
-	# status					Status object that Surfice has
-	# description (optional)	Description of the Surfice
-	# kwargs (optional)			Generic data stored as keys
-	# 
-	# RETURNS
-	# The created Surfice object
-	# -------------------------------------
 	@staticmethod
-	def create(name, surf, status, description='', **kwargs):
+	def create(name, surfs, status, description='', **kwargs):
+		""" Create a new surfice object and store it in the database
+			
+			INPUT
+			name					Name of the surfice
+			surfs					Surf object array that this surfice belongs to
+			status					Status object that the surfice has
+			description (optional)	Description of the surfice
+			**kwargs (optional)		Generic data stored as keys
+			
+			RETURNS
+			the new Surfice object
+		"""
+		
 		surfice = None
 		
 		# Check to make sure a Surfice object with the same name
 		# isn't already in the database.
-		print "here"
 		if not Surfice.is_saved(name=name) and name.strip() != '':
-			print "inside"
 			# Create the Surfice object
 			surfice = Surfice()
 			
 			# Set the Surfice class variables
 			# Remove extra spaces from the name
 			surfice.name = ' '.join(name.split())
-			surfice.surf = surf
 			surfice.description = description
 			surfice.status = status
 			
@@ -408,38 +407,38 @@ class Surfice(models.Model):
 			for key in kwargs:
 				surfice.data[key] = kwargs[key]
 			
-			# Save the Status object to the database
+			# Save the Surfice object to the database
 			surfice.save()
+			
+			# Now that the Surfice object has been saved,
+			# associate it with surf objects 
+			surfice.surfs = surfs
 		
 		return surfice
-		
-	# -------------------------------------
-	# delete(self, *args, **kwargs)
-	#
-	# INPUT
-	# args, kwargs		Only for extension of the built-in function
-	# 
-	# Deletes this surfice from the database
-	# -------------------------------------
+	
 	def delete(self, *args, **kwargs):
+		""" Delete this surfice from the database
+			
+			INPUT
+			*args, **kwargs		For extension of the built-in delete() function
+		"""
+		
 		# Call the real delete() function
 		super(Surfice, self).delete(*args, **kwargs)
 	
-	# -------------------------------------
-	# get_surfice(name, pk, id)
-	# 
-	# Gets the surfice with the defined name OR id/pk
-	# 
-	# INPUT
-	# name			The name of the surfice
-	# id = pk		id/primary key of the surfice
-	#
-	# RETURNS
-	# A surfice object
-	# None if no surfice found
-	# -------------------------------------
 	@staticmethod
 	def get_surfice(name=None, pk=None, id=None):
+		""" Get a surfice by name or id
+			
+			INPUT
+			name		Name of the surfice
+			id/pk		id/pk of the surfice
+			
+			RETURNS
+			Surfice object
+			None if no surfice found
+		"""
+		
 		surfice = None
 		try:
 			# If name is set, find the Surfice whose name matches (case-insensitive)
@@ -458,36 +457,35 @@ class Surfice(models.Model):
 			pass
 		return surfice
 	
-	# -------------------------------------
-	# get_surfices(surf, name)
-	#
-	# Gets surfices based on the arguments provided.
-	# All arguments are optional. If no arguments are provided,
-	# this function gets all the surfices stored in the database
-	#
-	# surf			Get all surfices belonging to a Surf object
-	# name			Get all surfices that CONTAIN this name (case insensitive)
-	# [both]		If both surf and name are set, get all Surfices that belong
-	#				to the Surf object and that contain this name
-	# [none]		If no params are passed, get all Surfices
-	#
-	# RETURNS
-	# An array of found Surfice objects
-	# -------------------------------------
 	@staticmethod
 	def get_surfices(surf=None, name=None, status=None):
+		""" Gets surfices based on arguments provided
+			
+			If surf and name are set, get all surfices in that surf
+			that contain this name.
+			Otherwise if one is set, search by that parameter.
+			
+			surf		Get all surfices belonging to a surf object
+			name		Get all surfices that contain this name (case insensitive)
+			[surf,name]	Get all surfices that belong to the Surf object and that
+						contain this name
+			[none]		Get all surfices
+			
+			RETURNS
+			*Surfice
+		"""
 		
 		try:
 			
 			# If both surf and name are set, find all objects with that Surf
 			# and contain the name
 			if surf != None and name != None:
-				surfices = Surfice.objects.filter(surf=surf, name__icontains=name)
+				surfices = Surfice.objects.filter(surfs=surf, name__icontains=name)
 			
 			# If surf is set, find all Surfice objects with that Surf
 			elif surf != None:
 				# CHECK TO SEE IF THIS IS REAL SURF OBJECT
-				surfices = Surfice.objects.filter(surf=surf)
+				surfices = Surfice.objects.filter(surfs=surf)
 				
 			# If name is set, find all Surfices that contain that name
 			elif name != None:
@@ -508,70 +506,56 @@ class Surfice(models.Model):
 		
 		return surfices
 	
-	
-	# -------------------------------------
-	# get_status(self)
-	# 
-	# Get the status of this Surfice object
-	# 
-	# RETURNS
-	# A status object
-	# -------------------------------------
 	def get_status(self):
+		""" Get status of the surfice
+			
+			RETURNS
+			Status
+		"""
+		
 		return self.status
-	
-	# -------------------------------------
-	# get_events(self, **kwargs)
-	# 
-	# Gets the events for this specific Surfice object
-	# Shortcut method to the Event.get_events() method
-	# 
-	# INPUT
-	# [Same input variables as Event.get_events()]
-	# 
-	# RETURNS
-	# An array of events
-	# -------------------------------------
+
 	def get_events(self, **kwargs):
+		""" Get events for this surfice
+			
+			Shortcut method to the Event.get_events() method
+			
+			INPUT
+			(same as get_events())
+			
+			RETURNS
+			*Event
+		"""
+		
 		# Get events
 		events = Event.get_events(surfice=self)
 		return events
 	
-	# -------------------------------------
-	# set(self, name, surf, description, **kwargs)
-	#
-	# Generic setter function. All fields are optional, but nothing happens
-	# if no parameters are passed
-	#
-	# INPUT
-	# name (optional)			The new name of the surfice object
-	# surf (optional)			The new surf object this surfice is part of
-	# description (optional)	The new description of the surfice object
-	# kwargs					Any other fields that would go into the generic data field as keys
-	# -------------------------------------
-	def set(self, name=None, surf=None, description=None, **kwargs):
+	def set(self, name=None, surfs=None, description=None, **kwargs):
+		""" Set surfice components
+			
+			Generic setter function. All fields are optional, but
+			nothing happens if no parameters are passed.
+			
+			INPUT
+			name (optional)			The new name of the surfice object
+			surfs (optional)		The new surf objects this surfice is part of
+			description (optional)	The new description of the surfice object
+			**kwargs				Any other generic data stored as keys
+		"""
 		
 		# If name is set, name hasn't changed, name isn't blank, and there isn't another object
 		# with the same name (case insensitive), update the name
-		if	(
-				name != None 							and
-				name.strip() != ''						and
-				' '.join(name.split()) != self.name 	and
-				Surf.objects.filter(name__iexact='name').count() == 0
-			):
-			self.name = ' '.join(name.split())
+		if name != None:
+			self.set_name(name)
 		
-		# If surf is set and is in the database, update it
-		if	(
-				surf != None and
-				type(surf) is Surf and
-				Surf.objects.filter(pk=surf.pk).count() == 1
-			):
-			self.surf = surf
+		# If surfs are set, update it
+		if surfs != None:
+			self.set_surfs(surfs)
 		
 		# If description is set, change the description
 		if description != None:
-			self.description = description
+			self.set_description(description)
 		
 		# Go through the generic data and put it in their respective fields
 		for key in kwargs:
@@ -580,98 +564,149 @@ class Surfice(models.Model):
 		# Save the object to the database
 		self.save()
 	
-	# -------------------------------------
-	# set_name(self, name)
-	#
-	# Sets the name of the surfice to a new unique name
-	#
-	# INPUT
-	# name			The new name of the surfice object
-	#
-	# RETURNS
-	# True if set worked
-	# False if failed due to name already existing
-	# -------------------------------------
 	def set_name(self, name):
+		""" Set name of surfice
+			
+			Only set name if
+			a) it's different
+			b) it's not the same as another surfice (i.e. needs to be unique)
+			
+			INPUT
+			name		The new name of the surfice object
+			
+			RETURNS
+			True if set worked
+			False if failed
+		"""
+		
 		code = False
 		
 		# If you aren't changing the name, don't change it!
 		if ' '.join(name.split()) == self.name:
-			code = False
+			code = True
 		
 		# Check if new name already exists in database
 		# If new name doesn't exist and isn't blank, set this object to that name	
-		elif not Surfice.is_saved(name=name)  and name.strip() != '':
+		elif not Surfice.is_saved(name=name, exclude=self.id)  and name.strip() != '':
 			self.name = ' '.join(name.split())
 			self.save()
 			code = True
 		return code
 	
-	# -------------------------------------
-	# set_surf(self, surf)
-	# 
-	# Sets the surf of the surfice and saves it to the database.
-	# Only runs if Surf object exists in database. If it doesn't,
-	# nothing happens
-	# 
-	# INPUT
-	# surf			The surf object that this surfice will be set to
-	#
-	# -------------------------------------
 	def set_surf(self, surf):
+		""" Assign the surfice to a single surf
+			
+			Replaces any surfs that are already assigned on this surfice.
+			Only runs if Surf object exists in database. If it
+			doesn't, nothing happens.
+			
+			INPUT
+			surf		Surf object that this surf will be set to
+		"""
+		
 		# Check to make sure Surf is actually in the database
 		if Surf.is_saved(surf=surf):
-			self.surf = surf
+			self.surfs = [surf]
 		
 			# Save surfice object to database
 			self.save()
 	
-	# -------------------------------------
-	# set_description(self, description)
-	#
-	# Sets the description of the surfice and saves it to the database
-	#
-	# INPUT
-	# description			The new description of the surfice object
-	# -------------------------------------
+	def set_surfs(self, surfs):
+		""" Assign the surfice to multiple surfs
+			
+			Replace any surfs that are already assigned on this surfice. 
+			Assumes that the surfs already exist in the database.
+			
+			INPUT
+			surfs		Array of surfs this surfice will be assigned to
+		"""
+		
+		self.surfs = surfs
+	
+		# Save surfice object to database
+		self.save()
+	
+	def add_surf(self, surf):
+		""" Assign the surfice to an additional surf
+			
+			Adds on to any existing surfs this surfice might already
+			be assigned to.
+			If the Surf object does not exist in the database,
+			nothing happens.
+			
+			INPUT
+			surf		The surf object that this surfice will be added to
+		"""
+		
+		# Check to make sure Surf is actually in the database
+		if Surf.is_saved(surf=surf):
+			self.surfs.add(surf)
+		
+			# Save surfice object to database
+			self.save()
+	
+	def add_surfs(self, surfs):
+		""" Assign the surfice to additional surfs
+			
+			Adds on to any existing surfs this surfice might already
+			be assigned to.
+			Assumes the surfs already exist in the database.
+			
+			INPUT
+			surfs		Array of surfs this surfice will be assigned to
+		"""
+		
+		# Does NOT check if surfs are already in database (dangerous)
+		# Expand the array out for .add()
+		self.surfs.add(*surfs)
+	
+		# Save surfice object to database
+		self.save()
+	
 	def set_description(self, description):
+		""" Set the description of the surfice and save it to the database
+			
+			INPUT
+			description		The new description of the surfice object
+		"""
+		
 		# Set the description to the new description
 		self.description = description
 		
 		# Save this object to the database
 		self.save()
 	
-	# -------------------------------------
-	# set_status(self, status)
-	# 
-	# Sets the status of a surfice object with a status object
-	#
-	# INPUT
-	# status					a Status object
-	# description (optional)	If set (even to a blank string), create an
-	#							event along with the status
-	# -------------------------------------
-	def set_status(self, status, description=False):
+	def set_status(self, status, description='', event=True):
+		""" Set the status of a surfice object
+			
+			INPUT
+			status					a Status object
+			description (optional)	The description of the status update
+			event (optional)		Flag to create an event or not
+		"""
 		
 		# If we want to create an event along with updating the status,
 		# do it here.
-		if description != False:
+		if event:
 			Event.create(self, status, description)
 		
 		self.status = status
 		self.save()
 	
-	# -------------------------------------
-	# save_new(self, *args, **kwargs)
-	#
-	# Saves a NEW Surfice object to the database. If a Surfice with the same name
-	# already exists, nothing happens.
-	#
-	# RETURNS
-	# True if it saved
-	# False if it didn't
-	# -------------------------------------
 	def save_new(self, *args, **kwargs):
+		""" Save a new surfice to the database
+			
+			This is useful if you created a surfice from scratch without
+			using the create() method.  This will check to make sure the
+			surfice doesn't already exist in the database, and if it
+			doesn't, then save it to the database. From that point,
+			you should use save().
+			
+			RETURNS
+			True if saved successfully
+			False if failed
+		"""
+		
 		# Check to see if Surfice object is already in database. Don't do anything if so
 		if Surfice.is_saved(name=self.name):
 			# Do nothing
@@ -683,27 +718,33 @@ class Surfice(models.Model):
 			flag = True
 		
 		return flag
-	
-	# -------------------------------------
-	# @staticmethod is_saved(name, pk, surfice)
-	# 
-	# Checks to see if Surfice object is already in database.
-	# 
-	# INPUT
-	# name			Name of the Surfice object
-	# pk			Private key of the surfice object
-	# surfice		Surfice object
-	# 
-	# RETURNS
-	# True if Surfice object is in database
-	# False if Surfice object is not in database
-	# -------------------------------------
+
 	@staticmethod
-	def is_saved(name=None, pk=None, surfice=None):
+	def is_saved(name=None, pk=None, surfice=None, exclude=-1):
+		""" Check if a surfice is saved in the database
+			
+			This method checks by name, pk, or surfice.  If checking
+			by name, you have a second option: to exclude a pk. This
+			is useful when checking to see if a name exists in the
+			database but you don't want to check the name of your current
+			surfice (i.e. in form validation, you don't want to check if a surfice's
+			own name exists in the database...we already know it does)
+			
+			INPUT
+			name				Name of the surfice object
+			pk					Private key of the surfice object
+			surfice				Surfice object
+			exclude (optional)	pk of surfice object that you want to exclude from name search
+			
+			RETURNS
+			True if surfice is in database
+			False if surfice is not in database
+		"""
+		
 		exists = False
-		print Surfice.objects.filter(name__iexact=' '.join( name.split() )).count() > 0
+		
 		# If name is set and the object is in the database
-		if name != None and Surfice.objects.filter(name__iexact=' '.join( name.split() )).count() > 0:
+		if name != None and Surfice.objects.filter(name__iexact=' '.join( name.split() )).exclude(pk=exclude).count() > 0:
 			exists = True
 		
 		# If pk is set and the object is in the database
@@ -716,52 +757,52 @@ class Surfice(models.Model):
 		
 		return exists
 
-# -----------------------------------------
-# Status Class (could be in a separate app)
-#
-# Dictates the status of a generic object.  It [can optionally]
-# connect with the a generic status image class NO IT CAN'T
-# 
-# CLASS VARIABLES
-# name			Name of the status e.g. "Totally axed" or "choppy" or "clean"
-# description	Description of the status
-# data			Generic data
-#
-# METHODS
-# 
-# Status		create(name, description)
-# void			delete(self, *args, **kwargs)
-# Status		get_status(name, pk, id)
-# *Status		get_statuses(name)
-# void			set(self, name, description, **kwargs)
-# bool			set_name(self, name)
-# void			set_description(self, description)
-# bool			is_saved(name, pk, status)
-# -----------------------------------------
+
 class Status(models.Model):
+	""" Status class
+		
+		Dictates the status of a generic object...in our case a surfice
+		
+		CLASS VARIABLES
+		name		Name of the status e.g. "Totally axed" or "choppy" or "clean"
+		description	Description of the status
+		data		Generic data
+		
+		METHODS
+		Status		create(name, description)
+		void		delete(self, *args, **kwargs)
+		Status		get_status(name, pk, id)
+		*Status		get_statuses(name)
+		void		set(self, name, description, **kwargs)
+		bool		set_name(self, name)
+		void		set_description(self, description)
+		bool		is_saved(name, pk, status)
+	"""
+	
 	# Class variables
 	name 		= models.CharField(max_length=512, unique=True)
-	description = models.TextField()
+	description = models.TextField(blank=True)
 	data		= YAMLField()
 	
 	def __unicode__(self):
+		""" Return the status name
+		"""
+		
 		return self.name
-	
-	# -------------------------------------
-	# @staticmethod create(name, description, **kwargs)
-	#
-	# Create a new status with name and optional description
-	#
-	# INPUT
-	# name						Name of the status
-	# description (optional)	Description of the status
-	# kwargs (optional)			Generic data to be put in the database
-	#
-	# RETURNS
-	# The created Status object
-	# -------------------------------------
+
 	@staticmethod
 	def create(name, description='', **kwargs):
+		""" Create a new status and save it to the database
+			
+			INPUT
+			name					Name of the status
+			description (optional)	Description of the status
+			**kwargs (optional)		Generic data to be put in the database
+			
+			RETURNS
+			Status
+		"""
+		
 		status = None
 		
 		# Check to make sure a Status object with the same name
@@ -787,34 +828,31 @@ class Status(models.Model):
 		
 		return status
 	
-	# -------------------------------------
-	# delete(self, *args, **kwargs)
-	#
-	# INPUT
-	# args, kwargs			Only for extension of the built-in function
-	# 
-	# Deletes this status from the database
-	# -------------------------------------
 	def delete(self, *args, **kwargs):
+		""" Delete this status from the database
+			
+			INPUT
+			*args, **kwargs		Only for extension of the built-in delete() function
+		"""
+		
 		# Call the real delete() function
 		super(Status, self).delete(*args, **kwargs)
 	
-	# -------------------------------------
-	# @staticmethod get_status(name)
-	# 
-	# Gets a status object by name OR id/pk. If no parameter is
-	# passed, nothing is returned
-	#
-	# INPUT
-	# name (optional)		The name of the status
-	# id=pk (optional)		The id/primary key of the status
-	#
-	# RETURNS
-	# A status object if found
-	# If nothing is found, nothing is returned
-	# -------------------------------------
 	@staticmethod
 	def get_status(name=None, pk=None, id=None):
+		""" Get status by name or id
+			
+			If no parameters are passed, nothing is returned
+			
+			INPUT
+			name (optional)		The name of the status
+			id/pk (optional) 	The id/pk of the status
+			
+			RETURNS
+			Status
+			None if nothing is found
+		"""
+		
 		# Default value to return is nothing
 		status = None
 		
@@ -836,19 +874,16 @@ class Status(models.Model):
 		
 		return status
 	
-	# -------------------------------------
-	# @staticmethod get_statuses()
-	# 
-	# Gets a list of all the statuses
-	#
-	# INPUT
-	# name (optional)		Find statuses that contain this name
-	#
-	# RETURNS
-	# An array of statuses (empty if nothing found)
-	# -------------------------------------
 	@staticmethod
 	def get_statuses(name=None):
+		""" Get statuses by name or all
+			
+			INPUT
+			name (optional)		Find statuses that contain this name
+			
+			RETURNS
+			*Status
+		"""
 		
 		# If no statuses are found, return an empty array
 		statuses = []
@@ -868,105 +903,100 @@ class Status(models.Model):
 		
 		return statuses
 	
-	# -------------------------------------
-	# set(self, name, description, **kwargs)
-	#
-	# Generic setter function. All fields are optional, but nothing happens
-	# if no parameters are passed
-	#
-	# INPUT
-	# name (optional)			The new name of the status object
-	# description (optional)	The new description of the status object
-	# kwargs					Any other fields that would go into the generic data field
-	# -------------------------------------
 	def set(self, name=None, description=None, **kwargs):
+		""" Set status components
+			
+			Generic setter function. All fields are optional, but
+			nothing happens if no parameters are passed
+			
+			INPUT
+			name (optional)			The new name of the status object
+			description (optional)	The new description of the status object
+			**kwargs				Generic data that goes in the data field
+		"""
 		
 		# If name is set, name hasn't changed, and there isn't another object
 		# with the same name, update the name
-		if	(
-				name != None 							and
-				name.strip() != ''						and
-				' '.join(name.split()) != self.name 	and
-				Status.objects.filter(name__iexact='name').count() == 0
-			):
-			# Remove extra spaces from the name
-			self.name = ' '.join(name.split())
+		if name != None:
+			self.set_name(name)
 		
 		# If description is set, change the description
 		if description != None:
-			self.description = description
+			self.set_description(description)
 		
 		# Go through the generic data and put it in their respective fields
 		for key in kwargs:
-			print key, kwargs[key]
 			self.data[key] = kwargs[key]
 		
 		# Save the object to the database
 		self.save()
 	
-	# -------------------------------------
-	# set_name(self, name)
-	#
-	# Sets the name of the status to a new unique name
-	#
-	# INPUT
-	# name			The new name of the status object
-	#
-	# RETURNS
-	# True if set worked
-	# False if failed due to name already existing
-	# -------------------------------------
 	def set_name(self, name):
+		""" Set the name of the status to a new unique name
+			
+			Only set name if
+			a) it's different
+			b) it's not the same as another status (i.e. needs to be unique)
+			
+			RETURNS
+			True if name change worked
+			False if failed
+		"""
+		
 		code = False
 		
 		# If you aren't changing the name, don't change it!
 		if ' '.join(name.split()) == self.name:
-			code = False
+			code = True
 		
 		# Check if new name already exists in database
 		# If new name doesn't exist and isn't blank, set this object to that name	
-		elif not Status.is_saved(name=name) and name.strip() != '':
+		elif not Status.is_saved(name=name, exclude=self.id) and name.strip() != '':
 			self.name = ' '.join(name.split())
 			self.save()
 			code = True
 		
 		return code
 	
-	# -------------------------------------
-	# set_description(self, description)
-	#
-	# Sets the description of the status and saves it to the database
-	#
-	# INPUT
-	# description			The new description of the status object
-	# -------------------------------------
 	def set_description(self, description):
+		""" Set the description of the status
+			
+			INPUT
+			description		The new description of the status object
+		"""
+		
 		# Set the description to the new description
 		self.description = description
 		
 		# Save this object to the database
 		self.save()
 	
-	# -------------------------------------
-	# @staticmethod is_saved(name, pk, status)
-	# 
-	# Checks to see if Status object is already in database.
-	# 
-	# INPUT
-	# name			Name of the Status object
-	# pk			Private key of the object
-	# status		Status object
-	# 
-	# RETURNS
-	# True if Status object is in database
-	# False if Status object is not in database
-	# -------------------------------------
 	@staticmethod
-	def is_saved(name=None, pk=None, status=None):
+	def is_saved(name=None, pk=None, status=None, exclude=-1):
+		""" Check to see if status is in database
+			
+			This method checks by name, pk, or status.  If checking
+			by name, you have a second option: to exclude a pk. This
+			is useful when checking to see if a name exists in the
+			database but you don't want to check the name of your current
+			status (i.e. in form validation, you don't want to check if a status's
+			own name exists in the database...we already know it does)
+			
+			INPUT
+			name				Name of the status object
+			pk					Private key of the object
+			status				status object
+			exclude (optional)	pk of status object to exclude from name search
+			
+			RETURNS
+			True if Status object is in database
+			False if Status object is not in database
+		"""
+		
 		exists = False
 		
 		# If name is set and the object is in the database
-		if name != None and Status.objects.filter(name__iexact=' '.join(name.split())).count() > 0:
+		if name != None and Status.objects.filter(name__iexact=' '.join(name.split())).exclude(pk=exclude).count() > 0:
 			exists = True
 		
 		# If pk is set and the object is in the database
@@ -981,58 +1011,56 @@ class Status(models.Model):
 	
 
 
-# -----------------------------------------
-# Ding Class
-#
-# Any object of type Ding is an issue.  This just captures the
-# initial issue and then the closing of the ding (issue).
-# Any usage of the ding will either need to be added here or
-# or added in a different app
-#
-# CLASS VARIABLES
-# timestamp			timestamp of the original issue
-# surfice			which "surfice" is having the issue
-# status			Status object that the user is reporting
-# email				Email of the user who submitted an ding
-# description		Description of the ding
-# data				Generic data stored as keys
-# NEED TO ADD RESOLVED FIELD
-#
-# METHODS
-# Ding			create(surfice, status, email, description)
-# Ding			get_ding(pk)
-# *Ding			get_dings(...)
-# 
-# -----------------------------------------
 class Ding(models.Model):
+	""" Ding Class
+		
+		Any object of type Ding is an issue. This just captures the
+		initial issue and the closing of the ding (issue).
+		
+		CLASS VARIABLES
+		timestamp		timestamp of the original issue
+		surfice			Which surfice is having the issue
+		status			Status object the user is reporting
+		email			Email of the user who submitted a ding
+		description		Description of the ding
+		data			Generic data stored as keys
+		NEED RESOLVED FIELD
+		
+		METHODS
+		Ding		create(surfice, status, email, description)
+		Ding		get_ding(pk)
+		*Ding		get_dings(...)
+	"""
+	
 	# Class variables
 	timestamp	= models.DateTimeField(auto_now=False, auto_now_add=True)
 	surfice		= models.ForeignKey(Surfice)
 	status		= models.ForeignKey(Status)
 	email		= models.EmailField()
-	description	= models.TextField()
+	description	= models.TextField(blank=True)
 	data		= YAMLField()
 	
 	def __unicode__(self):
+		""" Return the status name when referencing it directly
+		"""
+		
 		return self.status.name
 	
-	# -------------------------------------
-	# @staticmethod create(surfice, status, email, description)
-	# 
-	# Creates an ding for the set surfice and stores it in the database
-	#
-	# INPUT
-	# surfice					The surfice object that has a ding
-	# status					The reported status of the surfice
-	# email						The email address of the person who submitted the ding
-	# description (optional)	Description of the event
-	# kwargs (optional)			Generic data stored as keys
-	#
-	# RETURNS
-	# The created ding
-	# -------------------------------------
 	@staticmethod
 	def create(surfice, status, email, description='', **kwargs):
+		""" Create a ding and save it in the database
+			
+			INPUT
+			surfice					The surfice object that has a ding
+			status					The reported status of the surfice
+			email					The email address of the person who submitted the ding
+			description (optional)	Description of the event
+			**kwargs (optional)		Generic data stored as keys
+			
+			RETURNS
+			Ding
+		"""
+		
 		# Create the Ding object
 		ding = Ding()
 		ding.surfice = surfice
@@ -1049,21 +1077,18 @@ class Ding(models.Model):
 		
 		return ding
 	
-	# -------------------------------------
-	# @staticmethod get_ding(pk)
-	# 
-	# Get ding that corresponds to the pk parameter. If no param is passed
-	# nothing is returned
-	#
-	# INPUT
-	# pk			primary key of the Ding
-	#
-	# RETURNS
-	# Ding corresponding to the primary key
-	# None if nothing is found
-	# -------------------------------------
 	@staticmethod
 	def get_ding(pk):
+		""" Get ding by pk
+			
+			INPUT
+			pk		primary key of the ding
+			
+			RETURNS
+			Ding
+			None if nothing is found
+		"""
+		
 		# Default value to return is nothing
 		ding = None
 		
@@ -1079,37 +1104,35 @@ class Ding(models.Model):
 		
 		return ding
 	
-	# -------------------------------------
-	# @staticmethod get_dings(**kwargs)
-	# 
-	# Get Dings in reverse chronological order (newest first)
-	# from the database based on the arguments.
-	# All arguments are optional, and only one at time can be used
-	# (other than the start, end variables)
-	# If no argument is passed, all Dings are returned
-	# 
-	#
-	# INPUT
-	# surfice		Dings related to a Surfice object
-	# email			The email address of the person who submitted the ding
-	# status		The reported status stored in the Ding
-	# days			int in number of days back from the current day to pull dings
-	# events		int number of dings to pull regardless of date
-	# start			timestamp (YYYY-MM-DD) of the start date of dings
-	# end			timestamp (YYYY-MM-DD) of the end date. Gets dings
-	#				from before and including this date
-	# start, end	if both are set, all dings between (inclusive)
-	#				will be returned
-	# [sort, sort_by,
-	# order, order_by] 	Allows custom sorting, and then sorting by
-	#					timestamp and then pk
-	# [none]		If no argument is passed, all stored Dings will be returned
-	#
-	# RETURNS
-	# Array of Dings in reverse chronological order (newest first)
-	# -------------------------------------
 	@staticmethod
 	def get_dings(**kwargs):
+		""" Get dings based on arguments
+			
+			Get Dings in reverse chronological order after the optional
+			order passed by the user.
+			All arguments are optional, and only one at a time can be used
+			(other than start/end arguments)
+			If no argument is passed, all dings are returned
+			
+			INPUT
+			dings			Number of dings to return
+			surfice			Dings related this surfice
+			email			Email address of the person who submitted the ding
+			status			Reported status of the ding
+			days			x number of days back from the current day to pull dings
+			events			x number of dings to pull regardless of date
+			start			timestamp (YYYY-MM-DD) of the start date of dings (inclusive)
+			end				timestamp (YYYY-MM-DD) of the end date. Get dings
+							from before and including this date.
+			start, end		if both are set, all dings between (inclusive) will
+							be returned
+			[order, order_by,
+			sort, sort_by]	Allows custom sorting, and then sorting by timestamp, then pk
+			[none]			If no argument is passed, all stored dings will be returned
+			
+			RETURNS
+			*Ding
+		"""
 		
 		# Empty array of dings
 		dings = []
@@ -1132,8 +1155,13 @@ class Ding(models.Model):
 		elif order_by[0].replace('-', '') in ['status', 'surfice']:
 			order_by[0] += '__name'
 		
+		# Get this number of dings
+		if 'dings' in kwargs:
+			x = kwargs['dings']
+			dings = Ding.objects.all().order_by(*order_by)[:x]
+		
 		# Get all dings related to a specific surfice
-		if 'surfice' in kwargs:
+		elif 'surfice' in kwargs:
 			surfice = kwargs['surfice']
 			dings = Ding.objects.filter(surfice=surfice).order_by(*order_by)
 		
@@ -1188,52 +1216,52 @@ class Ding(models.Model):
 
 
 
-# --------------------------------------
-# Event Class
-#
-# A class for recording events of a general object
-# and what the current status is.
-#
-# CLASS VARIABLES
-# timestamp			timestamp of the event
-# status			Status object
-# surfice			Surfice object that event affects
-# description		description of the event
-# data				Generic data stored as keys
-#
-# METHODS
-# Event			create(surfice, status, description)
-# void			delete(self, *args, **kwargs)
-# *Event		get_events(...)
-# void			set(status, surfice, description, **kwargs)
-# ---------------------------------------
 class Event(models.Model):
+	""" Event Class
+		
+		A class for recording events of general objects
+		and what the current status is.
+		
+		CLASS VARIABLES
+		timestamp			timestamp of the event
+		status				Status object
+		surfice				Surfice object of the event
+		description			Description of the event
+		data				Generic data stored as keys
+		
+		METHODS
+		Event			create(surfice, status, description)
+		void			delete(self, *args, **kwargs)
+		*Event			get_events(...)
+		void			set(status, surfice, description, **kwargs)
+	"""
+	
 	# Class variables
 	timestamp	= models.DateTimeField(auto_now_add=True, auto_now=False)
 	status		= models.ForeignKey(Status)
 	surfice		= models.ForeignKey(Surfice)
-	description	= models.TextField()
+	description	= models.TextField(blank=True)
 	data		= YAMLField()
 	
 	def __unicode__(self):
+		""" Return the status name when referencing it directly
+		"""
 		return self.status.name
 	
-	# -------------------------------------
-	# @staticmethod create(surfice, status, description, **kwargs)
-	# 
-	# Creates an event for the set surfice. The surfice's status is also updated
-	#
-	# INPUT
-	# surfice					The surfice object that has an event
-	# status					The new status of the surfice
-	# description (optional)	Description of the event
-	# kwargs (optional)			Generic data stored as keys
-	#
-	# RETURNS
-	# The created event
-	# -------------------------------------
 	@staticmethod
 	def create(surfice, status, description='', **kwargs):
+		""" Create a new event and save it to the database
+			
+			INPUT
+			surfice					The surfice object that has this event
+			status					The status of the event
+			description (optional)	Description of the event
+			**kwargs (optional)		Generic data stored as keys
+			
+			RETURNS
+			Event
+		"""
+		
 		# Probably need to check these before setting them
 		event = Event()
 		
@@ -1246,42 +1274,33 @@ class Event(models.Model):
 		for key in kwargs:
 			event.data[key] = kwargs[key]
 		
-		# Update the current status of the surfice
-		# BAD MODEL: COMMENTING OUT
-		# surfice.set_status(status) ######
-		
 		# Save the event in the database
 		event.save()
 		
 		return event
 	
-	# -------------------------------------
-	# delete(self, *args, **kwargs)
-	#
-	# INPUT
-	# args, kwargs			Only for extension of the built-in function
-	# 
-	# Deletes this event from the database
-	# -------------------------------------
 	def delete(self, *args, **kwargs):
+		""" Delete this event from the database
+			
+			INPUT
+			*args, **kwargs		Only for extension of the built-in function
+		"""
+		
 		# Call the real delete() function
 		super(Event, self).delete(*args, **kwargs)
 	
-	# -------------------------------------
-	# @staticmethod get_event(pk)
-	# 
-	# Get event that corresponds to the pk parameter. If no param is passed
-	# nothing is returned
-	#
-	# INPUT
-	# pk			primary key of the Event
-	#
-	# RETURNS
-	# Event corresponding to the primary key
-	# None if nothing is found
-	# -------------------------------------
 	@staticmethod
 	def get_event(pk):
+		""" Get event by id
+			
+			INPUT
+			pk		Primary key of the Event
+			
+			RETURNS
+			Event
+			None if nothing is found
+		"""
+		
 		# Default value to return is nothing
 		event = None
 		
@@ -1295,33 +1314,34 @@ class Event(models.Model):
 		
 		return event
 	
-	# -------------------------------------
-	# @staticmethod get_events(...)
-	# 
-	# Gets events in reverse chronological order (newest first) based on the arguments
-	# All arguments are optional, and only one at a time can be used
-	# (other than the start, end variables)
-	#
-	# INPUT
-	# days				int in number of days back from the current day to pull events
-	# events			int number of events to pull regardless of date
-	# start				timestamp (YYYY-MM-DD) of the start date of events
-	# end				timestamp (YYYY-MM-DD) of the end date. Gets events
-	#					from before and including this date
-	# start, end		if both are set, all events between (inclusive)
-	#					will be returned
-	# surfice			Surfice object that has events
-	# status			Status of events
-	# [sort, sort_by,
-	# order, order_by] 	Allows custom sorting, and then sorting by
-	#					timestamp and then pk
-	# [none]			If no argument is passed, all stored events will be returned
-	#
-	# RETURNS
-	# Array of events in reverse chronological order (newest first)
-	# -------------------------------------
 	@staticmethod
 	def get_events(**kwargs):
+		""" Get events by parameters passed
+			
+			Get events in reverse chronological order after the optional
+			order passed by the user.
+			All arguments are optional, and only one at a time can be used
+			(other than start/end arguments)
+			If no argument is passed, all events are returned
+			
+			INPUT
+			days				x number of days back from the current day to pull events
+			events				x number of events to pull regardless of date
+			start				timestamp (YYYY-MM-DD) of the start date of events
+			end					timestamp (YYYY-MM-DD) of the end date. Gets events
+								from before and including this date
+			start, end			if both are set, all events between (inclusive) will
+								be returned.
+			surfice				Surfice object that has events
+			status				Status of events
+			[order, order_by,
+			sort, sort_by]		Allows custom sorting, and then sorting by
+								timestamp, then pk
+			[none]				If no argument is passed, all stored events will be returned
+			
+			RETURNS
+			*Event
+		"""
 		
 		# Empty array of events
 		events = []
@@ -1391,19 +1411,19 @@ class Event(models.Model):
 		
 		return events
 	
-	# -------------------------------------
-	# set(self, status, description, **kwargs)
-	#
-	# Generic setter function. All fields are optional, but nothing happens
-	# if no parameters are passed
-	#
-	# INPUT
-	# status (optional)			The new name of the event
-	# surfice (optional)		The new surfice of the event
-	# description (optional)	The new description of the event
-	# kwargs					Any other fields that would go into the generic data field as keys
-	# -------------------------------------
 	def set(self, status=None, surfice=None, description=None, timestamp=None, **kwargs):
+		""" Set components of event
+			
+			Generic setter function. All fields are optional, but
+			nothing happens if no paramaters are passed
+			
+			INPUT
+			status (optional)			The new name of the event
+			surfice (optional)			The new surfice of the event
+			description (optional)		The new description of the event
+			timestamp (optional)		The new timestamp of the event
+			**kwargs					Generic data stored as keys
+		"""
 		
 		# If status is set and is in the database, update it
 		if	(

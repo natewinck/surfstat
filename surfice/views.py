@@ -9,15 +9,16 @@ from surfice.models import Surf, Surfice, Status, Ding, Event
 import json
 
 # For the admin pages
-from django.contrib.auth.decorators import login_required
 from django.contrib.auth import authenticate, login
+from django.contrib.auth.decorators import permission_required
 
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.core.urlresolvers import reverse
 
 from datetime import date, timedelta
 
-# Create your views here.
+from django_auth_ldap.backend import LDAPBackend
+
 
 def printv(obj, title=""): # Print your variables!
 	if title != "":
@@ -54,9 +55,9 @@ def debug():
 	# First test Surfs
 	# First manually
 	surf_manual = Surf()
- 	surf_manual.name = "Manual Surf"
- 	surf_manual.description = "A description of the manual surf"
- 	surf_manual.save_new()
+	surf_manual.name = "Manual Surf"
+	surf_manual.description = "A description of the manual surf"
+	surf_manual.save_new()
 	
 	printv(surf_manual, "MANUAL SURF")
 	
@@ -175,18 +176,6 @@ def debug():
 	except: pass
 
 
-def ding(request):
-	#Not checking yet because this is a test
-	#if 'q' in request.POST:
-    #    message = 'You searched for: %r' % request.POST['q']
-    print(printv(request.POST))
-    d = request.POST
-    return HttpResponse(d['email'])
-    #return render(request, 'surfice/index.html', {})
-	#Ding.create(d['surfice'], d['status'], d['email'], d['description'])
-	#index(request)
-
-
 def index(request):
 	if DEBUG: debug()
 	
@@ -216,17 +205,6 @@ def index(request):
 	status_list = Status.get_statuses()
 	context_dict['statuses'] = status_list
 	
-	
-	
-	
-	# GET ISSUE STATUS COLOR HERE -------------------------------------
-	# SET A DEFAULT STATUS AS AN ISSUE ----------------------------------
-	
-	
-	
-	
-	
-	
 	# Query for surfs = add the list to our context dictionary.
 	#surf_list = Surf.objects.order_by('-name')[:5]
 	#context_dict = {'surfs': surf_list}
@@ -242,13 +220,20 @@ def index(request):
 	
 	#return HttpResponse("Rango says hello world!")
 
-@login_required
+@permission_required('is_superuser')
 def admin(request):
+
+	#user = LDAPBackend().get_user_model()
+
 	context_dict = {}
 	
 	# Query for surfs and add them to context_dict
 	surf_list = Surf.get_surfs()
 	context_dict['surfs'] = surf_list
+	
+	# For each Surf, query for Surfices and add them to context_dict
+	#for i, surf in enumerate(context_dict['surfs']):
+		#context_dict['surfs'][i].surfices = surf_list[i].surfice_set.all()
 	
 	# Query for Surfices and add them to context_dict
 	surfice_list = Surfice.get_surfices()
@@ -292,15 +277,15 @@ def surf(request, surf_url):
 	# Go render the response and return it to the client
 	return render(request, 'surfice/surf.html', context_dict)
 
-@login_required
+@permission_required('is_superuser')
 def surfs(request):
 	context_dict = {}
 	
 	# If the admin is trying to create or delete a Surf, the page is refreshed
 	flag = False
 	if request.method == 'POST':
-			
-		# Is the admin trying to delete a status?
+		
+		# Is the admin trying to delete a surf?
 		if	(
 				'delete' in request.POST and
 				'surf' in request.POST
@@ -309,39 +294,29 @@ def surfs(request):
 			# Get the surf that we're about to delete
 			surf = Surf.get_surf(pk=request.POST['surf'])
 			
-			# If the surf is empty, go ahead and delete it without moving anything
-			if 'is_empty' in request.POST:
+			if type(surf) is Surf:
+				# Add code here to delete related events and dings
+			
+				# Go ahead and delete the surf now that everything has be re-assigned
 				surf.delete()
-			
-			# If new_surf is set, move all surfices to the set surf
-			elif 'new_surf' in request.POST:
-				# Get the new surf that we're changing surfices to
-				new_surf = Surf.get_surf(pk=request.POST['new_surf'])
-			
-				# Only continue if the new surf actually exists and is not the same
-				# as the one that's being deleted
-				if type(new_surf) is Surf and new_surf != surf:
-				
-					# Get all the surfices associated with this surf
-					surfices = surf.get_surfices()
-				
-					# Now loop through all the surfices and change their surf
-					# to the new surf
-					for surfice in surfices:
-						surfice.set_surf(surf=new_surf)
-				
-					# Go ahead and delete the surf now that everything has be re-assigned
-					surf.delete()
-			
-				# A new surf wasn't selected or it doesn't exist, so don't do anything
-				else:
-					pass
 		
 		# Is the admin trying to create a surf?
-		elif 'name' in request.POST and 'description' in request.POST:
-			surf = Surf.create(request.POST['name'], request.POST['description'])
+		elif 'name' in request.POST:
+				
+			surf = Surf.create(request.POST['name'], request.POST.get('description', ''))
+			
+			# If the surf wasn't created, throw a flag
 			if surf == None:
 				flag = True
+			
+			# If the surf was created, assign surfices to it
+			else:
+				surfices = []
+				if 'surfices' in request.POST:
+					# Loop through the passed pks and append the surf to surfs array
+					for pk in request.POST.getlist('surfices'):
+						surfices.append( Surfice.get_surfice(pk=pk) )
+				surf.surfices = surfices
 		
 		# Redirect to this view after submission to clear headers
 		return HttpResponseRedirect('')
@@ -349,12 +324,8 @@ def surfs(request):
 	
 	
 	# Query for surfs and add them to context_dict
-	surf_list = Surf.get_surfs()
+	surf_list = Surf.get_surfs().prefetch_related('surfices')
 	context_dict['surfs'] = surf_list
-	
-	# For each Surf, query for Surfices and add them to context_dict
-	for i, surf in enumerate(context_dict['surfs']):
-		context_dict['surfs'][i].surfices = surf.get_surfices()
 	
 	# Query all the Surfices and add them to context_dict
 	surfice_list = Surfice.get_surfices()
@@ -366,7 +337,7 @@ def surfs(request):
 	
 	return render(request, 'surfice/base_surfs.html', context_dict)
 
-@login_required
+@permission_required('is_superuser')
 def surfices(request):
 	context_dict = {}
 	
@@ -411,13 +382,23 @@ def surfices(request):
 		# Is the admin trying to create a surfice?
 		elif	(
 					'name' in request.POST and
-					'surf' in request.POST and
 					'status' in request.POST
 				):
 			
-			surf = Surf.get_surf(pk=request.POST['surf'])
+			# Get the surf objects based on the pks that were passed
+			surfs = []
+			if 'surfs' in request.POST:
+				# Loop through the passed pks and append the surf to surfs array
+				for pk in request.POST.getlist('surfs'):
+					surfs.append( Surf.get_surf(pk=pk) )
+			
+			# Get the status object
 			status = Status.get_status(pk=request.POST['status'])
-			surfice = Surfice.create(request.POST['name'], surf, status, request.POST.get('description', ''))
+			
+			# All objects have been gotten, so create the surfice
+			surfice = Surfice.create(request.POST['name'], surfs, status, request.POST.get('description', ''))
+			
+			# Check to make sure a Surfice object was actually created
 			if type(surfice) is not Surfice:
 				flag = True
 		
@@ -431,7 +412,7 @@ def surfices(request):
 	context_dict['surfs'] = surf_list
 	
 	# Query all the Surfices and add them to context_dict
-	surfice_list = Surfice.get_surfices()
+	surfice_list = Surfice.get_surfices().prefetch_related('surfs')
 	context_dict['surfices'] = surfice_list
 	
 	# Query all the Statuses and add them to context_dict
@@ -441,7 +422,7 @@ def surfices(request):
 	
 	return render(request, 'surfice/base_surfices.html', context_dict)
 
-@login_required
+@permission_required('is_superuser')
 def events(request, page, order_by=''):
 	context_dict = {}
 	
@@ -484,7 +465,7 @@ def events(request, page, order_by=''):
 	
 	return render(request, 'surfice/base_events.html', context_dict)
 
-@login_required
+@permission_required('is_superuser')
 def dings(request, page='', order_by=''):
 	context_dict = {}
 	
@@ -527,13 +508,13 @@ def dings(request, page='', order_by=''):
 	
 	return render(request, 'surfice/base_dings.html', context_dict)
 
-@login_required
+@permission_required('is_superuser')
 def settings(request):
 	context_dict = {}
 	
 	return render(request, 'surfice/base_settings.html', context_dict)
 
-@login_required
+@permission_required('is_superuser')
 def statuses(request):
 	context_dict = {}
 	
@@ -599,53 +580,7 @@ def statuses(request):
 	
 	return render(request, 'surfice/base_statuses.html', context_dict)
 
-@login_required
-def status(request, status=''):
-	pass
-
-@login_required
-def surfice(request, surfice=''):
-	context_dict = {}
-	
-	if request.method == 'POST':
-		# Is the admin trying to delete a surfice?
-		if	(
-				'delete' in request.POST and
-				'surfice' in request.POST
-			):
-			
-			# Get the surfice that we're about to delete
-			surfice = Surfice.get_surfice(pk=request.POST['surfice'])
-			
-			# Only delete the surfice if the surfice actually exists in the database
-			# Django automatically deletes all related objects
-			# along with the surfice so go ahead and delete the surfice
-			if type(surfice) is Surfice:
-				surfice.delete()
-			
-			# Redirect to the surfices after submission to clear headers
-			return HttpResponseRedirect( reverse(surfices) )
-	
-	# Query for surfices and add them to context_dict
-	surfice = Surfice.get_surfice(pk=surfice)
-	
-	# If it does not exist, raise a 404 error
-	if type(surfice) is not Surfice:
-		raise Http404
-	
-	# Add the surfice to context_dict
-	context_dict['surfice'] = surfice
-	
-	#surfice_surfices = Surfice.get_surfices(surfice=surfice.surfice)
-	#x = 1 # Number of days
-	#start = date.today() - timedelta(x)
-	# Equivalent in SQL to SELECT ... WHERE timestamp >= start
-	#surfice_surfices = surfice_surfices.filter(timestamp__gte=start)
-	#context_dict['surfice_surfices'] = surfice_surfices.count()
-	
-	return render(request, 'surfice/base_surfice.html', context_dict)
-
-@login_required
+@permission_required('is_superuser')
 def ding(request, ding=''):
 	context_dict = {}
 	
