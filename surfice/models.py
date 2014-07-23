@@ -173,11 +173,11 @@ class Surf(models.Model):
 			# and that also contain the name param
 			if name != None:
 				# surfices is a reverse lookup defined by the related name in the Surfice class
-				surfices = Surf.objects.get(id=self.id).surfice_set.filter(name__icontains=name)
+				surfices = Surf.objects.get(id=self.id).surfices.filter(name__icontains=name)
 			
 			# If name is not set, get all Surfices under this Surf
 			else:
-				surfices = Surf.objects.get(id=self.id).surfice_set.all()
+				surfices = Surf.objects.get(id=self.id).surfices.all()
 		
 		except Surf.DoesNotExist:
 			# We get here if we didn't find the specified category.

@@ -49,3 +49,47 @@ if (typeof Object.size === 'undefined')
 		}
 		return size;
 	};
+
+/* getDynamicColor
+------------------------------ 
+*  Gets the color that the text should be
+*  against a color of background
+*  
+*  INPUT
+*  rgb		RGB or hex color of the background "rgb(255, 255, 255)"
+*  
+*  RETURNS
+*  rgb white or "inherit"
+*  
+------------------------------ */
+function getDynamicColor(rgb) {
+	// If they entered a hex code by accident...
+	if (rgb.indexOf("#") > -1) {
+		var hex = rgb;
+		var result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+		rgb = (result) ? [
+			parseInt(result[1], 16),
+			parseInt(result[2], 16),
+			parseInt(result[3], 16)
+		] : null;
+	
+	} else {
+		rgb = rgb.match(/^rgb\((\d+),\s*(\d+),\s*(\d+)\)$/);
+		rgb.shift();
+	}
+
+	var total = 0;
+	for (var i = 0; i < rgb.length; i++) {
+		total += parseInt(rgb[i]);
+	}
+	
+	var avg = total / 3.0;
+	
+	// If the average is less than halfway to dark
+	// change the color of the text to white
+	if (avg / 255 < 0.4) {
+		return "rgb(255, 255, 255)";
+	} else {
+		return "inherit";
+	}
+}

@@ -868,14 +868,14 @@ function refreshAJAXPageDispatcher(selector, data) {
 *
 *  ----------------------------------------- */
 function addSurficeRowToSurf($table, surfice) {
-	$row = $(getSurficerow(surfice));
+	$row = $(getSurficeRow(surfice));
 
 	// Now add the created row to the table
 	$table.append($row);
 }
 
 /* -----------------------------------------
-*  getSurficeRowToSurf(surfice)
+*  getSurficeRow(surfice)
 *
 *  Get the row that will be added to a surfice table on the surf page
 *
