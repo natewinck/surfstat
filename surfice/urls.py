@@ -27,6 +27,7 @@ urlpatterns = patterns('',
 	
 	url(r'^admin/events/(?P<page>\w*)(?:\/)(?P<order_by>[-\w]*)', views.events, name='events'),
 	url(r'^admin/events/(?P<page>\w*)', views.events, name='events'),
+	url(r'^admin/events/$', views.events, name='events'),
 	
 	url(r'^admin/dings/(?P<page>\w*)(?:\/)(?P<order_by>[-\w]*)', views.dings, name='dings'),
 	url(r'^admin/dings/(?P<page>\w*)', views.dings, name='dings'),
