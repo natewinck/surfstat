@@ -22,7 +22,7 @@
 				<!--<li><a href="/admin/settings">Settings</a></li>-->
 			</ul>
 			{% if user.is_authenticated %}
-			<p class="navbar-text navbar-right"><a href="/logout/" class="navbar-link">Log out {{ user.first_name }} {{ user.last_name }}</a></p>
+			<p class="navbar-text navbar-right"><a href="{% url 'logout' %}" class="navbar-link">Log out {{ user.first_name }} {{ user.last_name }}</a></p>
 	
 			{% endif %}
 		</div>

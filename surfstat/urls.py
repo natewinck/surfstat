@@ -10,8 +10,8 @@ urlpatterns = patterns('',
     # url(r'^blog/', include('blog.urls')),
 
     url(r'^db/', include(admin.site.urls)),
-    url(r'^login/$', 'django.contrib.auth.views.login', {'template_name': 'surfice/base_login.html'} ),
-    url(r'^logout/$', 'django.contrib.auth.views.logout_then_login'),
+    url(r'^login/$', 'django.contrib.auth.views.login', {'template_name': 'surfice/base_login.html'} , name='login'),
+    url(r'^logout/$', 'django.contrib.auth.views.logout_then_login', name='logout'),
     
     # Root redirects to index
     
