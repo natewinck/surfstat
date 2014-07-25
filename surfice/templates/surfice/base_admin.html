@@ -5,16 +5,19 @@
 {% load static %}
 {% load humanize %}
 {% load slugify %}
+{% load nav %}
 
 {% block body_class %}admin{% endblock %}
 
 
 {% block nav %}
+	{% nav "admin" %}
 	{% include "surfice/admin_nav.html" %}
 {% endblock %}
 
 
 {% block heading %}
+The name is {{ heading.name }}.
 <!-- super status bar -->
 <form class="row jumbotron jumbotron-admin" type="ajax" action="ajax/set-status" method="post">
 {# To prevent cross-site forgery, include the following required tag #}
@@ -170,9 +173,21 @@
 		{% for event in events|slice:":20" %}
 		<div class="row">
 			<div class="col-xs-3 col-xs-offset-2">{{ event.timestamp|naturaltime }}</div>
-			<div class="col-xs-7">{{ event.description }}</div>
+			<div class="col-xs-7">
+			{% if event.description != "" %}
+				{{ event.description }}
+			{% else %}
+				{# If the description is not set, output something generic #}
+				{{ event.surfice.name|capfirst }}'s status was changed to {{ event.status }}.
+			{% endif %}
+			</div>
 		</div>
 		{% endfor %}
+		
+		<div class="row">
+			<div class="col-xs-12 text-center"><a href="{% url 'events' %}">View and edit events here.</a></div>
+		</div>
+		
 	</div>
 </div>
 <!-- /end recent events -->

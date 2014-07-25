@@ -6,13 +6,10 @@
 {% block title %}Home{% endblock %}
 
 {% block heading %}
-<div class="heading"><center>
-    	<h1>What's the Status, Jack?</h1>
-       <center> <p>This used to be the essential grey box that housed all of the secrets to the Asbury network statuses. <br/>
-        Now it is a lie. <br/>
-        Like the cake.
-        </p></center>
-    </center>
+<div class="heading text-center">
+	<h1>What's the Status, Jack?</h1>
+    <p class="text-center">Find up-to-date statuses of all of Asbury's services,<br>
+    and even submit feedback on the status of services</p>
 </div>
 {% endblock %}
 
@@ -120,7 +117,7 @@
 		</div>
 		{% empty %}
 		<div class="row">
-			<div class="col-xs-12 text-center">Nothing has happened in the past two weeks.</div>
+			<div class="col-xs-12 text-center">Nothing has happened in the past week.</div>
 		</div>
 		{% endfor %}
 		

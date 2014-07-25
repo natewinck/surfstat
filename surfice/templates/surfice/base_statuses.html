@@ -1,15 +1,17 @@
 {% extends "surfice/base.html" %}
 
-{% block title %}Admin | Status{% endblock %}
+{% block title %}Admin | Statuses{% endblock %}
 
 {% load static %}
 {% load humanize %}
 {% load slugify %}
+{% load nav %}
 
 {% block body_class %}admin{% endblock %}
 
 
 {% block nav %}
+	{% nav "statuses" %}
 	{% include "surfice/admin_nav.html" %}
 {% endblock %}
 

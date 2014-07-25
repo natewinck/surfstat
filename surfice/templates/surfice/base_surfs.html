@@ -1,8 +1,11 @@
 {% extends "surfice/base.html" %}
 
+{% load nav %}
+
 {% block title %}Admin | Surfs{% endblock %}
 
 {% block nav %}
+	{% nav "surfs" %}
 	{% include "surfice/admin_nav.html" %}
 {% endblock %}
 

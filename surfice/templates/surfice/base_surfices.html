@@ -5,11 +5,13 @@
 {% load static %}
 {% load humanize %}
 {% load slugify %}
+{% load nav %}
 
 {% block body_class %}admin{% endblock %}
 
 
 {% block nav %}
+	{% nav "surfices" %}
 	{% include "surfice/admin_nav.html" %}
 {% endblock %}
 

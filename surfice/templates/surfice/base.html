@@ -74,13 +74,9 @@
    
 <div class="container">
     {% block heading %}
-    <div class="heading"><center>
-        <h1>You might want to put a header here.</h1>
-       <center> <p>This used to be the essential grey box that housed all of the secrets to the Asbury network statuses. <br/>
-        Now it is a lie. <br/>
-        Like the cake.
-        </p></center>
-    </center></div>
+    <div class="heading text-center">
+    	<h1>You might want to put a header here.</h1>
+    </div>
     {% endblock %}
 	
 	{% block content %}
@@ -95,7 +91,7 @@
 	<!-- FOOTER -->
 	<footer>
 		<p class="pull-right"><a href="#top">Back to top</a></p>
-		<p>&copy; 2014 Asbury University &middot; <a href="#">Privacy</a> &middot; <a href="admin">Admin</a>
+		<p>&copy; 2014 Asbury University &middot; <a href="{% url 'admin' %}">Admin</a>
 		{% if user.is_authenticated %} &middot; <a href="{% url 'logout' %}">Log out</a> {% endif %}</p>
 	</footer>
 	{% endblock %}

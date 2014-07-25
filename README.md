@@ -109,6 +109,6 @@ Data
 
 Testing
 -------
-- Make a test deployment server
+- ~~Make a test deployment server~~
 - Test database creation
 - Test initial setup
