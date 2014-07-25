@@ -24,7 +24,9 @@
 				{# If color is set in data, set the color #}
 				{% for surfice in surfices %}
 				<div class="surfice surfice-success dynamic-color" {% if surfice.status.data.color %}style="background-color:{{ surfice.status.data.color }}"{% endif %}>
-					<h2 class="center-all featurette-heading-grid surfice-active">{{ surfice.name }}</h2><a class="btn btn-lg btn-info center-all-button featurette-heading-grid surfice-hover" role="button" data-toggle="modal" data-target="#ding-{{ surfice.id }}">Report an Issue</a>
+					<h2 class="center-all featurette-heading-grid surfice-active">{{ surfice.name }}</h2>
+					<a class="btn btn-lg btn-info center-all-button featurette-heading-grid surfice-hover" role="button" data-toggle="modal" data-target="#ding-{{ surfice.id }}">Report an Issue</a>
+					<span class="surfice_dings"><span data-ajax-update="surfice-dings-length">{{ surfice.dings|length }}</span> with issues</span>
 				</div>
 				{% endfor %}
 				<!-- /end surfices -->
@@ -44,6 +46,9 @@
 								<form id="ding-form-{{ surfice.id }}" class="form-horizontal text-left" role="form" action="ajax/submit-ding" type="ajax" method="post"
 									data-ajax-success="Issue submitted!"
 									data-ajax-fail="Could not submit issue :("
+									data-ajax-update-target="surfice-dings-length"
+									data-ajax-action="ajax/get-surfice-dings-length"
+									data-ajax-get='{"days": "1", "surfice": "{{ surfice.id }}"}'
 								>
 									{# To prevent cross-site forgery, include the following required tag #}
 									{% csrf_token %}
@@ -51,7 +56,7 @@
 									<div class="form-group"> 
 										<label class="col-sm-2 control-label">Email</label>
 										<div class="col-sm-6">
-											<input type="email" class="form-control" name="email" placeholder="Enter email" data-ajax-clear>
+											<input type="email" class="form-control" name="email" placeholder="Enter email" data-ajax-clear data-ajax-check>
 										</div>
 									</div>
 							
@@ -174,5 +179,4 @@ chartData['online'] = {
 
 </script>
 
-<script src="{% static 'surfice/js/jquery.inview.min.js' %}"></script>
 {% endblock %}

@@ -29,27 +29,27 @@ Surfstat.prototype.getJSON = function(url, getData, callbackSuccess, callbackFai
 
 Surfstat.prototype.getSurfs = function(callbackSuccess, callbackFail) {
 	var s = this;
-	this.getJSON("ajax/get-surfs", function(data){ s.surfs = data }, callbackFail);
+	this.getJSON("ajax/get-surfs", function(data){ for(var key in data) { s.surfs[data[key].id] = data[key]; } }, callbackFail);
 }
 
 Surfstat.prototype.getSurfices = function(callbackSuccess, callbackFail) {
 	var s = this;
-	this.getJSON("ajax/get-surfices", function(data){ s.surfices = data }, callbackFail);
+	this.getJSON("ajax/get-surfices", function(data){for(var key in data) { s.surfices[data[key].id] = data[key]; } }, callbackFail);
 }
 
 Surfstat.prototype.getStatuses = function(callbackSuccess, callbackFail) {
 	var s = this;
-	this.getJSON("ajax/get-statuses", function(data){ s.statuses = data }, callbackFail);
+	this.getJSON("ajax/get-statuses", function(data){ for(var key in data) { s.statuses[data[key].id] = data[key]; } }, callbackFail);
 }
 
 Surfstat.prototype.getEvents = function(callbackSuccess, callbackFail) {
 	var s = this;
-	this.getJSON("ajax/get-events", function(data){ s.events = data }, callbackFail);
+	this.getJSON("ajax/get-events", function(data){ for(var key in data) { s.events[data[key].id] = data[key]; } }, callbackFail);
 }
 
 Surfstat.prototype.getDings = function(callbackSuccess, callbackFail) {
 	var s = this;
-	this.getJSON("ajax/get-dings", function(data){ s.dings = data }, callbackFail);
+	this.getJSON("ajax/get-dings", function(data){ for(var key in dings) { s.surfs[data[key].id] = data[key]; } }, callbackFail);
 }
 
 Surfstat.prototype.get = function(action, getData, callbackSuccess, callbackFail) {

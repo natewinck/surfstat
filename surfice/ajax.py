@@ -1307,6 +1307,90 @@ def get_dings(request):
 	
 	return dings
 
+def get_surfice_dings_length(request):
+	""" Get the number of dings returned for a specific surfice
+		
+		Only one order_by and one get mode can be used at a time.
+		For example, I can order by timestamp, over a certain number of days
+		
+		INPUT
+		request			A request object
+			- email				The email address of the person who submitted the ding
+			- days				int in number of days back from the current day to pull dings
+			- dings				int number of dings to pull regardless of date
+			- start				timestamp (YYYY-MM-DD) of the start date of dings
+			- end				timestamp (YYYY-MM-DD) of the end date. Gets dings
+			-					from before and including this date
+			- start, end		if both are set, all dings between (inclusive)
+			-					will be returned
+			- surfice (required)Dings related to this surfice
+			- status			The reported status stored in the ding
+			- [none]			If no argument is passed, all stored dings will be returned
+			-
+			- RETURNS
+			- Array of dings in reverse chronological order (newest first)
+		
+		RETURNS
+		*Ding in order_by order or reverse chronological order (newest first)
+	"""
+	
+	dings = {}
+	
+	# Get how to order the dings
+	order_by = ''
+	
+	# Get the surfice
+	if 'surfice' in request.GET:
+		surfice = request.GET['surfice']
+	else:
+		dings.append("No Surfice given!")
+		return dings
+	
+	# If email is set, get all dings associated with this email address
+	if 'email' in request.GET:
+		dings = Ding.get_dings(email=request.GET['email'], order_by=order_by).filter(surfice=surfice)
+	
+	# If days is set, get all dings back this number of days
+	elif 'days' in request.GET:
+		dings = Ding.get_dings(days=int(request.GET['days']), order_by=order_by).filter(surfice=surfice)
+	
+	# If dings is set, get this number of dings
+	elif 'dings' in request.GET:
+		dings = Ding.get_dings(dings=request.GET['dings'], order_by=order_by).filter(surfice=surfice)
+	
+	# If start and end are set (YYYY-MM-DD), get all dings between (inclusive)
+	elif 'start' in request.GET and 'end' in request.GET:
+		dings = Ding.get_dings(dings=request.GET['dings'], order_by=order_by).filter(surfice=surfice)
+	
+	# If start timestamp (YYYY-MM-DD) is set, get all dings from this date
+	elif 'start' in request.GET:
+		dings = Ding.get_dings(start=request.GET['start'], order_by=order_by).filter(surfice=surfice)
+	
+	# If end timestamp (YYYY-MM-DD) is set, get all dings up to and including this ding
+	elif 'end' in request.GET:
+		dings = Ding.get_dings(end=request.GET['end'], order_by=order_by).filter(surfice=surfice)
+	
+	# If surfice is set, get all dings associated with this surfice
+	elif 'surfice' in request.GET:
+		dings = Ding.get_dings(surfice=request.GET['surfice'], order_by=order_by).filter(surfice=surfice)
+	
+	# If status is set, get all dings that have a certain status
+	elif 'status' in request.GET:
+		dings = Ding.get_dings(status=request.GET['status'], order_by=order_by).filter(surfice=surfice)
+	
+	# If nothing is set, get all dings
+	else:
+		dings = Ding.get_dings(order_by=order_by).filter(surfice=surfice)
+	
+	# Serialize the dings so that we can pass them back as JSON
+	#dings = DingSerializer(dings)
+	#dings = JSONRenderer().render(dings.data)
+	
+	data = len(dings)
+	data = JSONRenderer().render(data)
+	
+	return data
+
 def dispatch(request, action=''):
 	""" Dispatch all ajax functions
 		
@@ -1454,6 +1538,10 @@ def dispatch(request, action=''):
 	# Get a set of dings
 	elif action == 'get-dings':
 		response = get_dings(request)
+	
+	# Get number of dings for the user on the frontend
+	elif action == 'get-surfice-dings-length':
+		response = get_surfice_dings_length(request)
 	
 	else:
 		response = ["No action called " + action]

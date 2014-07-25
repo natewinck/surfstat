@@ -744,6 +744,31 @@ function refreshDingRow($elements, data) {
 }
 
 /* -----------------------------------------
+*  refreshDingRow($elements, data)
+*
+*  Update the ding row by adding a new row when deleting a row
+*
+*  INPUT
+*  $elements		jQuery array of matched elements
+*  data				data that is a ding object
+*
+*  ----------------------------------------- */
+function refreshSurficeDingsLength($elements, data) {
+	// Data is the number of dings in the surfice based on
+	// the get parameters of the form
+	
+	// Loop through the elements and add the row to each table
+	$elements.each(function() {
+		$element = $(this);
+		
+		// Change the contents of the element to the number of dings
+		$element.val(data).text(data);
+		
+	});
+}
+
+
+/* -----------------------------------------
 *  refreshAJAXPageHandler($elements, data, $form=null)
 *
 *  This function acts as a dispatcher to fire the correct
@@ -847,6 +872,10 @@ function refreshAJAXPageDispatcher(selector, data) {
 	// Update the ding table by adding a row when deleting a row
 	else if (selector.contains("ding-row"))
 		refreshDingRow($elements, data);
+	
+	// Update the issue number counter on the front page
+	else if (selector.contains("surfice-dings-length"))
+		refreshSurficeDingsLength($elements, data);
 	
 	// No error if a selector isn't matched
 	

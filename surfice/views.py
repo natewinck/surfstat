@@ -194,6 +194,12 @@ def index(request):
 	# will be passed to the template engine
 	context_dict = {'surfices': surfice_list}
 	
+	# Get dings within past 24 hours for each surfice
+	days = 1
+	start = date.today() - timedelta(days)
+	for i, surfice in enumerate(context_dict['surfices']):
+		context_dict['surfices'][i].dings = surfice_list[i].ding_set.filter(timestamp__gte=start)
+	
 	# Query the database for a list of all the events
 	# Place them in context_dict
 	event_list = Event.get_events(days=7)[:10]

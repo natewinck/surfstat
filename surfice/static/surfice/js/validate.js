@@ -35,6 +35,20 @@ $('input[name="name"][data-ajax-check]').each(function() {
 		$input.keyup(function(){ statusNameField( $(this) ) });
 });
 
+$('input[name="email"][data-ajax-check]').each(function() {
+	$input = $(this);
+	
+	$input.keyup(function() {
+		if (!isValidEmail( $(this).val() )) {
+			$(this).closest(".form-group").removeClass("has-success").addClass("has-error");
+		} else {
+			$(this).closest(".form-group").removeClass("has-error").addClass("has-success");
+		}
+		
+	});
+	
+});
+
 /* CHECK SURF NAME FIELDS */
 function surfNameField($input) {
 	// Get the id of this object so that we don't check the name against itself
@@ -116,3 +130,14 @@ function checkNameField($input, data, id) {
 		}
 	});
 }
+
+function validate(form) {
+	// If there are errors in the form, return false
+	// Otherwise, return true
+	return ($(form).find(".has-error").length > 0) ? false : true;
+}
+
+function isValidEmail(emailAddress) {
+    var pattern = new RegExp(/^((([a-z]|\d|[!#\$%&'\*\+\-\/=\?\^_`{\|}~]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])+(\.([a-z]|\d|[!#\$%&'\*\+\-\/=\?\^_`{\|}~]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])+)*)|((\x22)((((\x20|\x09)*(\x0d\x0a))?(\x20|\x09)+)?(([\x01-\x08\x0b\x0c\x0e-\x1f\x7f]|\x21|[\x23-\x5b]|[\x5d-\x7e]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(\\([\x01-\x09\x0b\x0c\x0d-\x7f]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF]))))*(((\x20|\x09)*(\x0d\x0a))?(\x20|\x09)+)?(\x22)))@((([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])*([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])))\.)+(([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])*([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])))\.?$/i);
+    return pattern.test(emailAddress);
+};

@@ -43,6 +43,11 @@ $("form").submit(function(e) { //listen for submit event
 		$(this).append(input);
 	}
 	
+	if (!validate(this)) {
+		e.preventDefault();
+		return false;
+	}
+	
 });
 
 /* AJAX FORM
@@ -106,9 +111,8 @@ $("body").on("submit", "form[type='ajax']", function(e) {
 ------------------------------ */
 $('.modal [type="submit"]').click(function(e) {
 	e.preventDefault();
-	var $modal = $(this).parents(".modal");
+	var $modal = $(this).closest(".modal");
 	$modal.find("form").submit();
-	$modal.modal("hide");
 });
 
 

@@ -586,6 +586,9 @@ function ajaxProcessingDisplay($form) {
 }
 
 function ajaxSuccessDisplay($form) {
+	// If the form was inside a modal, hide the modal
+	$form.closest(".modal").modal("hide");
+	
 	var $button = $form.find('[type="submit"]');
 	
 	if ($button.attr("data-value-success")) {
