@@ -27,6 +27,7 @@ from django.contrib.auth.decorators import permission_required
 from django.http import HttpResponse
 
 
+@permission_required('is_superuser', raise_exception=True)
 def set_status(request):
 	""" Sets the status of a surfice
 	
@@ -68,6 +69,7 @@ def set_status(request):
 	
 	return errors
 
+@permission_required('is_superuser', raise_exception=True)
 def set_surf_status(request):
 	""" Sets the status of all surfices belonging to a surf.
 		
@@ -162,6 +164,7 @@ def set_surf_status(request):
 # RETURNS
 # *errors
 # -----------------------------------------
+@permission_required('is_superuser', raise_exception=True)
 def set_surf(request):
 	errors = []
 	
@@ -201,6 +204,7 @@ def set_surf(request):
 	
 	return errors
 
+@permission_required('is_superuser', raise_exception=True)
 def set_surfs(request):
 	""" Sets the surfs of a surfice
 		
@@ -237,6 +241,7 @@ def set_surfs(request):
 	
 	return errors
 
+@permission_required('is_superuser', raise_exception=True)
 def add_surf(request):
 	""" Add a surf to a surfice
 		
@@ -267,6 +272,7 @@ def add_surf(request):
 	
 	return errors
 
+@permission_required('is_superuser', raise_exception=True)
 def add_surfs(request):
 	""" Add surfs to a surfice
 		
@@ -304,6 +310,7 @@ def add_surfs(request):
 	
 	return errors
 
+@permission_required('is_superuser', raise_exception=True)
 def update_surf(request):
 	""" Update a surf's attributes
 		
@@ -353,6 +360,7 @@ def update_surf(request):
 	
 	return errors
 
+@permission_required('is_superuser', raise_exception=True)
 def update_surfice(request):
 	""" Update a surfice's attributes
 		
@@ -427,6 +435,7 @@ def update_surfice(request):
 	
 	return errors
 
+@permission_required('is_superuser', raise_exception=True)
 def update_status(request):
 	""" Update a status's attributes
 		
@@ -476,6 +485,7 @@ def update_status(request):
 	
 	return errors
 
+@permission_required('is_superuser', raise_exception=True)
 def update_event(request):
 	""" Update an event's attribute
 		If no event is in request, nothing happens
@@ -550,6 +560,7 @@ def update_event(request):
 	
 	return errors
 
+@permission_required('is_superuser', raise_exception=True)
 def delete_surf(request):
 	""" Delete a surf
 		
@@ -583,6 +594,7 @@ def delete_surf(request):
 	
 	return errors
 
+@permission_required('is_superuser', raise_exception=True)
 def delete_surfice(request):
 	""" Delete a surfice
 		
@@ -616,6 +628,7 @@ def delete_surfice(request):
 	
 	return errors
 
+@permission_required('is_superuser', raise_exception=True)
 def delete_status(request):
 	""" Delete a status
 		
@@ -649,6 +662,7 @@ def delete_status(request):
 	
 	return errors
 
+@permission_required('is_superuser', raise_exception=True)
 def delete_event(request):
 	""" Delete an event
 		
@@ -682,6 +696,7 @@ def delete_event(request):
 	
 	return errors
 
+@permission_required('is_superuser', raise_exception=True)
 def delete_ding(request):
 	""" Delete a ding
 		
@@ -776,6 +791,7 @@ def submit_ding(request):
 	
 	return errors
 
+@permission_required('is_superuser', raise_exception=True)
 def get_surf(request):
 	""" Get a surf by name or id
 		
@@ -814,6 +830,7 @@ def get_surf(request):
 	
 	return surf
 
+@permission_required('is_superuser', raise_exception=True)
 def get_surfs(request):
 	""" Get surfs as JSON data
 		
@@ -846,6 +863,7 @@ def get_surfs(request):
 	
 	return surfs
 
+@permission_required('is_superuser', raise_exception=True)
 def get_surfice(request):
 	""" Get a surfice by name or id
 		
@@ -884,6 +902,7 @@ def get_surfice(request):
 	
 	return surfice
 
+@permission_required('is_superuser', raise_exception=True)
 def get_surfices(request):
 	""" Get surfices by surf or all
 		
@@ -931,6 +950,7 @@ def get_surfices(request):
 	
 	return surfices
 
+@permission_required('is_superuser', raise_exception=True)
 def get_status(request):
 	""" Get a status by id or name
 		
@@ -969,6 +989,7 @@ def get_status(request):
 	
 	return status
 
+@permission_required('is_superuser', raise_exception=True)
 def get_statuses(request):
 	""" Get an array of statuses
 		
@@ -999,6 +1020,7 @@ def get_statuses(request):
 	
 	return statuses
 
+@permission_required('is_superuser', raise_exception=True)
 def get_event(request):
 	""" Get an event
 		
@@ -1059,6 +1081,7 @@ def get_event(request):
 	
 	return event
 
+@permission_required('is_superuser', raise_exception=True)
 def get_events(request):
 	""" Get an array of events
 		
@@ -1135,6 +1158,7 @@ def get_events(request):
 	
 	return events
 
+@permission_required('is_superuser', raise_exception=True)
 def get_ding(request):
 	""" Get a ding
 		
@@ -1201,6 +1225,7 @@ def get_ding(request):
 	
 	return ding
 
+@permission_required('is_superuser', raise_exception=True)
 def get_dings(request):
 	""" Get an array of dings
 		
@@ -1282,7 +1307,6 @@ def get_dings(request):
 	
 	return dings
 
-@permission_required('is_superuser', raise_exception=True)
 def dispatch(request, action=''):
 	""" Dispatch all ajax functions
 		
