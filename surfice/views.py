@@ -202,8 +202,12 @@ def index(request):
 	
 	# Query the database for a list of all the events
 	# Place them in context_dict
-	event_list = Event.get_events(days=7)[:10]
-	context_dict['events'] = event_list
+	event_list = Event.get_events(days=7)
+	context_dict['events'] = event_list[:10]
+	
+	# Split events into future and past events
+	context_dict['events_future'] = event_list.filter(timestamp__gt=date.today())[:10]
+	context_dict['events_past'] = event_list.filter(timestamp__lte=date.today())[:10]
 	
 	
 	# Get a list of available statuses for reporting dings

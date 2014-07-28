@@ -26,19 +26,19 @@ $('input[name="name"][data-ajax-check]').each(function() {
 		// Nothing to do if check is undefined
 	}
 	else if (check == "surf-name")
-		$input.keyup(function(){ surfNameField( $(this) ) });
+		$input.on("keyup blur", function(){ surfNameField( $(this) ) });
 	
 	else if (check == "surfice-name")
-		$input.keyup(function(){ surficeNameField( $(this) ) });
+		$input.on("keyup blur", function(){ surficeNameField( $(this) ) });
 	
 	else if (check == "status-name")
-		$input.keyup(function(){ statusNameField( $(this) ) });
+		$input.on("keyup blur", function(){ statusNameField( $(this) ) });
 });
 
 $('input[name="email"][data-ajax-check]').each(function() {
 	$input = $(this);
 	
-	$input.keyup(function() {
+	$input.on("keyup blur", function() {
 		if (!isValidEmail( $(this).val() )) {
 			$(this).closest(".form-group").removeClass("has-success").addClass("has-error");
 		} else {
@@ -57,7 +57,7 @@ function surfNameField($input) {
 	// If the surfs array already exists, just fire the function without getting all the info
 	// If surfs is empty, however, get the new data
 	if (Object.size(ss.surfs) == 0) {
-		console.log("getting new surfs");
+		
 		ss.getSurfs(function(data) {
 			checkNameField($input, ss.surfs, surfId);
 		});
@@ -76,7 +76,7 @@ function surficeNameField($input) {
 	// If the surfs array already exists, just fire the function without getting all the info
 	// If surfs is empty, however, get the new data
 	if (Object.size(ss.surfices) == 0) {
-		console.log("getting new surfices");
+		
 		ss.getSurfices(function(data) {
 			checkNameField($input, ss.surfices, surficeId);
 		});

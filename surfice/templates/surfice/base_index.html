@@ -26,7 +26,7 @@
 				<div class="surfice surfice-success dynamic-color" {% if surfice.status.data.color %}style="background-color:{{ surfice.status.data.color }}"{% endif %}>
 					<h2 class="center-all featurette-heading-grid surfice-active">{{ surfice.name }}</h2>
 					<a class="btn btn-lg btn-info center-all-button featurette-heading-grid surfice-hover" role="button" data-toggle="modal" data-target="#ding-{{ surfice.id }}">Report an Issue</a>
-					<span class="surfice_dings"><span data-ajax-update="surfice-dings-length">{{ surfice.dings|length }}</span> with issues</span>
+					<span class="surfice_dings"><span data-ajax-update="surfice-dings-length-{{ surfice.id }}">{{ surfice.dings|length }}</span> with issues</span>
 				</div>
 				{% endfor %}
 				<!-- /end surfices -->
@@ -46,7 +46,7 @@
 								<form id="ding-form-{{ surfice.id }}" class="form-horizontal text-left" role="form" action="ajax/submit-ding" type="ajax" method="post"
 									data-ajax-success="Issue submitted!"
 									data-ajax-fail="Could not submit issue :("
-									data-ajax-update-target="surfice-dings-length"
+									data-ajax-update-target="surfice-dings-length-{{ surfice.id }}"
 									data-ajax-action="ajax/get-surfice-dings-length"
 									data-ajax-get='{"days": "1", "surfice": "{{ surfice.id }}"}'
 								>
@@ -108,7 +108,23 @@
 	<div class="col-sm-8 col-sm-offset-2 col-xs-12 events">
 		<h2 class="featurette-heading text-center">What's happening lately?</h2>
 		
-		{% for event in events %}
+		{# Future events #}
+		{% for event in events_future %}
+		<div class="row text-danger">
+			<div class="col-xs-4">{{ event.timestamp|naturaltime }}{# event.timestamp|date:'M n' #}</div>
+			<div class="col-xs-8">
+			{% if event.description != "" %}
+				{{ event.description }}
+			{% else %}
+				{# If the description is not set, output something generic #}
+				{{ event.surfice.name|capfirst }}'s status will change to {{ event.status }}.
+			{% endif %}
+			</div>
+		</div>
+		{% endfor %}
+		
+		{# Past events #}
+		{% for event in events_past %}
 		<div class="row">
 			<div class="col-xs-4">{{ event.timestamp|naturaltime }}{# event.timestamp|date:'M n' #}</div>
 			<div class="col-xs-8">
@@ -120,11 +136,13 @@
 			{% endif %}
 			</div>
 		</div>
-		{% empty %}
+		{% endfor %}
+		
+		{% if events|length == 0 %}
 		<div class="row">
 			<div class="col-xs-12 text-center">Nothing has happened in the past week.</div>
 		</div>
-		{% endfor %}
+		{% endif %}
 		
 	</div>
 </div>

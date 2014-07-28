@@ -3,3 +3,5 @@
 surfstat/ldap_asbury.py
 
 *.db
+
+*.pyc
