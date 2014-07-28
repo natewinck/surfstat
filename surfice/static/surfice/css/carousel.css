@@ -166,6 +166,17 @@ body {
     padding: 10px;
     width: 180px;
     font-size: 36px;
+    
+    -ms-word-break: break-all;
+    word-break: break-all;
+    
+    /* Non standard for webkit */
+    word-break: break-word;
+    
+    -webkit-hypthens: auto;
+    -moz-hyphens: auto;
+    -ms-hyphens: auto;
+    hyphens: auto;
 
 }
 
