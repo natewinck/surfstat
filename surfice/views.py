@@ -16,6 +16,7 @@ from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.core.urlresolvers import reverse
 
 from datetime import date, timedelta
+from django.utils import timezone
 
 from django_auth_ldap.backend import LDAPBackend
 
@@ -206,8 +207,8 @@ def index(request):
 	context_dict['events'] = event_list[:10]
 	
 	# Split events into future and past events
-	context_dict['events_future'] = event_list.filter(timestamp__gt=date.today())[:10]
-	context_dict['events_past'] = event_list.filter(timestamp__lte=date.today())[:10]
+	context_dict['events_future'] = event_list.filter(timestamp__gt=timezone.now())[:10]
+	context_dict['events_past'] = event_list.filter(timestamp__lte=timezone.now())[:10]
 	
 	
 	# Get a list of available statuses for reporting dings
