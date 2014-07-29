@@ -20,6 +20,8 @@ from django.utils import timezone
 
 from django_auth_ldap.backend import LDAPBackend
 
+from user_agents import parse
+
 
 def printv(obj, title=""): # Print your variables!
 	if title != "":
@@ -257,6 +259,29 @@ def admin(request):
 	# Query for Statuses and add them to context_dict
 	status_list = Status.get_statuses()
 	context_dict['statuses'] = status_list
+	
+	print request.META['HTTP_USER_AGENT']
+	ua_string = request.META['HTTP_USER_AGENT']
+	user_agent = parse(ua_string)
+	
+	# Accessing user agent's browser attributes
+	print user_agent.browser  # returns Browser(family=u'Mobile Safari', version=(5, 1), version_string='5.1')
+	print user_agent.browser.family  # returns 'Mobile Safari'
+	print user_agent.browser.version  # returns (5, 1)
+	print user_agent.browser.version_string   # returns '5.1'
+
+	# Accessing user agent's operating system properties
+	print user_agent.os  # returns OperatingSystem(family=u'iOS', version=(5, 1), version_string='5.1')
+	print user_agent.os.family  # returns 'iOS'
+	print user_agent.os.version  # returns (5, 1)
+	print user_agent.os.version_string  # returns '5.1'
+
+	# Accessing user agent's device properties
+	print user_agent.device  # returns Device(family='iPhone')
+	print user_agent.device.family  # returns 'iPhone'
+	
+	print request.META['REMOTE_HOST']
+	print request.META['REMOTE_ADDR']
 	
 	return render(request, 'surfice/base_admin.html', context_dict)
 

@@ -101,19 +101,21 @@
 			</tr>
 		</thead>
 		{% for ding in dings %}
-		<tr id="tr-ding-{{ ding.id }}" data-href="{% url 'ding' ding=ding.id %}">
+		<tr id="tr-ding-{{ ding.id }}" data-href="{% url 'ding' ding=ding.id %}" data-ajax-update="delete-ding-{{ ding.id }}">
 			<!-- timestamp -->
 			<td>{{ ding.timestamp|date:"M j, Y f a"|cut:"." }}</td>
 			
 			<!-- surfice -->
 			<td>
-				<a data-name="surfice" href="{% url 'ding' ding=ding.id %}">{{ ding.surfice.name }}</a>
+				<a data-name="surfice" href="{% url 'surfices' %}#surfice-{{ ding.surfice.name|slugify }}">{{ ding.surfice.name }}</a>
 			</td>
 			
 			<!-- description -->
 			<td>{{ ding.description|truncatechars:140 }}</td>
+			
+			<!-- status -->
 			<td class="dynamic-color" style="background-color:{{ ding.status.data.color }}">
-				<a class="dynamic-color" style="background-color:{{ ding.status.data.color }}" href="{% url 'ding' ding=ding.id %}">{{ ding.status }}</a>
+				<a class="dynamic-color" style="background-color:{{ ding.status.data.color }}" href="{% url 'statuses' %}#status-{{ ding.status.name|slugify }}">{{ ding.status }}</a>
 			</td>
 			
 			<!-- email -->
@@ -182,7 +184,7 @@
 					data-ajax-fail="There was an error trying to delete this ding."
 					data-ajax-action="ajax/get-ding"
 					data-ajax-get='{ "page": "{{ dings.number }}", "last":"" }'
-					data-ajax-update-target="ding-row"
+					data-ajax-update-target="ding-row delete-ding-"
 				>
 					{# To prding cross-site forgery, include the following required tag #}
 					{% csrf_token %}

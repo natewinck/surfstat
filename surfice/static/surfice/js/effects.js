@@ -155,12 +155,15 @@ $(window).load(function() {
 *  Also prevents a # from appearing in the URL
 * 
 *  INPUT
-*  a[href*=#*]      Any <a> with an href that starts with # (but not only #)
+*  a[href^=#*]      Any <a> with an href that starts with # (but not only #)
 *  
 *  EVENT
 *  click
 ------------------------------ */
-$("a[href*=#]:not([href=#])").click(function() {
+///*
+//$("a[href*=#]:not([href=#])").click(function(e) {
+$("a[href^=#]:not([href=#])").click(function(e) {
+	e.preventDefault();
     if (location.pathname.replace(/^\//,'') == this.pathname.replace(/^\//,'') && location.hostname == this.hostname) {
         var target = $(this.hash);
         target = target.length ? target : $('[name=' + this.hash.slice(1) +']');
@@ -168,11 +171,13 @@ $("a[href*=#]:not([href=#])").click(function() {
             $('html,body').animate({
             scrollTop: target.offset().top
         }, 500);
-        return false;
+        console.log("You clicked a hashtag!");
+        //window.location.hash = this.hash.slice(1);
+        //return false;
         }
     }
 });
-
+//*/
 
 
 /* CHARTS
@@ -346,19 +351,66 @@ $(".list-group.select .list-group-item").click(function(e) {
 	// Prevent a # from showing up in the URL
 	e.preventDefault();
 	
-	if (!$(this).hasClass("active")) {
+	selectTab( $(this) );
+	
+});
+
+function selectTab($button, push) {
+	push = typeof push !== 'undefined' ? push : true;
+	if (!$button.hasClass("active") && $button.length > 0) {
 		// Find the previous element that was selected and remove classes
-		var old_id = $(this).closest(".list-group.select").find(".list-group-item.active").removeClass("active").attr("href");
+		var old_id = $button.closest(".list-group.select").find(".list-group-item.active").removeClass("active").attr("href");
 		
 		// Find the element new element taht was clicked and add the active class to it
-		var new_id = $(this).addClass("active").attr("href");
+		var new_id = $button.addClass("active").attr("href");
 		
 		// Hide the old tab and show the new one
 		$(old_id).removeClass("active in");
 		$(new_id).addClass("active in");
 		
+		// Change hash for page-reload
+		//window.location.hash = $button.prop("hash");
+		if (push) {
+			var data = {hash: new_id};
+			console.log("Pushing " + data.hash);
+			history.pushState(data, "", $button.prop("hash"));
+		}
 	}
+}
+
+window.addEventListener("popstate", function(e) {
+	//console.log(e.state.hash);
 	
+	// Javascript to enable link to tab
+	// If there is a state, use its hash property set in selectTab
+	if (e.state) {
+		console.log("Popping " + e.state.hash);
+		if (e.state.hash.match('#')) {
+			console.log("the hashtag: " + e.state.hash.split('#')[1]);
+			selectTab( $('.list-group.select a[href=#'+e.state.hash.split('#')[1]+']'), false );
+		} 
+	}
+	// If this event is the first time it's run, there won't be a state
+	// so get the hash from the url
+	else {
+		var url = document.location.toString();
+		console.log("Getting from URL " + url);
+		if (url.match('#')) {
+			selectTab( $('.list-group.select a[href=#'+url.split('#')[1]+']'), false );
+		} else {
+			// If there is no hashtag, push a state with the current button selected
+			// (assuming there is only one .list-group.select tag on the page
+			selectTab( $(".list-group.select a.list-group-item.active").removeClass("active") );
+		}
+	}
+	e.preventDefault();
+	return false;
+	
+	/*var url = document.location.toString();
+	if (url.match('#')) {
+		selectTab( $('.list-group.select a[href=#'+url.split('#')[1]+']') );
+	}
+	*/
 });
 
 /* DYNAMIC COLOR

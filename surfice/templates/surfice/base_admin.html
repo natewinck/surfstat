@@ -17,7 +17,6 @@
 
 
 {% block heading %}
-The name is {{ heading.name }}.
 <!-- super status bar -->
 <form class="row jumbotron jumbotron-admin" type="ajax" action="ajax/set-status" method="post">
 {# To prevent cross-site forgery, include the following required tag #}
@@ -79,7 +78,7 @@ The name is {{ heading.name }}.
 			{% for surf in surfs %}
 			<tr>
 				<!-- name -->
-				<td><a href="surfs/{{ surf.name|slugify }}">{{ surf.name }}</a></td>
+				<td><a href="{% url 'surfs' %}#surf-{{ surf.name|slugify }}">{{ surf.name }}</a></td>
 				
 				<!-- change status -->
 				<td>
@@ -121,7 +120,7 @@ The name is {{ heading.name }}.
 			{% for surfice in surfices %}
 			<tr>
 				<!-- surfice name -->
-				<td><a href="surfices/{{ surfice.name|slugify }}">{{ surfice.name }}</a></td>
+				<td><a href="{% url 'surfices' %}#surfice-{{ surfice.name|slugify }}">{{ surfice.name }}</a></td>
 				
 				<!-- surfice status -->
 				<td>

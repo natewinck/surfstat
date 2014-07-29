@@ -23,6 +23,9 @@ from surfice import views
 # Import authentication
 from django.contrib.auth.decorators import permission_required
 
+# Import reverse so we can build urls
+from django.core.urlresolvers import reverse
+
 # Import the response so we can return
 from django.http import HttpResponse
 
@@ -1183,8 +1186,19 @@ def get_ding(request):
 		# Get the ding object from the database
 		ding = Ding.get_ding(pk=request.GET['ding'])
 		
+		# Serialize the ding
 		ding = DingSerializer(ding)
-		ding = JSONRenderer().render(ding.data)
+		
+		# Get the actual data and put it in ding
+		ding = ding.data
+		
+		# Get the ding's surfice, status, and ding urls
+		ding['surfice']['url'] = reverse('surfices') + '#surfice-' + slugify(ding['surfice']['name'])
+		ding['status']['url'] = reverse('statuses') + '#status-' + slugify(ding['status']['name'])
+		ding['url'] = reverse('ding', kwargs={'ding': ding['id']})
+		
+		# Render the ding out as JSON
+		ding = JSONRenderer().render(ding)
 	
 	elif 'page' in request.GET:
 		# For ease of use, get the page
@@ -1215,6 +1229,11 @@ def get_ding(request):
 		
 		# Get the actual data and put it in ding
 		ding = ding.data
+		
+		# Get the ding's surfice, status, and ding urls
+		ding['surfice']['url'] = reverse('surfices') + '#surfice-' + slugify(ding['surfice']['name'])
+		ding['status']['url'] = reverse('statuses') + '#status-' + slugify(ding['status']['name'])
+		ding['url'] = reverse('ding', kwargs={'ding': ding['id']})
 		
 		# Render the ding out to JSON
 		ding = JSONRenderer().render(ding)

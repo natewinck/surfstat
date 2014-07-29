@@ -81,11 +81,10 @@ function refreshSurfName($elements, data) {
 			if ($element.hasClass("list-group-item"))
 				$element.append("<span class=\"glyphicon glyphicon-chevron-right pull-right\"></span>");
 
-			// If an anchor is updated, don't forget to update it's #href
+			// If an anchor is updated, don't forget to update its #href
 			if ($element.is("a"))
-				//console.log(data.name);
 				$element.attr("href", "#surf-" + data.name.slugify());
-			}
+		}
 	});
 }
 
@@ -689,6 +688,15 @@ function refreshEventRow($elements, data) {
 	$elements.each(function() {
 		$element = $(this);
 		
+		// Check to see if the ding is already listed in the table
+		// by comparing the last id in the table to data.id
+		var tableId = parseInt($element.find("tr").last().attr("id").split("tr-event-")[1]);
+		
+		if (tableId == data.id) {
+			// Continue onto the next loop iteration
+			return true;
+		}
+		
 		// Change the contents of the element to the name of the surfice's surf
 		$element.append($tr);
 		$tr.slideRow('down', 500);
@@ -708,16 +716,18 @@ function refreshEventRow($elements, data) {
 *  ----------------------------------------- */
 function refreshDingRow($elements, data) {
 	var ding = data;
-	var $tr = $('<tr id="tr-event-' + ding.id + '" style="display:none;">\
+	
+	
+	var $tr = $('<tr id="tr-ding-' + ding.id + '" style="display:none;">\
 			<td>' + moment(ding.timestamp, moment.ISO_8601).format("MMM D, YYYY h:mm a") + '</td>\
 			<td>\
-				<a href="' + ding.surfice_url + '"\
+				<a href="' + ding.surfice.url + '"\
 					data-name="surfice"\
 				>' + ding.surfice.name + '</a>\
 			</td>\
 			<td>' + ding.description + '</td>\
 			<td class="dynamic-color" style="background-color:' + ding.status.data.color + '; color:' + getDynamicColor(ding.status.data.color) + ';">\
-				<a class="dynamic-color" style="background-color:' + ding.status.data.color + '; color:' + getDynamicColor(ding.status.data.color) + ';" href="' + ding.status_url + '">' + ding.status.name + '</a>\
+				<a class="dynamic-color" style="background-color:' + ding.status.data.color + '; color:' + getDynamicColor(ding.status.data.color) + ';" href="' + ding.status.url + '">' + ding.status.name + '</a>\
 			</td>\
 			<td>\
 				<a href="mailto:' + ding.email + '">' + ding.email + '</a>\
@@ -725,9 +735,13 @@ function refreshDingRow($elements, data) {
 			<td>\
 				<a class="delete" href="#"\
 					data-toggle="modal"\
-					data-target="#confirm-delete-event"\
-					data-event-id="' + ding.id + '"\
+					data-target="#confirm-delete-ding"\
+					data-ding-id="' + ding.id + '"\
 				><span class="glyphicon glyphicon-remove text-danger"></span></a>\
+			</td>\
+			\
+			<td>\
+				<a href="' + ding.url + '"><span class="glyphicon glyphicon-eye-open"></span></a>\
 			</td>\
 		</tr>');
 	
@@ -735,6 +749,14 @@ function refreshDingRow($elements, data) {
 	// Loop through the elements and add the row to each table
 	$elements.each(function() {
 		$element = $(this);
+		// Check to see if the ding is already listed in the table
+		// by comparing the last id in the table to data.id
+		var tableId = parseInt($element.find("tr").last().attr("id").split("tr-ding-")[1]);
+		
+		if (tableId == data.id) {
+			// Continue onto the next loop iteration
+			return true;
+		}
 		
 		// Change the contents of the element to the name of the surfice's surf
 		$element.append($tr);
@@ -744,9 +766,9 @@ function refreshDingRow($elements, data) {
 }
 
 /* -----------------------------------------
-*  refreshDingRow($elements, data)
+*  refreshSurficeDingsLength($elements, data)
 *
-*  Update the ding row by adding a new row when deleting a row
+*  Update the number of dings in a specific surfice
 *
 *  INPUT
 *  $elements		jQuery array of matched elements
