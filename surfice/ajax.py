@@ -807,7 +807,7 @@ def submit_ding(request):
 			data['hostname'] = request.META['REMOTE_HOST']
 			data['ip'] = request.META['REMOTE_ADDR']
 			
-			print json.dumps(data, sort_keys=True, indent=4, separators=(',', ': '))
+			#print json.dumps(data, sort_keys=True, indent=4, separators=(',', ': '))
 			
 			# Create the ding
 			ding = Ding.create(
@@ -831,6 +831,52 @@ def submit_ding(request):
 		errors.append("It's usually good to have a surfice to assign a ding to.")
 	
 	return errors
+
+@permission_required('is_superuser', raise_exception=True)
+def send_email(request):
+	"""	Send an email
+		
+		Will not only send to a specific address, but will also
+		send to cc, and bcc fields.
+		
+		INPUT
+		request
+			- to				To field
+			- from (optional)	From field
+			- cc (optional)		CC field
+			- bcc (optional)	BCC field
+			- subject			Subject field
+			- body				Body of email
+	"""
+	if	(
+			'to' 		in request.POST and
+			'subject' 	in request.POST and
+			'body'		in request.POST
+		):
+		
+		try:
+			# First see if the email address is actually an email address
+			validate_email(request.POST['to'])
+			
+			# Start creating the EmailMessage object
+			email = EmailMessage(to=[request.POST['to']], subject=request.POST['subject'], body=request.POST['body'])
+			
+			if 'from' in request.POST:
+				email.from_email = request.POST['from']
+			
+			if 'cc' in request.POST:
+				email.cc = request.POST['cc']
+			
+			if 'bcc' in request.POST:
+				email.bcc = request.POST['bcc']
+			
+			# Now actually mail the email
+			#from django.core import mail
+			#connection = mail.get_connection()
+			
+		except ValidationError:
+			pass
+		
 
 @permission_required('is_superuser', raise_exception=True)
 def get_surf(request):
@@ -1475,6 +1521,7 @@ def dispatch(request, action=''):
 		delete-event		Delete an event
 		delete-ding			Delete a ding
 		submit-ding			Submit a ding
+		send-email			Send an email
 		get-surf			Get a surf
 		get-surfs			Get array of surfs
 		get-surfice			Get a surfice
@@ -1485,6 +1532,7 @@ def dispatch(request, action=''):
 		get-events			Get an array of events
 		get-ding			Get a ding
 		get-dings			Get an array of dings
+		get-surfice-dings-length	Get the length of dings assigned to a surfice
 		
 		RETURNS
 		JSON HttpResponse
@@ -1555,6 +1603,10 @@ def dispatch(request, action=''):
 	# Submit a ding from the user
 	elif action == 'submit-ding':
 		response = json.dumps(submit_ding(request))
+	
+	# Send an email
+	elif action == 'send-email':
+		response = json.dumps(send_email(request))
 	
 	# Get a single surf
 	elif action == 'get-surf':

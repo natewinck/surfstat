@@ -8,9 +8,8 @@
 {% load nav %}
 
 {% block css %}
-<!-- x-editable (bootstrap version) -->
-<link href="{% static 'surfice/css/bootstrap-editable.css' %}" rel="stylesheet">
-<link href="{% static 'surfice/css/bootstrap-datetimepicker.min.css' %}" rel="stylesheet" type="text/css"></link> 
+<link href="{% static 'surfice/css/bootstrap-tagsinput.css' %}" rel="stylesheet">
+
 {% endblock %}
 
 {% block body_class %}admin{% endblock %}
@@ -149,17 +148,73 @@
 			</div>
 		</div>
 		
-		<span class="glyphicon glyphicon-envelope"></span> <a href="mailto:{{ ding.email }}">Reply</a>
-		<span class="glyphicon glyphicon-remove text-danger"></span>
-			<a class="text-danger" href="#"
+		<div class="btn-group btn-group-justified">
+			<a class="btn btn-default" role="button" href="#"
+				data-toggle="modal"
+				data-target="#reply-{{ ding.id }}"
+			><span class="glyphicon glyphicon-envelope"></span> Reply</a>
+			<a class="btn-danger btn" role="button" href="#"
 				data-toggle="modal"
 				data-target="#confirm-delete-ding-{{ ding.id }}"
-			>Delete</a>
+			><span class="glyphicon glyphicon-remove"></span> Delete</a>
+		</div>
 	</div>
 	<!-- /end ding info -->
 	
 </div>
 <hr class="featurette-divider">
+
+<!-- reply modal -->
+<div class="modal fade" id="reply-{{ ding.id }}" tabindex="-1" role="dialog" aria-hidden="true">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h4 class="modal-title">Reply to {{ ding.email }}</h4>
+			</div>
+			<div class="modal-body">
+				<form>
+					<div class="row">
+						<div class="col-md-6">
+							<div class="form-group">
+								<label for="cc" class="control-label">CC</label>
+								<select name="cc" multiple type="email" class="form-control tagsinput" placeholder="CC" id="cc"></select>
+							</div>
+						</div>
+						<div class="col-md-6">
+							<div class="form-group">
+								<label for="bcc" class="control-label">BCC</label>
+								<select name="bcc" multiple type="email" class="form-control tagsinput" placeholder="BCC" id="bcc"></select>
+							</div>
+						</div>
+						<div class="col-xs-12">
+							<div class="form-group">
+								<label for="subject">
+									Subject</label>
+								<input id="subject" name="subject" class="form-control focus" placeholder="Subject" required="required" value="We Are Working on the Issue">
+							</div>
+							
+							<div class="form-group">
+								<label for="message">
+									Message</label>
+								<textarea name="message" id="message" class="form-control" rows="9" cols="25" required="required" placeholder="Message">&#10;&#10;&#10;On {{ ding.timestamp|date:"M j, Y" }} at {{ ding.timestamp|time:"f A" }}, {{ ding.email }} wrote:&#10;{{ ding.description }}
+								</textarea>
+							</div>
+						</div>
+						
+					</div>
+				</form>
+
+			</div>
+			<div class="modal-footer">
+				<div class="col-md-12">
+					<button type="submit" class="btn btn-primary pull-right">
+						Send Message</button>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+<!-- /end reply modal -->
 
 <!-- delete ding modal -->
 <div class="modal fade" id="confirm-delete-ding-{{ ding.id }}" tabindex="-1" role="dialog" aria-hidden="true">
@@ -189,6 +244,24 @@
 {% endblock content %}
 
 {% block scripts %}
-<script src="{% static 'surfice/js/moment.min.js' %}"></script>
+<script src="{% static 'surfice/js/bootstrap-tagsinput-custom.js' %}"></script>
+
+<script>
+$(function() {
+	$("select.tagsinput").tagsinput({
+		trimValue: true
+		
+	});
+	$("select.tagsinput").on("beforeItemAdd", function(e) {
+		// e.item contains the item
+		// If Email is not valid, cancel the event
+		if ( !isValidEmail(e.item) ) e.cancel = true;
+	});
+	$("select.tagsinput").on("itemAdded", function(e) {
+		// e.item contains the item
+		//return false;
+	});
+});
+</script>
 
 {% endblock %}

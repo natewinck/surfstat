@@ -537,12 +537,19 @@ $("#confirm-delete-ding").on("show.bs.modal", function(e) {
 
 $(".modal").on("show.bs.modal", onModalShow);
 $(".modal").on("hide.bs.modal", onModalHide);
+$(".modal").on("shown.bs.modal", onModalShown);
 
 function onModalShow(e) {
 	$modal = $(this);
+	
+	// Set up pressing enter
 	$modal.on("keydown", function(e) {
-		// If the user presses enter, submit the form
-		if(e.which == 13) {
+		// If the user presses enter, and the user isn't entering tags, submit the form
+		if	(
+				e.which == 13 &&
+				$(e.target).parent(".bootstrap-tagsinput").length == 0
+			)
+		{
 			$modal.find('[type="submit"]').trigger("click");
 		}
 	});
@@ -551,6 +558,25 @@ function onModalShow(e) {
 function onModalHide(e) {
 	$modal = $(this);
 	$modal.off("keydown");
+}
+
+function onModalShown(e) {
+	$modal = $(this);
+	
+	
+	$focusElement = $modal.find(".focus").first();
+	
+	// If no element is specified as the to focus first,
+	// find the first visible input and focus it
+	if ($focusElement.length == 0)
+		$focusElement = $modal
+			.find("input, select, textarea, button")
+			.filter(function(index) {
+				return ($(this).css("display") != "none");
+			})
+			.first();
+	
+	$focusElement.focus();
 }
 
 /* MULTISELECT
