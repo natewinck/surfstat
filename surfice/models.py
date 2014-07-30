@@ -1047,7 +1047,7 @@ class Ding(models.Model):
 		return self.status.name
 	
 	@staticmethod
-	def create(surfice, status, email, description='', **kwargs):
+	def create(surfice, status, email, description='', data={}, **kwargs):
 		""" Create a ding and save it in the database
 			
 			INPUT
@@ -1069,6 +1069,7 @@ class Ding(models.Model):
 		ding.description = description
 		
 		# Go through kwargs and assign to generic data field
+		ding.data = data
 		for key in kwargs:
 			ding.data[key] = kwargs[key]
 		

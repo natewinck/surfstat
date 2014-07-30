@@ -771,22 +771,60 @@ def submit_ding(request):
 				# Get the JSON data from POST
 				data = json.loads(request.POST['data'])
 			
+			print "DATA:"
+			print data
+			#data = json.JSONDecoder()
+			
+			# Add in user agent data
+			from user_agents import parse
+			
+			# Get the data and parse it
+			ua_string = request.META['HTTP_USER_AGENT']
+			user_agent = parse(ua_string)
+			
+			# Accessing user agent's browser attributes
+			data['browser'] = {
+				#'original': user_agent.browser, # returns Browser(family=u'Mobile Safari', version=(5, 1), version_string='5.1')
+				'family': user_agent.browser.family, # returns 'Mobile Safari'
+				'version': user_agent.browser.version, # returns (5, 1)
+				'version_string': user_agent.browser.version_string # returns '5.1'
+			}
+
+			# Accessing user agent's operating system properties
+			data['os'] = {
+				#'original': user_agent.os,  # returns OperatingSystem(family=u'iOS', version=(5, 1), version_string='5.1')
+				'family': user_agent.os.family,  # returns 'iOS'
+				'version': user_agent.os.version,  # returns (5, 1)
+				'version_string': user_agent.os.version_string  # returns '5.1'
+			}
+	
+			# Accessing user agent's device properties
+			data['device'] = {
+				#'original': user_agent.device,  # returns Device(family='iPhone')
+				'family': user_agent.device.family #returns 'iPhone'
+			}
+			
+			data['hostname'] = request.META['REMOTE_HOST']
+			data['ip'] = request.META['REMOTE_ADDR']
+			
+			print json.dumps(data, sort_keys=True, indent=4, separators=(',', ': '))
+			
 			# Create the ding
 			ding = Ding.create(
 				surfice,
 				Status.get_status(pk=request.POST['status']),
 				request.POST['email'],
 				request.POST.get('description', ''),
-				**data
+				data=data
 			)
 			
 		except ValidationError:
 			# The user entered an invalid email address
 			errors.append("Hey, that's not a valid email address")
 			pass
-		except:
-			errors.append("Whoa, something unexpected happened")
-			pass
+		#except:
+			#errors.append("Whoa, something unexpected happened")
+			#pass
 	
 	# If no surfice is set, throw an error
 	else:

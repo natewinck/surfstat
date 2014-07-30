@@ -1,6 +1,6 @@
 {% extends "surfice/base.html" %}
 
-{% block title %}Admin | Dings{% endblock %}
+{% block title %}Admin | Ding from {{ ding.email }}{% endblock %}
 
 {% load static %}
 {% load humanize %}
@@ -44,32 +44,110 @@
 	<!-- left info -->
 	<div class="col-sm-4">
 		<div class="row">
-			<h4>Surfice</h4>
-			<p>{{ ding.surfice.name }}</p>
+			<div class="col-xs-12">
+				<h4>Surfice</h4>
+				<p>{{ ding.surfice.name }}</p>
+			</div>
 		</div>
 		
 		<div class="row dynamic-color" style="background-color:{{ ding.surfice.status.data.color }}">
-			<h4>Current Surfice Status</h4>
-			<p>{{ ding.surfice.status.name }}</p>
+			<div class="col-xs-12">
+				<h4>Current Surfice Status</h4>
+				<p data-ajax-update="surfice-status">{{ ding.surfice.status.name }}</p>
+			</div>
 		</div>
 		
 		<div class="row">
-			<h4>Reports Today</h4>
-			<p>{{ surfice_dings }}</p>
+			<div class="col-xs-12">
+				<h4>Reports Today</h4>
+				<p>{{ surfice_dings }}</p>
+			</div>
 		</div>
+		
+		<hr>
+		
+		<!-- update surfice status -->
+		<div class="row">
+			<div class="col-xs-12">
+				<h4>Quick Update Status</h4>
+				<form type="ajax" action="ajax/set-status" method="post" role="form"
+					data-ajax-action="ajax/get-surfice"
+					data-ajax-get='{ "surfice": {{ ding.surfice.id }} }'
+					data-ajax-update-target="surfice-status"
+				>
+					{# To prevent cross-site forgery, include the following required tag #}
+					{% csrf_token %}
+					<input type="hidden" name="surfice" value="{{ ding.surfice.id }}">
+					<div class="form-group">
+						<label class="control-label">Select Status</label>
+						<select name="status" class="form-control">
+							{% for status in statuses %}
+							<option value="{{ status.id }}" {% if status == ding.surfice.status %}selected="selected"{% endif %}>{{ status.name }}</option>
+							{% endfor %}
+						</select>
+					</div>
+					<div class="form-group">
+						<label class="control-label">Status Description</label>
+						<textarea name="description" class="form-control" rows="3" placeholder="(Optional) Add your status description..."
+							data-ajax-clear></textarea>
+					</div>
+					<div class="row">
+						<div class="col-xs-offset-10 col-xs-2">
+							<button type="submit" class="btn btn-success button-accordian pull-right">Submit</button>
+						</div>
+					</div>
+				</form>
+			</div>
+		</div>
+		<!-- /end update surfice status -->
+		
 	</div>
 	<!-- /end left info -->
 	
 	<!-- ding info -->
 	<div class="col-sm-8">
-		<div class="dynamic-color" style="background-color:{{ ding.status.data.color }}">Reported status: {{ ding.status.name }}</div>
+		<div class="dynamic-color well well-sm" style="background-color:{{ ding.status.data.color }}">Reported status: {{ ding.status.name }}</div>
 		{# Make sure description isn't empty #}
 		{% if ding.description and ding.description.strip %}
-		<h3>Description of Ding</h3>
-		<p>{{ ding.description }}</p>
+		<div class="panel panel-default">
+			<div class="panel-heading">
+				<h3 class="panel-title">Description of Ding from {{ ding.email }}</h3>
+			</div>
+			<div class="panel-body">
+				<p>{{ ding.description }}</p>
+			</div>
+		</div>
+		
 		{% else %}
 		<h3><a href="mailto:{{ ding.email }}">{{ ding.email }}</a> did not provide a description</h3>
 		{% endif %}
+		
+		<div class="panel panel-info">
+			<div class="panel-heading">
+				<h3 class="panel-title">User Metadata</h3>
+			</div>
+			<div class="panel-body">
+				<h4>Network</h4>
+				<p>	{% if ding.data.hostname != '' %}
+					Hostname: {{ ding.data.hostname }}<br>
+					{% else %}
+					<em>No hostname</em><br>
+					{% endif %}
+					
+					IP Address: {{ ding.data.ip }}
+				
+				<h4>Browser</h4>
+				<p>	Family: {{ ding.data.browser.family }}<br>
+					Version: {{ ding.data.browser.version_string }}<br>
+					
+				</p>
+				
+				<h4>Device</h4>
+				<p>	Family: {{ ding.data.device.family }}<br>
+					OS: {{ ding.data.os.family }} {{ ding.data.os.version_string }}<br>
+				<p>
+			</div>
+		</div>
 		
 		<span class="glyphicon glyphicon-envelope"></span> <a href="mailto:{{ ding.email }}">Reply</a>
 		<span class="glyphicon glyphicon-remove text-danger"></span>
