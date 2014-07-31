@@ -152,6 +152,12 @@ body {
     cursor: pointer;
     text-overflow: ellipsis;
 }
+#status .surfices.small .surfice {
+	height: 150px;
+	width: 150px;
+	padding-top: 50px;
+	margin: 12px;
+}
 #status .surfice-success {
     background-color:#2ecc71;
 }
@@ -178,6 +184,11 @@ body {
     -ms-hyphens: auto;
     hyphens: auto;
 
+}
+
+#status .surfices.small .surfice h2 {
+	width: 135px;
+	font-size: 24px;
 }
 
 #status .surfice > span {

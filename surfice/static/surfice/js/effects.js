@@ -544,12 +544,15 @@ function onModalShow(e) {
 	
 	// Set up pressing enter
 	$modal.on("keydown", function(e) {
-		// If the user presses enter, and the user isn't entering tags, submit the form
+		// If the user presses enter, and the user isn't entering tags
+		// and the user is not in a textarea, submit the form
 		if	(
 				e.which == 13 &&
-				$(e.target).parent(".bootstrap-tagsinput").length == 0
+				$(e.target).parent(".bootstrap-tagsinput").length == 0 &&
+				!$(e.target).is("textarea")
 			)
 		{
+			e.preventDefault();
 			$modal.find('[type="submit"]').trigger("click");
 		}
 	});
@@ -570,7 +573,7 @@ function onModalShown(e) {
 	// find the first visible input and focus it
 	if ($focusElement.length == 0)
 		$focusElement = $modal
-			.find("input, select, textarea, button")
+			.find("input, select, textarea")
 			.filter(function(index) {
 				return ($(this).css("display") != "none");
 			})
@@ -633,6 +636,22 @@ $(".multiselect-surfices").multiselect({
 	enableFiltering: true,
 	enableCaseInsensitiveFiltering: true,
 	includeSelectAllOption: true
+});
+
+/* AUTOSIZE
+------------------------------ 
+*  Makes any textarea with the autosize class resize
+*  when text is inputted.
+*  
+*  INPUT
+*  textarea.autosize
+*  
+*  EVENT
+*  focus
+*  
+------------------------------ */
+$("textarea.autosize").on('focus', function() {
+	$(this).autosize();
 });
 
 });

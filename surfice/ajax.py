@@ -874,9 +874,78 @@ def send_email(request):
 			#from django.core import mail
 			#connection = mail.get_connection()
 			
+			email.send()
+			
 		except ValidationError:
 			pass
+
+@permission_required('is_superuser', raise_exception=True)
+def submit_rt_ticket(request):
+	""" Submit an RT ticket by email
 		
+		INPUT
+		request
+			- requestor (optional)		Requestor email address
+			- queue						Queue email address
+			- body						Body of the RT ticket
+			- name (optional)			Name in the subject line
+			- phone	(optional)			phone number in the subject line
+			- location (optional)		location in the subject line
+			- description (optional)	brief description in the subject line
+	"""
+	if	(
+			'queue'		in request.POST and
+			'body'		in request.POST
+		):
+		try:
+			# First see if the email addresses are actually email addresses
+			validate_email(request.POST['queue'])
+			
+			# Create the subject line
+			subject = ''
+		
+			if 'name' in request.POST:
+				subject += request.POST['name'] + ' - '
+		
+			if 'phone' in request.POST:
+				subject += request.POST['phone'] + ' - '
+		
+			if 'location' in request.POST:
+				subject += request.POST['location'] + ' - '
+		
+			if 'description' in request.POST:
+				subject += request.POST['description']
+			else:
+				subject += 'Network Issue'
+			
+			# Get the requestor from POST if set
+			print "requestor: "
+			if 'requestor' in request.POST:
+				validate_email(request.POST['requestor'])
+				requestor = request.POST['requestor']
+			
+			# If it's not set, get it from the settings file
+			else:
+				from surfstat.settings import EMAIL_HOST_USER
+				requestor = EMAIL_HOST_USER
+			
+			# Remove extra spaces from the subject
+			subject = ' '.join(subject.split())
+			
+			from django.core.mail import send_mail
+			# Start creating the EmailMessage object
+			#email = EmailMessage(
+			#send_mail(
+			#			from_email=requestor,
+			#			recipient_list=[request.POST['queue']],
+			#			subject=subject,
+			#			message=request.POST['body'])
+			
+			# Now actually send the email
+			#email.send()
+			
+		except ValidationError:
+			pass
 
 @permission_required('is_superuser', raise_exception=True)
 def get_surf(request):
@@ -1607,6 +1676,10 @@ def dispatch(request, action=''):
 	# Send an email
 	elif action == 'send-email':
 		response = json.dumps(send_email(request))
+	
+	# Submit an RT ticket
+	elif action == 'submit-rt-ticket':
+		response = json.dumps(submit_rt_ticket(request))
 	
 	# Get a single surf
 	elif action == 'get-surf':

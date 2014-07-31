@@ -21,9 +21,9 @@ DATABASE_PATH = os.path.join(BASE_DIR, 'surfice.db')
 SECRET_KEY = '((tsl3s98_p3wx7jvu*1s7y0q8j4y!_#y4tps$!bix62&1a*-d'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
-TEMPLATE_DEBUG = True
+TEMPLATE_DEBUG = False
 
 ALLOWED_HOSTS = []
 
@@ -52,9 +52,6 @@ MIDDLEWARE_CLASSES = (
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 )
 
-# Set up LDAP
-from ldap_asbury import *
-
 ROOT_URLCONF = 'surfstat.urls'
 
 WSGI_APPLICATION = 'surfstat.wsgi.application'
@@ -75,7 +72,7 @@ DATABASES = {
 
 LANGUAGE_CODE = 'en-us'
 
-TIME_ZONE = 'America/Kentucky/Louisville'
+TIME_ZONE = 'UTC'
 
 USE_I18N = True
 
@@ -86,7 +83,7 @@ USE_TZ = True
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/1.6/howto/static-files/
-STATIC_ROOT = '/home/localadm/public_html/static/'
+STATIC_ROOT = '/home/user/public_html/static/'
 STATIC_URL = '/static/'
 
 # Additional locations of static files

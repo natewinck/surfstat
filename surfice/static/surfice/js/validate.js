@@ -35,7 +35,7 @@ $('input[name="name"][data-ajax-check]').each(function() {
 		$input.on("keyup blur", function(){ statusNameField( $(this) ) });
 });
 
-$('input[name="email"][data-ajax-check]').each(function() {
+$('input[name="email"][data-ajax-check], input[data-validate="email"]').each(function() {
 	$input = $(this);
 	
 	$input.on("keyup blur", function() {

@@ -1,7 +1,5 @@
 
 *.pyc
-surfstat/ldap_asbury.py
+surfstat/settings/asbury.py
 
 *.db
-
-*.pyc

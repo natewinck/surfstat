@@ -658,4 +658,26 @@ def ding(request, ding=''):
 	status_list = Status.get_statuses()
 	context_dict['statuses'] = status_list
 	
+	# Get the user's potential first name and last name based on
+	# email addresses that have the patter "first.last@email.com"
+	username = ding.email.split('@')[0]
+	names = username.split('.')
+	# If there are 2 names (first and last), capitalize the first letter
+	# and add them to first and last
+	if (len(names) > 1):
+		firstname = names[0].title()
+		lastname  = names[1].title()
+		fullname = (firstname + ' ' + lastname).title()
+	else:
+		firstname = ''
+		lastname  = ''
+		fullname  = ''
+	
+	print fullname
+	
+	# Add the names to context dict
+	context_dict['firstname'] = firstname
+	context_dict['lastname']  = lastname
+	context_dict['fullname']  = fullname
+	
 	return render(request, 'surfice/base_ding.html', context_dict)
