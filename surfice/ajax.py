@@ -804,7 +804,7 @@ def submit_ding(request):
 				'family': user_agent.device.family #returns 'iPhone'
 			}
 			
-			data['hostname'] = request.META['REMOTE_HOST']
+			data['hostname'] = request.META.get('REMOTE_HOST')
 			data['ip'] = request.META['REMOTE_ADDR']
 			
 			#print json.dumps(data, sort_keys=True, indent=4, separators=(',', ': '))

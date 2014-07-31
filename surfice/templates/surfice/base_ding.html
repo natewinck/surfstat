@@ -174,7 +174,7 @@
 </div>
 <hr class="featurette-divider">
 
-<!-- reply modal -->
+<!-- rt modal -->
 <div class="modal fade" id="rt-{{ ding.id }}" tabindex="-1" role="dialog" aria-hidden="true">
 	<div class="modal-dialog">
 		<div class="modal-content">
@@ -186,61 +186,79 @@
 					{# To prding cross-site forgery, include the following required tag #}
 					{% csrf_token %}
 					<div class="row">
+						<!-- queue email -->
 						<div class="col-md-6">
 							<div class="form-group">
 								<label for="queue" class="control-label">Queue Email</label>
 								<input name="queue" value="network.tickets@asbury.edu" type="email" class="form-control" placeholder="Queue Email" id="queue" data-validate="email">
 							</div>
 						</div>
+						<!-- /end queue email -->
 					</div>
 					<div class="row">
+					
+						<!-- name -->
 						<div class="col-sm-4">
 							<div class="form-group">
 								<label for="name" class="control-label">Name</label>
-								<input name="name" value="{% if fullname != '' %}{{ fullname }}{% endif %}" class="form-control focus" placeholder="Name (optional)" id="name">
+								<input name="name" value="{% if fullname != '' %}{{ fullname }}{% endif %}" class="form-control {% if fullname == '' %}focus{% endif %}" placeholder="Name (optional)" id="name">
 							</div>
 						</div>
+						<!-- /end name -->
+						
+						<!-- phone -->
 						<div class="col-sm-4">
 							<div class="form-group">
 								<label for="phone" class="control-label">Phone</label>
-								<input name="phone" class="form-control" placeholder="Phone (optional)" id="phone">
+								<input name="phone" class="form-control {% if fullname != '' %}focus{% endif %}" placeholder="Phone (optional)" id="phone">
 							</div>
 						</div>
+						<!-- /end phone -->
+						
+						<!-- location -->
 						<div class="col-sm-4">
 							<div class="form-group">
 								<label for="location" class="control-label">Location</label>
 								<input name="location" class="form-control" placeholder="Location (optional)" id="location">
 							</div>
 						</div>
+						<!-- /end location -->
 					</div>
 					<div class="row">
 						<div class="col-xs-12">
+						
+							<!-- description -->
 							<div class="form-group">
 								<label for="description">
 									Brief Description</label>
 								<input id="description" name="description" class="form-control" placeholder="Brief Description (optional)" value="{{ ding.surfice.name }} is {{ ding.status.name }}">
 							</div>
+							<!-- /end description -->
 							
+							<!-- body -->
 							<div class="form-group">
 								<label for="body">
 									Body</label>
 								<textarea name="body" id="body" class="form-control" rows="9" cols="25" required="required" placeholder="Message">On {{ ding.timestamp|date:"M j, Y" }} at {{ ding.timestamp|time:"f A" }}, {% if fullname != '' %}{{ lastname }}, {{ firstname }} <{{ ding.email }}>{% else %}{{ ding.email }}{% endif %} wrote:&#10;{{ ding.description }}</textarea>
 							</div>
+							<!-- /end body -->
 						</div>
 						
 					</div>
 				</form>
 
 			</div>
+			
+			<!-- submit and cancel buttons -->
 			<div class="modal-footer">
 				<button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
-				<button type="submit" class="btn btn-primary pull-right">
+				<button type="submit" class="btn btn-primary">
 					Add to RT</button>
 			</div>
 		</div>
 	</div>
 </div>
-<!-- /end reply modal -->
+<!-- /end rt modal -->
 
 <!-- delete ding modal -->
 <div class="modal fade" id="confirm-delete-ding-{{ ding.id }}" tabindex="-1" role="dialog" aria-hidden="true">
