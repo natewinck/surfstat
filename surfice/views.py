@@ -191,7 +191,7 @@ def index(request):
 	#context_dict = {'surfices': surfice_list}
 	
 	# Query the database for a list of ALL surfices currently stored.
-	surfice_list = Surfice.get_surfices()
+	surfice_list = Surfice.get_surfices().order_by('name')
 	
 	# Place the list in our context_dict dictionary which
 	# will be passed to the template engine
