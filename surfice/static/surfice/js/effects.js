@@ -168,7 +168,7 @@ $("a[href^=#]:not([href=#])").click(function(e) {
         var target = $(this.hash);
         target = target.length ? target : $('[name=' + this.hash.slice(1) +']');
         if (target.length) {
-            $('html,body').animate({
+            $('html,body').stop().animate({
             scrollTop: target.offset().top
         }, 500);
         console.log("You clicked a hashtag!");
@@ -400,7 +400,14 @@ window.addEventListener("popstate", function(e) {
 		} else {
 			// If there is no hashtag, push a state with the current button selected
 			// (assuming there is only one .list-group.select tag on the page
-			selectTab( $(".list-group.select a.list-group-item.active").removeClass("active") );
+			selectTab( $(".list-group.select a.list-group-item.active").removeClass("active"), false );
+			
+			// Since this is the first time it's loaded, replace the state rather than push it
+			var $button = $(".list-group.select a.list-group-item.active");
+			var data = {hash: $button.attr("href")};
+			console.log("Replacing " + data.hash);
+			// Don't add the hash to the url so that the page doesn't jump there onload
+			history.replaceState(data, "");
 		}
 	}
 	e.preventDefault();
@@ -556,6 +563,7 @@ function onModalShow(e) {
 			$modal.find('[type="submit"]').trigger("click");
 		}
 	});
+	console.log("show");
 }
 
 function onModalHide(e) {
@@ -652,6 +660,33 @@ $(".multiselect-surfices").multiselect({
 ------------------------------ */
 $("textarea.autosize").on('focus', function() {
 	$(this).autosize();
+});
+
+/* ROW LINK
+------------------------------ 
+*  Makes any row with a data-href attribute also a link
+*  Changes the cursor automatically to a pointer
+*  Won't fire when clicking on an <a>
+*  
+*  INPUT
+*  tr[data-href]
+*  
+*  EVENT
+*  focus
+*  
+------------------------------ */
+$("table").on('click', 'tr[data-href]', function(e) {
+	//console.log(e);
+	if ($(this).attr("data-href") != "") {
+		//console.log("href");
+		window.location = $(this).attr("data-href");
+	}
+});
+
+$("table").on("click", 'tr[data-href] a[data-toggle="modal"]', function(e) {
+	// Create a custom modal show trigger for table row elements that have data-href
+	$($(this).attr("data-target")).modal('show');
+	return false;
 });
 
 });

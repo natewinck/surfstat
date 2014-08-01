@@ -168,7 +168,7 @@
 					<div class="col-sm-8">
 						<h4>All Surfices in <span data-ajax-update="surf-name-{{ surf.id }}">{{ surf.name }}</span></h4>
 						<table class="table" data-ajax-update="surfs-surfices surf-surfices-{{ surf.id }} update-surfices" data-ajax-id="surf-{{ surf.id }}">
-							{% for surfice in surf.surfices.all %}
+							{% for surfice in surf.surfices.all|dictsort:'name' %}
 							<tr class="dynamic-color" style="background-color:{{ surfice.status.data.color }}"
 								data-ajax-id="surfice-{{ surfice.id }}"
 							>

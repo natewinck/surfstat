@@ -25,7 +25,7 @@
 				{% for surfice in surfices %}
 				<div class="surfice surfice-success dynamic-color" {% if surfice.status.data.color %}style="background-color:{{ surfice.status.data.color }}"{% endif %}>
 					<h2 class="center-all featurette-heading-grid surfice-active">{{ surfice.name }}</h2>
-					<a class="btn btn-lg btn-info center-all-button featurette-heading-grid surfice-hover" role="button" data-toggle="modal" data-target="#ding-{{ surfice.id }}">Report an Issue</a>
+					<a class="btn {% if surfices|length > 6 %}btn-small{% else %}btn-lg{% endif %} btn-info center-all-button featurette-heading-grid surfice-hover" role="button" data-toggle="modal" data-target="#ding-{{ surfice.id }}">Report an Issue</a>
 					<span class="surfice_dings"><span data-ajax-update="surfice-dings-length-{{ surfice.id }}">{{ surfice.dings|length }}</span> reports today</span>
 				</div>
 				{% endfor %}

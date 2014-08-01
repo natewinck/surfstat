@@ -124,18 +124,29 @@
 			</td>
 			
 			<!-- delete -->
-			<td>
+			<td colspan="2">
+				<!--
 				<a class="delete" href="#"
 					data-toggle="modal"
 					data-target="#confirm-delete-ding"
 					data-ding-id="{{ ding.id }}"
 				><span class="glyphicon glyphicon-remove text-danger"></span></a>
+				-->
+				<div class="btn-group-vertical">
+					<a class="btn btn-default" role="button" href="{% url 'ding' ding=ding.id %}" title="View Ding"><span class="glyphicon glyphicon-eye-open"></span></a>
+					<a class="btn btn-danger delete" role="button" title="Delete Ding"
+						data-toggle="modal"
+						data-target="#confirm-delete-ding"
+						data-ding-id="{{ ding.id }}"
+					><span class="glyphicon glyphicon-remove"></span></a>
+				</div>
 			</td>
 			
-			<!-- open -->
+			<!-- open
 			<td>
 				<a href="{% url 'ding' ding=ding.id %}"><span class="glyphicon glyphicon-eye-open"></span></a>
 			</td>
+			-->
 		</tr>
 		{% endfor %}
 	</table>

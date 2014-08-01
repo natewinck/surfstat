@@ -360,11 +360,11 @@ def surfs(request):
 	
 	
 	# Query for surfs and add them to context_dict
-	surf_list = Surf.get_surfs().prefetch_related('surfices')
+	surf_list = Surf.get_surfs().order_by('name').prefetch_related('surfices')
 	context_dict['surfs'] = surf_list
 	
 	# Query all the Surfices and add them to context_dict
-	surfice_list = Surfice.get_surfices()
+	surfice_list = Surfice.get_surfices().order_by('name')
 	context_dict['surfices'] = surfice_list
 	
 	# Query all the Statuses and add them to context_dict
@@ -444,11 +444,11 @@ def surfices(request):
 	
 	
 	# Query for surfs and add them to context_dict
-	surf_list = Surf.get_surfs()
+	surf_list = Surf.get_surfs().order_by('name')
 	context_dict['surfs'] = surf_list
 	
 	# Query all the Surfices and add them to context_dict
-	surfice_list = Surfice.get_surfices().prefetch_related('surfs')
+	surfice_list = Surfice.get_surfices().order_by('name').prefetch_related('surfs')
 	context_dict['surfices'] = surfice_list
 	
 	# Query all the Statuses and add them to context_dict

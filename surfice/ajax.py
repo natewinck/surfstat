@@ -1006,12 +1006,12 @@ def get_surfs(request):
 	# If name is set, get all the surfs that contain this name
 	if 'name' in request.GET:
 		# Get the surf objects that contain this name
-		surfs = Surf.get_surfs(name=request.GET['name'])
+		surfs = Surf.get_surfs(name=request.GET['name']).order_by('name')
 	
 	# If nothing is set, get all the surfs
 	else:	
 		# Get the surf object from the database
-		surfs = Surf.get_surfs()
+		surfs = Surf.get_surfs().order_by('name')
 	
 	# Serialize the surfs
 	surfs = SurfSerializer(surfs)
@@ -1081,12 +1081,12 @@ def get_surfices(request):
 		surf = Surf.get_surf(pk=request.GET['surf'])
 		
 		# Get all the surfices within that Surf
-		surfices = surf.get_surfices()
+		surfices = surf.get_surfices().order_by('name')
 	
 	# If name is set, get all surfices that contain this name
 	elif 'name' in request.GET:
 		# Get all the surfices within that Surf
-		surfices = surf.get_surfices(name=request.GET['name'])
+		surfices = surf.get_surfices(name=request.GET['name']).order_by('name')
 	
 	# If status is set, get all surfices that have this status
 	elif 'status' in request.GET:
@@ -1094,11 +1094,11 @@ def get_surfices(request):
 		status = Status.get_status(pk=request.GET['status'])
 		
 		# Get all the surfices with that status
-		surfices = Surfice.get_surfices(status=status)
+		surfices = Surfice.get_surfices(status=status).order_by('name')
 	
 	# If nothing was set in GET, get all the surfices
 	else:
-		surfices = Surfice.get_surfices()
+		surfices = Surfice.get_surfices().order_by('name')
 	
 	# Serialize the surfices so that we can pass them back as an array of JSON objects
 	surfices = SurficeSerializer(surfices)
