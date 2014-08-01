@@ -31,7 +31,7 @@
 		<div class="form-box">
 			<form action="{% url 'django.contrib.auth.views.login' %}" method="post">
 				{% csrf_token %}
-				<input id="username" name="username" type="text" placeholder="username">
+				<input id="username" name="username" type="email" placeholder="username">
 				<input id="password" name="password" type="password" placeholder="password">
 				<button class="btn btn-info btn-block login" type="submit">Login</button>
 				<input type="hidden" name="next" value="{{ next }}" />

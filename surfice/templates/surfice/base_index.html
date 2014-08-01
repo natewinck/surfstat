@@ -53,14 +53,17 @@
 									{# To prevent cross-site forgery, include the following required tag #}
 									{% csrf_token %}
 									<input type="hidden" name="surfice" value="{{ surfice.id }}">
+									
+									<!-- email -->
 									<div class="form-group"> 
 										<label class="col-sm-2 control-label">Email</label>
 										<div class="col-sm-6">
 											<input type="email" class="form-control" name="email" placeholder="Enter email" data-ajax-clear data-ajax-check>
 										</div>
 									</div>
+									<!-- /end email -->
 							
-							
+									<!-- status -->
 									<div class="form-group">
 										<label class="col-sm-2 control-label">Status</label>
 										<div class="col-sm-4 col-xs-12">
@@ -71,13 +74,16 @@
 											</select>
 										</div><!-- /.col-sm-10 -->
 									</div>
+									<!-- /end status -->
 						  			
+						  			<!-- description -->
 									<div class="form-group">
 										<label class="col-sm-2 control-label">Description</label>
 										<div class="col-sm-10">
 											<textarea type="text" name="description" class="form-control autosize" rows="1" placeholder="(Optional) Feed me more detail..." data-ajax-clear></textarea>
 										</div>
 									</div><!-- /.form-group -->
+									<!-- /end description -->
 							
 								</form>
 						  
