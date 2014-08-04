@@ -689,6 +689,7 @@ $("table").on("click", 'tr[data-href] a[data-toggle="modal"]', function(e) {
 	return false;
 });
 
+
 });
 
 /* AJAX PROCESSES DISPLAY
