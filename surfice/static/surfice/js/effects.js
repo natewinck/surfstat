@@ -689,6 +689,25 @@ $("table").on("click", 'tr[data-href] a[data-toggle="modal"]', function(e) {
 	return false;
 });
 
+
+/* SURFICE CLICK
+------------------------------ 
+*  Makes all the surfices able to be clicked even when 
+*  clicking on the div rather than the <a>
+*  
+*  INPUT
+*  .surfices div.surfice
+*  
+*  EVENT
+*  click
+*  
+------------------------------ */
+$(".surfices > div.surfice").click(function() {
+	//console.log('click');
+	console.log(this);
+	$( $(this).find("a").attr("data-target") ).modal("show");
+});
+
 });
 
 /* AJAX PROCESSES DISPLAY
