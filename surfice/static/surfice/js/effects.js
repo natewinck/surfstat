@@ -689,28 +689,6 @@ $("table").on("click", 'tr[data-href] a[data-toggle="modal"]', function(e) {
 	return false;
 });
 
-function isInputTypeSupported(typeName) {
-    // Create element
-    var input = document.createElement("input");
-    // attempt to set the specified type
-    input.setAttribute("type", typeName);
-    // If the "type" property equals "text"
-    // then that input type is not supported
-    // by the browser
-    var val = (input.type !== "text");
-    // Delete "input" variable to
-    // clear up its resources
-    delete input;
-    // Return the detected value
-    return val;
-}
-
-if (!isInputTypeSupported("datetime-local")) {
-	$(".datetimepicker").datetimepicker();
-}
-
-});
-
 /* AJAX PROCESSES DISPLAY
 -------------------------------
 *  Pulse buttons, replace text, and perform other display functions
