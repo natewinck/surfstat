@@ -689,6 +689,8 @@ $("table").on("click", 'tr[data-href] a[data-toggle="modal"]', function(e) {
 	return false;
 });
 
+});
+
 /* AJAX PROCESSES DISPLAY
 -------------------------------
 *  Pulse buttons, replace text, and perform other display functions
