@@ -171,7 +171,7 @@ $("a[href^=#]:not([href=#])").click(function(e) {
             $('html,body').stop().animate({
             scrollTop: target.offset().top
         }, 500);
-        console.log("You clicked a hashtag!");
+        //console.log("You clicked a hashtag!");
         //window.location.hash = this.hash.slice(1);
         //return false;
         }
@@ -372,7 +372,7 @@ function selectTab($button, push) {
 		//window.location.hash = $button.prop("hash");
 		if (push) {
 			var data = {hash: new_id};
-			console.log("Pushing " + data.hash);
+			//console.log("Pushing " + data.hash);
 			history.pushState(data, "", $button.prop("hash"));
 		}
 	}
@@ -386,7 +386,7 @@ window.addEventListener("popstate", function(e) {
 	if (e.state) {
 		console.log("Popping " + e.state.hash);
 		if (e.state.hash.match('#')) {
-			console.log("the hashtag: " + e.state.hash.split('#')[1]);
+			//console.log("the hashtag: " + e.state.hash.split('#')[1]);
 			selectTab( $('.list-group.select a[href=#'+e.state.hash.split('#')[1]+']'), false );
 		} 
 	}
@@ -394,7 +394,7 @@ window.addEventListener("popstate", function(e) {
 	// so get the hash from the url
 	else {
 		var url = document.location.toString();
-		console.log("Getting from URL " + url);
+		//console.log("Getting from URL " + url);
 		if (url.match('#')) {
 			selectTab( $('.list-group.select a[href=#'+url.split('#')[1]+']'), false );
 		} else {
@@ -405,7 +405,7 @@ window.addEventListener("popstate", function(e) {
 			// Since this is the first time it's loaded, replace the state rather than push it
 			var $button = $(".list-group.select a.list-group-item.active");
 			var data = {hash: $button.attr("href")};
-			console.log("Replacing " + data.hash);
+			//console.log("Replacing " + data.hash);
 			// Don't add the hash to the url so that the page doesn't jump there onload
 			history.replaceState(data, "");
 		}
@@ -563,7 +563,7 @@ function onModalShow(e) {
 			$modal.find('[type="submit"]').trigger("click");
 		}
 	});
-	console.log("show");
+	//console.log("show");
 }
 
 function onModalHide(e) {
@@ -704,7 +704,7 @@ $("table").on("click", 'tr[data-href] a[data-toggle="modal"]', function(e) {
 ------------------------------ */
 $(".surfices > div.surfice").click(function() {
 	//console.log('click');
-	console.log(this);
+	//console.log(this);
 	$( $(this).find("a").attr("data-target") ).modal("show");
 });
 

@@ -32,7 +32,7 @@ function refreshAJAXPage($form) {
 	// refresh the page with the new data
 	// TO DO: Stop using the data passed to this function and start using ss
 	ss.get($form.attr("data-ajax-action"), getData, function(data) {
-		console.log(data);
+		//console.log(data);
 		
 		// Get the selectors and split them into an array
 		var selectors = ($form.attr("data-ajax-update-target")) ? $form.attr("data-ajax-update-target").split(' ') : [];

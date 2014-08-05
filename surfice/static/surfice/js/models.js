@@ -63,8 +63,8 @@ Surfstat.prototype.get = function(action, getData, callbackSuccess, callbackFail
 		
 		// Get a single surf
 		if (action == "get-surf") {
-			console.log("get-surf");
-			console.log(data);
+			//console.log("get-surf");
+			//console.log(data);
 			s.surfs[data.id] = data
 		}
 		
@@ -114,7 +114,7 @@ Surfstat.prototype.get = function(action, getData, callbackSuccess, callbackFail
 		}
 		
 		else if (action == "get-event") {
-			console.log(data);
+			//console.log(data);
 			s.events[data.id] = data;
 		}
 		
@@ -126,7 +126,7 @@ Surfstat.prototype.get = function(action, getData, callbackSuccess, callbackFail
 		}
 		
 		else if (action == "get-ding") {
-			console.log(data);
+			//console.log(data);
 			s.dings[data.id] = data;
 		}
 		
