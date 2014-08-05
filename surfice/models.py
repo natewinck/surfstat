@@ -1231,7 +1231,7 @@ class Event(models.Model):
 		data				Generic data stored as keys
 		
 		METHODS
-		Event			create(surfice, status, description)
+		Event			create(surfice, status, description, timestamp, **kwargs)
 		void			delete(self, *args, **kwargs)
 		*Event			get_events(...)
 		void			set(status, surfice, description, **kwargs)
@@ -1250,13 +1250,14 @@ class Event(models.Model):
 		return self.status.name
 	
 	@staticmethod
-	def create(surfice, status, description='', **kwargs):
+	def create(surfice, status, description='', timestamp='', **kwargs):
 		""" Create a new event and save it to the database
 			
 			INPUT
 			surfice					The surfice object that has this event
 			status					The status of the event
 			description (optional)	Description of the event
+			timestamp (optional)	Timestamp of event
 			**kwargs (optional)		Generic data stored as keys
 			
 			RETURNS
@@ -1277,6 +1278,11 @@ class Event(models.Model):
 		
 		# Save the event in the database
 		event.save()
+		
+		# If the timestamp was set, set it to what it should be
+		if timestamp != '':
+			event.timestamp = timestamp
+			event.save()
 		
 		return event
 	

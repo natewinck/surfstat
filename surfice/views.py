@@ -15,7 +15,9 @@ from django.contrib.auth.decorators import permission_required
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.core.urlresolvers import reverse
 
-from datetime import date, timedelta
+# Import date and time
+import time
+from datetime import date, timedelta, datetime
 from django.utils import timezone
 
 from django_auth_ldap.backend import LDAPBackend
@@ -460,6 +462,68 @@ def surfices(request):
 
 @permission_required('is_superuser')
 def events(request, page, order_by=''):
+	
+	if request.method == 'POST':
+		# """ Adds an event to the database
+# 		
+# 				If no timestamp is provided, it will fill in the current time
+# 		
+# 				INPUT
+# 				request						A request object
+# 					- status					The pk of a status
+# 					- surfice					The pk of the surfice
+# 					- description (optional)	The description of the Event
+# 					- timestamp (optional)		The timestamp of the event
+# 		
+# 				RETURNS
+# 				*errors
+# 			"""
+
+		errors = []
+
+		# If status is set, go ahead and edit it
+		if 'status' in request.POST and 'surfice' in request.POST:
+	
+			# Get the status object
+			status = Status.get_status(pk=request.POST['status'])
+	
+			# Get the surfice object
+			surfice = Surfice.get_surfice(pk=request.POST['surfice'])
+	
+			# If description is in request, set the description
+			if 'description' in request.POST:
+				description = request.POST['description']
+			else:
+				description = ''
+	
+			# If timestamp is in request, set the timestamp
+			print request.POST['timestamp'].strip()
+			if 'timestamp' in request.POST and request.POST['timestamp'].strip() != '':
+		
+				# Timestamp passed in format "01/21/2012 14:30:59"
+				strp_time = time.strptime(request.POST['timestamp'], "%m/%d/%Y %H:%M:%S")
+		
+				# Convert the time to a Django-acceptable timestamp
+				timestamp = datetime.fromtimestamp(time.mktime(strp_time))
+				
+				print "TIMESTAMP"
+				print timestamp
+		
+			# If timestamp is not set or is blank, use the current time
+			else:
+				timestamp = timezone.now()
+			
+			Event.create(surfice, status, description, timestamp)
+	
+
+		# If no status or surfice is set, throw an error
+		else:
+			errors.append("It's usually good to have a status to edit.")
+		
+		# Redirect to this view after submission to clear headers
+		return HttpResponseRedirect('')
+	
+
 	context_dict = {}
 	
 	# Query for events and add them to context_dict

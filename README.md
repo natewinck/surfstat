@@ -112,3 +112,5 @@ Testing
 - ~~Make a test deployment server~~
 - Test database creation
 - Test initial setup
+
+Special thanks to Vada Bennett for assisting with the design.

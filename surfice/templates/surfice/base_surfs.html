@@ -33,8 +33,8 @@
 	<!-- start left nav -->
 	<div class="col-sm-4">
 		<div class="list-group select">
-			<a href="#new" class="list-group-item list-group-item-success">Create New Surf<span class="glyphicon glyphicon-plus pull-right"</span></a>
-			<a href="#all" class="list-group-item"><em>(all)</em><span class="glyphicon glyphicon-chevron-right pull-right"</span></a>
+			<a href="#new" class="list-group-item list-group-item-success">Create New Surf<span class="glyphicon glyphicon-plus pull-right"></span></a>
+			<a href="#all" class="list-group-item"><em>(all)</em><span class="glyphicon glyphicon-chevron-right pull-right"></span></a>
 			{% for surf in surfs %}
 			<a href="#surf-{{ surf.name|slugify }}" data-ajax-update="surf-name-{{ surf.id }}" class="list-group-item {% if forloop.first %}active{% endif %}">{{ surf.name }}<span class="glyphicon glyphicon-chevron-right pull-right"></span></a>
 			{% endfor %}

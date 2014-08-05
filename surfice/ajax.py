@@ -928,6 +928,7 @@ def submit_rt_ticket(request):
 			else:
 				from surfstat.settings import EMAIL_HOST_USER
 				requestor = EMAIL_HOST_USER
+				requestor = 'nathaniel.winckler@asbury.edu'
 			
 			# Remove extra spaces from the subject
 			subject = ' '.join(subject.split())
@@ -935,11 +936,11 @@ def submit_rt_ticket(request):
 			from django.core.mail import send_mail
 			# Start creating the EmailMessage object
 			#email = EmailMessage(
-			#send_mail(
-			#			from_email=requestor,
-			#			recipient_list=[request.POST['queue']],
-			#			subject=subject,
-			#			message=request.POST['body'])
+			send_mail(
+						from_email=requestor,
+						recipient_list=[request.POST['queue']],
+						subject=subject,
+						message=request.POST['body'])
 			
 			# Now actually send the email
 			#email.send()
