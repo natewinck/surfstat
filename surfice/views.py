@@ -501,7 +501,7 @@ def events(request, page, order_by=''):
 			if 'timestamp' in request.POST and request.POST['timestamp'].strip() != '':
 		
 				# Timestamp passed in format "01/21/2012 14:30:59"
-				strp_time = time.strptime(request.POST['timestamp'], "%m/%d/%Y %H:%M:%S")
+				strp_time = time.strptime(request.POST['timestamp'], "%m/%d/%YT%H:%M:%S")
 		
 				# Convert the time to a Django-acceptable timestamp
 				timestamp = datetime.fromtimestamp(time.mktime(strp_time))
