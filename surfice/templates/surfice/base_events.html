@@ -184,7 +184,7 @@
 			</tr>
 		</thead>
 		{% for event in events %}
-		<tr data-ajax-update="delete-event-{{ event.id }}">
+		<tr data-ajax-update="delete-event-{{ event.id }}" id="tr-event-{{ event.id }}">
 			<!-- timestamp -->
 			<td><a href="#" data-type="datetime" class="editable"
 					data-pk="{{ event.id }}"
