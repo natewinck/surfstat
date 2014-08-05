@@ -783,8 +783,13 @@ function refreshSurficeDingsLength($elements, data) {
 	$elements.each(function() {
 		$element = $(this);
 		
+		var text = data + " report";
+		if (parseInt(data) != 1) {
+			text += "s";
+		}
+		
 		// Change the contents of the element to the number of dings
-		$element.val(data).text(data);
+		$element.val(text).text(text);
 		
 	});
 }
