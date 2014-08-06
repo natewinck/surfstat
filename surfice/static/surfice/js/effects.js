@@ -677,16 +677,13 @@ $("textarea.autosize").on('focus', function() {
 ------------------------------ */
 $("table").on('click', 'tr[data-href]', function(e) {
 	//console.log(e);
-	if ($(this).attr("data-href") != "") {
+	// If the row has a data-href attribute
+	// and the original target is not an <a>, treat the row like a link
+	if ($(this).attr("data-href") != "" && $(e.target).closest("a").length == 0) {
 		//console.log("href");
+		//console.log(e);
 		window.location = $(this).attr("data-href");
 	}
-});
-
-$("table").on("click", 'tr[data-href] a[data-toggle="modal"]', function(e) {
-	// Create a custom modal show trigger for table row elements that have data-href
-	$($(this).attr("data-target")).modal('show');
-	return false;
 });
 
 
