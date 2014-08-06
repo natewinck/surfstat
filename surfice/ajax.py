@@ -61,8 +61,15 @@ def set_status(request):
 			# Using .get() allows for description not being set in POST
 			description = request.POST.get('description','')
 			
+			# If event is set and is set to False, don't create an event with the update
+			if 'event' in request.POST and int(request.POST['event']) == 0:
+				event = False
+			# Create an event by default
+			else:
+				event = True
+			
 			# Set the status of the surf, which also creates an event
-			surfice.set_status(status, description)
+			surfice.set_status(status, description, event=event)
 	
 		else:
 			errors.append("I need a Surfice and a Status in order to update the status.")
@@ -128,7 +135,6 @@ def set_surf_status(request):
 		description = request.POST.get('description','')
 		
 		# If event is set and is set to False, don't create an event with the update
-		
 		if 'event' in request.POST and int(request.POST['event']) == 0:
 			event = False
 		# Create an event by default

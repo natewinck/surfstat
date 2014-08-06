@@ -21,6 +21,13 @@ jQuery.fn.fadeSlide = function(speed, easing, callback) {
   }
 };
 
+jQuery.fn.fadeSlideDown = function(speed, easing, callback) {
+    return this.slideDown(speed, easing).fadeTo(speed, 1, easing, callback);
+};
+jQuery.fn.fadeSlideUp = function(speed, easing, callback) {
+    return this.fadeTo(speed, 0, easing).slideUp(speed, easing, callback);
+};
+
 /* $().slideRow
 ------------------------------ 
 *  Using options "up" or "down", this collapses an element up or down.
@@ -703,6 +710,32 @@ $(".surfices > div.surfice").click(function() {
 	//console.log('click');
 	//console.log(this);
 	$( $(this).find("a").attr("data-target") ).modal("show");
+});
+
+$("#create-event-toggle label").click(function() {
+	if ( $(this).hasClass("active") ) return;
+	//console.log(this);
+	$description = $(this).closest("#create-event-toggle").next();
+	var val = parseInt( $(this).children("input").val() );
+	console.log(val);
+	// If we creating an event and the description box is hidden, show the description box
+	if (val == 1) {
+		$description.stop().fadeSlideDown(250, "swing", function() {
+			// Check to make sure it's still supposed to be showing
+			// Prevents confusion in the javascript...
+			//if (val == 0) $description.stop().fadeSlideUp(250);
+		});
+	}
+	
+	// Else if we are not creating an event and the description box is showing
+	// or partially showing, hide it
+	else if (val == 0) {
+		$description.stop().fadeSlideUp(250, "swing", function() {
+			// Check to make sure it's still supposed to not be showing
+			// Prevents confusion in the javascript...
+			//if (val == 1) $description.stop().fadeSlideDown(250);
+		});
+	}
 });
 
 });

@@ -243,7 +243,7 @@ def admin(request):
 	context_dict = {}
 	
 	# Query for surfs and add them to context_dict
-	surf_list = Surf.get_surfs()
+	surf_list = Surf.get_surfs().order_by('name')
 	context_dict['surfs'] = surf_list
 	
 	# For each Surf, query for Surfices and add them to context_dict
@@ -251,7 +251,7 @@ def admin(request):
 		#context_dict['surfs'][i].surfices = surf_list[i].surfice_set.all()
 	
 	# Query for Surfices and add them to context_dict
-	surfice_list = Surfice.get_surfices()
+	surfice_list = Surfice.get_surfices().order_by('name')
 	context_dict['surfices'] = surfice_list
 	
 	# Query for Events and add them to context_dict
@@ -286,34 +286,6 @@ def admin(request):
 # 	print request.META['REMOTE_ADDR']
 	
 	return render(request, 'surfice/base_admin.html', context_dict)
-
-def surf(request, surf_url):
-	# Change underscores in the category name to spaces.
-	# URLs don't handle spaces well, so we encode them as underscores.
-	# We can then simply replace the underscores with spaces again to get the name.
-	surf_name = surf_url.replace('_', ' ')
-	
-	# Change spaces to underscores for the url.
-	# URLs don't handle spaces well.
-	# So we just replace them!
-	#url = name.replace(' ', '_')
-	
-	# Create a context dictionary which we can pass to the template rendering engine
-	# We start by containing the name of the surf passed by the user
-	context_dict = {'surf_name': surf_name}
-	
-	surfices = Surf.get_surf(surf_name).get_surfices()
-	
-	if surfices:
-		# Add our results list to the template context under name 'surfices'.
-		context_dict['surfices'] = surfices
-		
-		# Also add the surf object from the database to the context dictionary
-		# We'll use this in the template to verify the category exists.
-		context_dict['surf'] = Surf.objects.get(name=surf_name)
-		
-	# Go render the response and return it to the client
-	return render(request, 'surfice/surf.html', context_dict)
 
 @permission_required('is_superuser')
 def surfs(request):
