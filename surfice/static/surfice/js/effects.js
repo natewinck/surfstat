@@ -580,9 +580,9 @@ function onModalHide(e) {
 }
 
 function onModalHidden(e) {
-	e.preventDefault();
-	e.stopPropagation();
-	return false;
+	//e.preventDefault();
+	//e.stopPropagation();
+	//return false;
 }
 
 function onModalShown(e) {

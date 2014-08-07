@@ -452,7 +452,7 @@ tr[data-href] {
 -------------------------------------------------- */
 .surfices {
     margin:0 auto;
-    text-align: center;
+    text-align: left;
     width: 90%;
     
 }
@@ -497,7 +497,8 @@ tr[data-href] {
     -moz-hyphens: auto;
     -ms-hyphens: auto;
     hyphens: auto;
-    margin: 2px auto;
+    margin: 2px 64px 2px 0px;
+    z-index: 1;
 
 }
 
@@ -512,8 +513,8 @@ tr[data-href] {
 	position: relative;
 /* 	left: 5%; */
 	font-style: italic;
-	text-align: center;
-	left: 0px;
+	text-align: left;
+	left: 12px;
 	right: 0px;
 }
 
@@ -522,37 +523,36 @@ tr[data-href] {
     text-align: center;
 }
 
-#status .surfice-active {
-    display: block;
-    text-align: center;
-}
-#status .surfice-success {
-    background-color:#2ecc71;
-}
-#status .surfice-danger {
-    background-color:#e74c3c;
-}
-#status .surfice-warning {
-    background-color: #f1c40f;
+#status .surfice-mobile {
+	display: block;
+	position: absolute;
+	right: 12px;
+	top: 14px;
+	/* 
+float: right;
+	margin-right: 12px;
+	margin-left: 12px;
+ */
+	z-index: 1000;
 }
 
-#status .surfice > * {
-    -webkit-transition: opacity 200ms linear; /* For Safari 3.1 to 6.0 */
-    transition: opacity 200ms linear;
+#status .surfice > .surfice-hover {
+    -webkit-transition: none; /* For Safari 3.1 to 6.0 */
+    transition: none;
 }
 
 #status .surfice:hover > *:not(a) {
-    opacity: 0.5;
-    text-shadow: 0px 0px 5px black;
+    opacity: 1;
+    text-shadow: 0px 0px 0px black;
     color: transparent;
 }
 
-#status .surfice:hover > a  {
-    display: block;
-    opacity: 1;
+#status .surfice:hover > a.surfice-hover  {
+    display: none;
+    opacity: 0;
 }
 
-#status .surfice a {
+#status .surfice a.surfice-hover {
     font-size: 16px;
 }
 
@@ -570,9 +570,20 @@ tr[data-href] {
     font-size: 63px;
 }
 
+.surfices {
+    margin:0 auto;
+    text-align: center;
+    width: 90%;
+    
+}
+
 #status .surfice-hover {
     opacity: 0;
     text-align: center;
+}
+
+#status .surfice-mobile {
+	display: none;
 }
 
 #status .surfice-active {
@@ -652,8 +663,28 @@ tr[data-href] {
 	right: 0px;
 }
 
-#status .surfice a {
+#status .surfice > a.surfice-hover {
+    -webkit-transition: opacity 200ms linear; /* For Safari 3.1 to 6.0 */
+    transition: opacity 200ms linear;
+}
+
+#status .surfice:hover > *:not(a) {
+    opacity: 0.5;
+    text-shadow: 0px 0px 5px black;
+    color: transparent;
+}
+
+#status .surfice:hover > a.surfice-hover  {
+    display: block;
+    opacity: 1;
+}
+
+#status .surfice a.surfice-hover {
     font-size: 18px;
+}
+
+#status {
+    width: 100%
 }
 
 
