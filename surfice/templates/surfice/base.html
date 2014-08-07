@@ -48,7 +48,7 @@
             		<span class="icon-bar"></span>
             		<span class="icon-bar"></span>
           		</button>
-          		<a class="navbar-brand" href="#" onclick="return false;">Asbury University Status</a>
+          		<a class="navbar-brand" href="#" onclick="return false;">Asbury University Status <em>(beta)</em></a>
         	</div>
         	
         	
@@ -114,7 +114,6 @@
 	{% block footer %}
 	<!-- FOOTER -->
 	<footer>
-		<p class="pull-right"><a href="#top">Back to top</a></p>
 		<p>&copy; {% now "Y" %} Asbury University
 		{% if user.is_authenticated %} &middot; <a href="{% url 'logout' %}">Log out</a> {% endif %}</p>
 	</footer>

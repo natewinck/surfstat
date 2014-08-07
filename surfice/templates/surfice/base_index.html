@@ -3,7 +3,7 @@
 {% load humanize %}
 {% load static %}
 
-{% block title %}Asbury University Status{% endblock %}
+{% block title %}Asbury University Status (beta){% endblock %}
 
 {% block heading %}
 <div class="heading text-center">
@@ -110,19 +110,22 @@
 
 <div class="row featurette">
 	<div class="col-sm-8 col-sm-offset-2 col-xs-12 events">
+		<a name="whatshappening"></a>
 		<h2 class="featurette-heading text-center">What's happening lately?</h2>
 		
 		{# Future events #}
 		{% for event in events_future %}
 		<div class="row text-danger">
-			<div class="col-xs-4">{{ event.timestamp|naturaltime }}{# event.timestamp|date:'M n' #}</div>
+			<div class="col-xs-4"><strong>{{ event.timestamp|naturaltime }}{# event.timestamp|date:'M n' #}</strong></div>
 			<div class="col-xs-8">
-			{% if event.description != "" %}
-				{{ event.description }}
-			{% else %}
-				{# If the description is not set, output something generic #}
-				{{ event.surfice.name|capfirst }}'s status will change to {{ event.status }}.
-			{% endif %}
+				<strong>
+				{% if event.description != "" %}
+					{{ event.description }}
+				{% else %}
+					{# If the description is not set, output something generic #}
+					{{ event.surfice.name|capfirst }}'s status will change to {{ event.status }}.
+				{% endif %}
+				</strong>
 			</div>
 		</div>
 		{% endfor %}
@@ -153,6 +156,8 @@
 
 <hr class="featurette-divider">
 <!-- /end information -->
+
+<a href="#whatshappening" id="anchorToggle" class="btn btn-sm btn-info anchorToggle anchorToggleDown"><span class="text">What's Happening?</span> <span class="glyphicon glyphicon-arrow-down pull-right"></span></a>
 
 
 <script>
@@ -204,5 +209,46 @@ chartData['online'] = {
 {% endblock %}
 
 {% block scripts %}
-
+<script>
+$(function() {
+	// The anchor offset is 1/3 of the way from the bottom of the page.  That's what's
+	// "in view"
+	var anchor_offset = $('a[name="whatshappening"]').offset().top - (window.innerHeight / (3/2));
+	var isAboveAnchor = true;
+	
+	$(window).on('scroll', function() {
+		//console.log($(window).scrollTop() + " - " + anchor_offset);
+		// If above the anchor, show the scroll down button
+		if ( $(window).scrollTop() < anchor_offset && !isAboveAnchor ) {
+			//console.log('above');
+			isAboveAnchor = true;
+			$("#anchorToggle")
+				.stop()
+				.removeClass("anchorToggleUp")
+				.addClass("anchorToggleDown")
+				.attr("href", "#whatshappening");
+				
+			$("#anchorToggle .text").stop().fadeOut(function() {
+				$(this).text("What's Happening");
+			}).fadeIn();
+		}
+		
+		// If the anchor is above the current scroll point (we've scrolled past it),
+		// show the scroll-to-top button
+		else if ( $(window).scrollTop() >= anchor_offset && isAboveAnchor ) {
+			//console.log('below');
+			isAboveAnchor = false;
+			$("#anchorToggle")
+				.stop()
+				.removeClass("anchorToggleDown")
+				.addClass("anchorToggleUp")
+				.attr("href", "#top");
+			
+			$("#anchorToggle .text").stop().fadeOut(function() {
+				$(this).text("Back to top")	;
+			}).fadeIn();
+		}
+	});
+});
+</script>
 {% endblock scripts %}

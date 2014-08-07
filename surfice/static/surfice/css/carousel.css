@@ -518,7 +518,7 @@ tr[data-href] {
 }
 
 #status .surfice-hover {
-    opacity: 0;
+    opacity: 1;
     display: none;
     text-align: center;
 }
@@ -685,6 +685,50 @@ float: right;
 
 #status {
     width: 100%
+}
+
+
+.anchorToggle {
+	position: fixed;
+	bottom: 5%;
+	right: 3%;
+	font-size: 18px;
+	
+	width: 200px;
+}
+
+.anchorToggle.anchorToggleDown span.glyphicon {
+	/* Firefox */
+	-moz-transition: all 0.5s ease;
+	/* WebKit */
+	-webkit-transition: all 0.5s ease;
+	/* Opera */
+	-o-transition: all 0.5s ease;
+	/* Standard */
+	transition: all 0.5s ease;
+}
+
+.anchorToggle.anchorToggleUp span.glyphicon {
+	opacity: 1;
+	/* Firefox */
+	-moz-transform: rotate(180deg);
+	/* WebKit */
+	-webkit-transform: rotate(180deg);
+	/* Opera */
+	-o-transform: rotate(180deg);
+	/* Standard */
+	transform: rotate(180deg);
+	
+	z-index: 1000;
+	
+	/* Firefox */
+	-moz-transition: all 0.5s ease;
+	/* WebKit */
+	-webkit-transition: all 0.5s ease;
+	/* Opera */
+	-o-transition: all 0.5s ease;
+	/* Standard */
+	transition: all 0.5s ease;
 }
 
 
