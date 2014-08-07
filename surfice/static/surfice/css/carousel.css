@@ -450,7 +450,114 @@ tr[data-href] {
 
 /* MAIN PAGE SURFICES
 -------------------------------------------------- */
+.surfices {
+    margin:0 auto;
+    text-align: left;
+    width: 90%;
+    
+}
 
+#status .surfice {
+	min-height: 60px;
+    height: auto;
+    width: 100%;
+    padding-top: 10px;
+    padding-right: 0px;
+    padding-bottom: 10px;
+    padding-left: 0px;
+    margin: 10px 0px;
+    display: inline-block;
+    vertical-align: top;
+    position: relative;
+    cursor: pointer;
+    text-overflow: ellipsis;
+}
+/* 
+#status .surfices.small .surfice {
+	height: auto;
+	width: 200;
+	padding-top: 50px;
+	margin: 12px;
+}
+ */
+
+#status .surfice h2 {
+	position: relative;
+    padding: 2px 12px;
+    width: auto;
+    font-size: 18px;
+    
+    -ms-word-break: break-all;
+    word-break: break-all;
+    
+    /* Non standard for webkit */
+    word-break: break-word;
+    
+    -webkit-hypthens: auto;
+    -moz-hyphens: auto;
+    -ms-hyphens: auto;
+    hyphens: auto;
+    margin: 2px 64px 2px 0px;
+
+}
+
+/* 
+#status .surfices.small .surfice h2 {
+	width: 150px;
+	font-size: 18px;
+}
+ */
+
+#status .surfice > span {
+	position: relative;
+/* 	left: 5%; */
+	font-style: italic;
+	text-align: left;
+	left: 12px;
+	right: 0px;
+}
+
+#status .surfice-hover {
+    opacity: 0;
+    display: none;
+    text-align: center;
+}
+
+#status .surfice-mobile {
+	display: block;
+	position: absolute;
+	right: 12px;
+	top: 14px;
+	/* 
+float: right;
+	margin-right: 12px;
+	margin-left: 12px;
+ */
+}
+
+#status .surfice > .surfice-hover {
+    -webkit-transition: none; /* For Safari 3.1 to 6.0 */
+    transition: none;
+}
+
+#status .surfice:hover > *:not(a) {
+    opacity: 1;
+    text-shadow: 0px 0px 0px black;
+    color: transparent;
+}
+
+#status .surfice:hover > a.surfice-hover  {
+    display: none;
+    opacity: 0;
+}
+
+#status .surfice a.surfice-hover {
+    font-size: 16px;
+}
+
+#status {
+    width: 100%
+}
 
 
 /* RESPONSIVE CSS
@@ -471,6 +578,7 @@ tr[data-href] {
 
 #status .surfice-hover {
     opacity: 0;
+    display: block;
     text-align: center;
 }
 
