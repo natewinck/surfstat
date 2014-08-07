@@ -113,7 +113,7 @@ body {
     background-color: #fff;
 }
 .heading h1 {
-    font-size: 63px;
+    font-size: 48px;
 }
 .heading p {
     margin-bottom: 15px;
@@ -565,6 +565,10 @@ tr[data-href] {
 -------------------------------------------------- */
 
 @media (min-width: 500px) {
+
+.heading h1 {
+    font-size: 63px;
+}
 
 #status .surfice-hover {
     opacity: 0;

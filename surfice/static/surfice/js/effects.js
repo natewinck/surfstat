@@ -576,6 +576,9 @@ function onModalShow(e) {
 function onModalHide(e) {
 	$modal = $(this);
 	$modal.off("keydown");
+	e.preventDefault();
+	e.stopPropagation();
+	return false;
 }
 
 function onModalShown(e) {
