@@ -121,109 +121,6 @@ body {
     font-weight: 200;
 }
 
-.surfices {
-    margin:0 auto;
-    text-align: center;
-    width: 90%;
-    
-}
-
-#status .surfice-hover {
-    opacity: 0;
-    text-align: center;
-}
-
-#status .surfice-active {
-    display: block;
-    text-align: center;
-}
-#status .surfice {
-    height: 200px;
-    width: 200px;
-    padding-top: 75px;
-    padding-right: 10px;
-    padding-bottom: 10px;
-    padding-left: 10px;
-    margin: 20px;
-    display: inline-block;
-    vertical-align: top;
-    position: relative;
-    cursor: pointer;
-    text-overflow: ellipsis;
-}
-#status .surfices.small .surfice {
-	height: 150px;
-	width: 150px;
-	padding-top: 50px;
-	margin: 12px;
-}
-#status .surfice-success {
-    background-color:#2ecc71;
-}
-#status .surfice-danger {
-    background-color:#e74c3c;
-}
-#status .surfice-warning {
-    background-color: #f1c40f;
-}
-
-#status .surfice h2 {
-    padding: 10px;
-    width: 180px;
-    font-size: 36px;
-    
-    -ms-word-break: break-all;
-    word-break: break-all;
-    
-    /* Non standard for webkit */
-    word-break: break-word;
-    
-    -webkit-hypthens: auto;
-    -moz-hyphens: auto;
-    -ms-hyphens: auto;
-    hyphens: auto;
-
-}
-
-#status .surfices.small .surfice h2 {
-	width: 135px;
-	font-size: 24px;
-}
-
-#status .surfice > span {
-	position: absolute;
-	bottom: 5%;
-/* 	left: 5%; */
-	font-style: italic;
-	text-align: center;
-	left: 0px;
-	right: 0px;
-}
-
-#status .surfice > * {
-    -webkit-transition: opacity 200ms linear; /* For Safari 3.1 to 6.0 */
-    transition: opacity 200ms linear;
-}
-
-#status .surfice:hover > *:not(a) {
-    opacity: 0.5;
-    text-shadow: 0px 0px 5px black;
-    color: transparent;
-}
-
-#status .surfice:hover > a  {
-    display: block;
-    opacity: 1;
-}
-
-#status .surfice a {
-    font-size: 18px;
-}
-
-#status {
-    width: 100%
-}
-
 
 .position-relative {
     position: relative;
@@ -237,13 +134,6 @@ body {
     position: absolute;
 }
 
-.center-all {
-    left: 50%;
-/*    top: 50%;*/
-    transform: translate(-50%,-50%);
-    -webkit-transform: translate(-50%,-50%);
-    position: absolute;
-}
 .center-all-button {
     left: 50%;
     top: 50%;
@@ -558,11 +448,211 @@ tr[data-href] {
 
 
 
+/* MAIN PAGE SURFICES
+-------------------------------------------------- */
+.surfices {
+    margin:0 auto;
+    text-align: center;
+    width: 90%;
+    
+}
+
+#status .surfice {
+	min-height: 60px;
+    height: auto;
+    width: 100%;
+    padding-top: 10px;
+    padding-right: 10px;
+    padding-bottom: 10px;
+    padding-left: 10px;
+    margin: 10px;
+    display: inline-block;
+    vertical-align: top;
+    position: relative;
+    cursor: pointer;
+    text-overflow: ellipsis;
+}
+/* 
+#status .surfices.small .surfice {
+	height: auto;
+	width: 200;
+	padding-top: 50px;
+	margin: 12px;
+}
+ */
+
+#status .surfice h2 {
+	position: relative;
+    padding: 2px;
+    width: auto;
+    font-size: 18px;
+    
+    -ms-word-break: break-all;
+    word-break: break-all;
+    
+    /* Non standard for webkit */
+    word-break: break-word;
+    
+    -webkit-hypthens: auto;
+    -moz-hyphens: auto;
+    -ms-hyphens: auto;
+    hyphens: auto;
+    margin: 2px auto;
+
+}
+
+/* 
+#status .surfices.small .surfice h2 {
+	width: 150px;
+	font-size: 18px;
+}
+ */
+
+#status .surfice > span {
+	position: relative;
+/* 	left: 5%; */
+	font-style: italic;
+	text-align: center;
+	left: 0px;
+	right: 0px;
+}
+
+#status .surfice-hover {
+    opacity: 0;
+    text-align: center;
+}
+
+#status .surfice-active {
+    display: block;
+    text-align: center;
+}
+#status .surfice-success {
+    background-color:#2ecc71;
+}
+#status .surfice-danger {
+    background-color:#e74c3c;
+}
+#status .surfice-warning {
+    background-color: #f1c40f;
+}
+
+#status .surfice > * {
+    -webkit-transition: opacity 200ms linear; /* For Safari 3.1 to 6.0 */
+    transition: opacity 200ms linear;
+}
+
+#status .surfice:hover > *:not(a) {
+    opacity: 0.5;
+    text-shadow: 0px 0px 5px black;
+    color: transparent;
+}
+
+#status .surfice:hover > a  {
+    display: block;
+    opacity: 1;
+}
+
+#status .surfice a {
+    font-size: 16px;
+}
+
+#status {
+    width: 100%
+}
+
+
 /* RESPONSIVE CSS
 -------------------------------------------------- */
 
 @media (min-width: 500px) {
-        
+
+#status .surfice-hover {
+    opacity: 0;
+    text-align: center;
+}
+
+#status .surfice-active {
+    display: block;
+    text-align: center;
+}
+#status .surfice {
+    height: 200px;
+    width: 200px;
+    padding-top: 75px;
+    padding-right: 10px;
+    padding-bottom: 10px;
+    padding-left: 10px;
+    margin: 20px;
+    display: inline-block;
+    vertical-align: top;
+    position: relative;
+    cursor: pointer;
+    text-overflow: ellipsis;
+}
+#status .surfices.small .surfice {
+	height: 150px;
+	width: 150px;
+	padding-top: 50px;
+	margin: 12px;
+}
+#status .surfice-success {
+    background-color:#2ecc71;
+}
+#status .surfice-danger {
+    background-color:#e74c3c;
+}
+#status .surfice-warning {
+    background-color: #f1c40f;
+}
+
+#status .surfice h2 {
+    padding: 10px;
+    width: 180px;
+    font-size: 36px;
+    
+    -ms-word-break: break-all;
+    word-break: break-all;
+    
+    /* Non standard for webkit */
+    word-break: break-word;
+    
+    -webkit-hypthens: auto;
+    -moz-hyphens: auto;
+    -ms-hyphens: auto;
+    hyphens: auto;
+    
+    /* To offset above back to defaults */
+    margin: 20px auto 10px auto;
+    
+    /* Center All */
+    left: 50%;
+/*    top: 50%;*/
+    transform: translate(-50%,-50%);
+    -webkit-transform: translate(-50%,-50%);
+    position: absolute;
+
+}
+
+#status .surfices.small .surfice h2 {
+	width: 135px;
+	font-size: 24px;
+}
+
+#status .surfice > span {
+	position: absolute;
+	bottom: 5%;
+/* 	left: 5%; */
+	font-style: italic;
+	text-align: center;
+	left: 0px;
+	right: 0px;
+}
+
+#status .surfice a {
+    font-size: 18px;
+}
+
+
     
   /* Remove the edge padding needed for mobile */
   .marketing {

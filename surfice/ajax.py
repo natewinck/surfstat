@@ -51,7 +51,7 @@ def set_status(request):
 	# don't do anything
 	try:
 		if 'surfice' in request.POST and 'status' in request.POST:
-			print "ELSE"
+			#print "ELSE"
 			# Get the surfice and status parameters to set the status of the surfice
 			surfice = Surfice.get_surfice(pk=request.POST['surfice'])
 			status = Status.get_status(pk=request.POST['status'])
