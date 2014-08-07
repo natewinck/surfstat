@@ -576,6 +576,7 @@ function onModalShow(e) {
 function onModalHide(e) {
 	$modal = $(this);
 	$modal.off("keydown");
+	console.log(e);
 }
 
 function onModalShown(e) {
@@ -709,6 +710,8 @@ $("table").on('click', 'tr[data-href]', function(e) {
 $(".surfices > div.surfice").click(function() {
 	//console.log('click');
 	//console.log(this);
+	console.log('haha');
+	console.log($(this).find("a").attr("data-target"));
 	$( $(this).find("a").attr("data-target") ).modal("show");
 });
 
