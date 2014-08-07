@@ -551,6 +551,7 @@ $("#confirm-delete-ding").on("show.bs.modal", function(e) {
 
 $(".modal").on("show.bs.modal", onModalShow);
 $(".modal").on("hide.bs.modal", onModalHide);
+$(".modal").on("hidden.bs.modal", onModalHidden);
 $(".modal").on("shown.bs.modal", onModalShown);
 
 function onModalShow(e) {
@@ -576,6 +577,9 @@ function onModalShow(e) {
 function onModalHide(e) {
 	$modal = $(this);
 	$modal.off("keydown");
+}
+
+function onModalHidden(e) {
 	e.preventDefault();
 	e.stopPropagation();
 	return false;
