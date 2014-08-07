@@ -1,6 +1,6 @@
 {% extends "surfice/base.html" %}
 
-{% block title %}Admin{% endblock %}
+{% block title %}AU Status | Admin{% endblock %}
 
 {% load static %}
 {% load humanize %}
@@ -117,6 +117,37 @@
 	<!-- all surfs -->
 	<div class="col-sm-6">
 		<table class="table panel panel-default table-hover">
+			<!-- all surfices -->
+			<tr>
+				<!-- name -->
+				<td><a href="{% url 'surfs' %}#all"><em>(all)</em></a></td>
+				
+				<!-- change status -->
+				<td>
+					<form type="ajax" action="ajax/set-surf-status" method="post"
+						data-ajax-action="ajax/get-surfices"
+						data-ajax-update-target="surfices-status"
+					>
+						{# To prevent cross-site forgery, include the following required tag #}
+						{% csrf_token %}
+						<input type="hidden" name="surf">
+						<input type="hidden" name="all">
+						<div class="dropdown dropdown-select autosubmit pull-right">
+							<input type="hidden" name="status">
+							<button type="button" class="btn btn-default btn-xs dropdown-toggle" data-toggle="dropdown" tabindex="-1"><span data-bind="label">Change Status</span>
+								<span class="caret"></span>
+							</button>
+							<ul class="dropdown-menu" role="menu">
+								{% for status in statuses %}
+								<li value="{{ status.id }}"><a href="#">{{ status.name }}</a></li>
+								{% endfor %}
+							</ul>
+						</div>
+					</form>
+				</td>
+			</tr>
+			<!-- /end all surfices -->
+			
 			{% for surf in surfs %}
 			<tr>
 				<!-- name -->

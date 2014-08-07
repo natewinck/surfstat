@@ -1,16 +1,17 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
+  	
+  	{% load static %}
+  	
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="description" content="">
-    <meta name="author" content="">
-    <link rel="shortcut icon" href="http://www.asbury.edu/sites/default/files/favicon.ico" type="image/x-icon">
+    <meta name="description" content="Status of Asbury University's online services.">
+    <meta name="author" content="Asbury University">
+    <link rel="shortcut icon" href="{% static 'surfice/images/favicon.ico' %}" type="image/x-icon">
 
     <title>{% block title %}REPLACE TITLE WITH CODE{% endblock %}</title>
-      
-    {% load static %}
     
     
     <!-- Bootstrap core CSS -->
@@ -54,6 +55,10 @@
         	<!-- Collect the nav links, forms, and other content for toggling -->
 			<div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
 			<ul class="nav navbar-nav">
+				{% if user.is_authenticated %}
+				<li class="text-primary"><a class="text-primary" href="{% url 'admin' %}"><span class="text-success">Admin</span></a></li>
+				{% endif %}
+				
 				<li><a href="http://www.asbury.edu">asbury.edu</a></li>
 				<li><a href="http://webmail.asbury.edu">Webmail</a></li>
 				<li><a href="http://online.asbury.edu">Online</a></li>
@@ -110,7 +115,6 @@
 	<!-- FOOTER -->
 	<footer>
 		<p class="pull-right"><a href="#top">Back to top</a></p>
-		<p>&copy; 2014 Asbury University &middot; <a href="{% url 'admin' %}">Admin</a>
 		{% if user.is_authenticated %} &middot; <a href="{% url 'logout' %}">Log out</a> {% endif %}</p>
 	</footer>
 	{% endblock %}
