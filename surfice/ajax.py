@@ -904,22 +904,20 @@ def submit_rt_ticket(request):
 			'body'		in request.POST
 		):
 		try:
-			# First see if the email addresses are actually email addresses
-			validate_email(request.POST['queue'])
 			
 			# Create the subject line
 			subject = ''
 		
-			if 'name' in request.POST:
+			if 'name' in request.POST and request.POST['name'] != '':
 				subject += request.POST['name'] + ' - '
 		
-			if 'phone' in request.POST:
+			if 'phone' in request.POST and request.POST['phone'] != '':
 				subject += request.POST['phone'] + ' - '
 		
-			if 'location' in request.POST:
+			if 'location' in request.POST and request.POST['location'] != '':
 				subject += request.POST['location'] + ' - '
 		
-			if 'description' in request.POST:
+			if 'description' in request.POST and request.POST['description'] != '':
 				subject += request.POST['description']
 			else:
 				subject += 'Network Issue'
@@ -934,19 +932,58 @@ def submit_rt_ticket(request):
 			else:
 				from surfstat.settings import EMAIL_HOST_USER
 				requestor = EMAIL_HOST_USER
-				requestor = 'nathaniel.winckler@asbury.edu'
+			
+			print requestor
 			
 			# Remove extra spaces from the subject
 			subject = ' '.join(subject.split())
 			
-			from django.core.mail import send_mail
+			# Add a space to each new line of the body
+			lines = request.POST['body'].split('\n')
+			body = ''
+			for line in lines:
+				body += ' ' + line + '\n'
+			body = body.strip()
+			
+			print ''
+			print body
+			print ''
+			print lines
+			print ''
+			
+			#for line in request.POST['body']:
+			#	 body = ('%s%s%s\n' % (body, ' ', line.rstrip('\n')))
+			
+			# To send data to RT, we need to put everything in a
+			# variable named RT, with keys and values on separate lines.
+			# Multiple lines will be indented
+			content =(	'id: ticket/new\n'
+						'Queue: ' + request.POST['queue'] + '\n'
+						'Requestor: ' + requestor + '\n'
+						'Subject: ' + subject + '\n'
+						'Text: ' + body + '\n'
+					)
+			
+			import urllib, urllib2
+			from surfstat.settings import RT_HOST, RT_USER, RT_PASSWORD
+			print RT_HOST, RT_USER, RT_PASSWORD
+			post = [('user', RT_USER), ('pass', RT_PASSWORD), ('content', content),]
+			
+			result = urllib2.urlopen( RT_HOST, urllib.urlencode(post) )
+			
+			#print 'RESULT:'
+			#print result.read()
+			
+			return result.read()
+			
+			#from django.core.mail import send_mail
 			# Start creating the EmailMessage object
 			#email = EmailMessage(
-			send_mail(
-						from_email=requestor,
-						recipient_list=[request.POST['queue']],
-						subject=subject,
-						message=request.POST['body'])
+			#send_mail(
+			#			from_email=requestor,
+			#			recipient_list=[request.POST['queue']],
+			#			subject=subject,
+			#			message=request.POST['body'])
 			
 			# Now actually send the email
 			#email.send()

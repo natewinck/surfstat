@@ -199,11 +199,20 @@
 					{# To prding cross-site forgery, include the following required tag #}
 					{% csrf_token %}
 					<div class="row">
+						<!-- requestor -->
+						<div class="col-md-6">
+							<div class="form-group">
+								<label for="requestor" class="control-label">Requestor</label>
+								<input name="requestor" value="{{ ding.email }}" type="email" class="form-control" placeholder="Requestor" id="requestor" data-validate="email">
+							</div>
+						</div>
+						<!-- /end requestor -->
+						
 						<!-- queue email -->
 						<div class="col-md-6">
 							<div class="form-group">
-								<label for="queue" class="control-label">Queue Email</label>
-								<input name="queue" value="network.tickets@asbury.edu" type="email" class="form-control" placeholder="Queue Email" id="queue" data-validate="email">
+								<label for="queue" class="control-label">Queue</label>
+								<input name="queue" value="8" type="number" class="form-control" placeholder="Queue" id="queue">
 							</div>
 						</div>
 						<!-- /end queue email -->
@@ -252,7 +261,7 @@
 							<div class="form-group">
 								<label for="body">
 									Body</label>
-								<textarea name="body" id="body" class="form-control" rows="9" cols="25" required="required" placeholder="Message">On {{ ding.timestamp|date:"M j, Y" }} at {{ ding.timestamp|time:"f A" }}, {% if fullname != '' %}{{ lastname }}, {{ firstname }} <{{ ding.email }}>{% else %}{{ ding.email }}{% endif %} wrote:&#10;{{ ding.description }}</textarea>
+								<textarea name="body" id="body" class="form-control" rows="9" cols="25" required="required" placeholder="Message">On {{ ding.timestamp|date:"M j, Y" }} at {{ ding.timestamp|time:"f A" }}, {% if fullname != '' %}{{ lastname }}, {{ firstname }} <{{ ding.email }}>{% else %}{{ ding.email }}{% endif %} wrote:&#10;{{ ding.description }}&#10;&#10;------------------------------&#10;Network&#10;{% if ding.data.hostname != '' %}Hostname: {{ ding.data.hostname }}&#10;{% else %}No hostname&#10;{% endif %}IP Address: {{ ding.data.ip }}&#10;&#10;Browser&#10;Family: {{ ding.data.browser.family }}&#10;Version: {{ ding.data.browser.version_string }}&#10;&#10;Device&#10;Family: {{ ding.data.device.family }}&#10;OS: {{ ding.data.os.family }} {{ ding.data.os.version_string }}&#10;</textarea>
 							</div>
 							<!-- /end body -->
 						</div>
