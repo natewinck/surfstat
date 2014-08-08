@@ -178,11 +178,11 @@ body.admin {
     margin-bottom: 20px;
 }
 
-.events .row:after {
+.events > .row:after {
     border-bottom: solid 1px #eee;
-    width: 50%;
-    margin: 0px auto 6px auto;
-    padding-top: 6px;
+    width: 95%;
+    margin: 0px auto 8px auto;
+    padding-top: 8px;
     
 }
 
@@ -604,12 +604,33 @@ float: right;
 }
 
 
+.eventSurfice .well {
+	width: 20px;
+	margin: 0 0 0 8px;
+}
+
+
+.events > .row.visible-xs-block .well {
+	margin: 0 8px 0 0;
+}
+
+.events > .row.visible-xs-block .description {
+	margin-left: 30px;
+}
 
 /* RESPONSIVE CSS
 -------------------------------------------------- */
 
 @media (min-width: 768px) {
 
+
+.events > .row:after {
+    border-bottom: solid 1px #eee;
+    width: 75%;
+    margin: 0px auto 8px auto;
+    padding-top: 8px;
+    
+}
 
 .heading h1 {
     font-size: 63px;

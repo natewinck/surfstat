@@ -115,15 +115,16 @@
 </div>
 
 <div class="row featurette">
-	<div class="col-sm-8 col-sm-offset-2 col-xs-12 events">
+	<div class="col-sm-8 col-sm-offset-2 col-xs-10 col-xs-offset-1 events">
 		<a name="whatshappening"></a>
 		<h2 class="featurette-heading text-center">What's happening lately?</h2>
 		
 		{# Future events #}
 		{% for event in events_future %}
-		<div class="row text-danger">
-			<div class="col-xs-4"><strong>{{ event.timestamp|naturaltime }}{# event.timestamp|date:'M n' #}</strong></div>
-			<div class="col-xs-8">
+		<!-- desktop -->
+		<div class="row text-danger hidden-xs">
+			<div class="col-xs-3"><strong>{{ event.timestamp|naturaltime }}{# event.timestamp|date:'M n' #}</strong></div>
+			<div class="col-xs-5">
 				<strong>
 				{% if event.description != "" %}
 					{{ event.description }}
@@ -133,14 +134,33 @@
 				{% endif %}
 				</strong>
 			</div>
+			<div class="col-xs-4 eventSurfice text-right">{{ event.surfice.name }}<div class="well well-sm pull-right" style="background-color: {{ event.status.data.color }};"></div></div>
+		</div>
+		
+		<!-- mobile -->
+		<div class="row text-danger visible-xs-block">
+			<div class="col-xs-12">
+				<div class="well well-sm pull-left" style="background-color: {{ event.status.data.color }};"></div>
+				<em class="text-danger">{{ event.timestamp|naturaltime }}{# event.timestamp|date:'M n' #} - {{ event.surfice.name }}</em>
+				<div class="description">
+				{% if event.description != "" %}
+					{{ event.description }}
+				{% else %}
+					{# If the description is not set, output something generic #}
+					{{ event.surfice.name|capfirst }}'s status will change to {{ event.status }}.
+				{% endif %}
+				</div>
+			</div>
 		</div>
 		{% endfor %}
 		
+		
 		{# Past events #}
 		{% for event in events_past %}
-		<div class="row">
-			<div class="col-xs-4">{{ event.timestamp|naturaltime }}{# event.timestamp|date:'M n' #}</div>
-			<div class="col-xs-8">
+		<!-- desktop -->
+		<div class="row hidden-xs">
+			<div class="col-xs-3">{{ event.timestamp|naturaltime }}{# event.timestamp|date:'M n' #}</div>
+			<div class="col-xs-5">
 			{% if event.description != "" %}
 				{{ event.description }}
 			{% else %}
@@ -148,7 +168,25 @@
 				{{ event.surfice.name|capfirst }}'s status was changed to {{ event.status }}.
 			{% endif %}
 			</div>
+			<div class="col-xs-4 eventSurfice text-right">{{ event.surfice.name }}<div class="well well-sm pull-right" style="background-color: {{ event.status.data.color }};"></div></div>
 		</div>
+		
+		<!-- mobile -->
+		<div class="row visible-xs-block">
+			<div class="col-xs-12">
+				<div class="well well-sm pull-left" style="background-color: {{ event.status.data.color }};"></div>
+				<em class="text-muted">{{ event.timestamp|naturaltime }}{# event.timestamp|date:'M n' #} - {{ event.surfice.name }}</em>
+				<div class="description">
+				{% if event.description != "" %}
+					{{ event.description }}
+				{% else %}
+					{# If the description is not set, output something generic #}
+					{{ event.surfice.name|capfirst }}'s status was changed to {{ event.status }}.
+				{% endif %}
+				</div>
+			</div>
+		</div>
+		
 		{% endfor %}
 		
 		{% if events|length == 0 %}
@@ -165,7 +203,8 @@
 <div class="row featurette">
 	<div class="col-xs-12">
 		<h2 class="featurette-heading text-center">Have a more specific issue?</h2>
-		<h4 class="text-center">Call Help Desk at <a class="mobilesOnly" href="tel:8598583511">(859) 858-3511</a> and dial extension 2177.</h4>
+		<h4 class="text-center">Call Help Desk at <a href="tel:8598583511">(859) 858-3511</a> and dial extension 2177<br>
+		or email <a href="mailto:helpdesk@asbury.edu">helpdesk@asbury.edu</a>.</h4>
 		<p class="text-center text-muted">We'll be happy to answer any questions you might have.</p>
 	</div>
 </div>
@@ -233,13 +272,16 @@ $(function() {
 	// Get the offset....when the link is halfway up the page
 	var nextSectionOffset = $(".nextSection").offset().top - ( window.innerHeight / 2 );
 	var isAboveAnchor = true;
+	$(window).on("resize", function() {
+		console.log(window.innerWidth);
+	});
 	
 	$(window).on('scroll', function() {
 		var isAtBottom = (window.innerHeight + window.scrollY) >= document.body.offsetHeight;
-		console.log($(window).scrollTop() + " - " + nextSectionOffset);
+		//console.log($(window).scrollTop() + " - " + nextSectionOffset);
 		// If above the anchor, show the scroll down button
 		if ( $(window).scrollTop() < nextSectionOffset && !isAboveAnchor ) {
-			console.log('above');
+			//console.log('above');
 			isAboveAnchor = true;
 			$(".nextSection")
 				.stop()
@@ -256,7 +298,7 @@ $(function() {
 		// If the anchor is above the current scroll point (we've scrolled past it),
 		// or if we're at the bottom of the page, show the scroll-to-top button
 		else if ( isAtBottom || ($(window).scrollTop() >= nextSectionOffset && isAboveAnchor) ) {
-			console.log('below');
+			//console.log('below');
 			isAboveAnchor = false;
 			$(".nextSection")
 				.stop()
