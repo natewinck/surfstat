@@ -577,7 +577,7 @@ float: right;
 /* RESPONSIVE CSS
 -------------------------------------------------- */
 
-@media (min-width: 500px) {
+@media (min-width: 768px) {
 
 .heading h1 {
     font-size: 63px;
@@ -669,12 +669,19 @@ float: right;
 
 #status .surfice > span {
 	position: absolute;
-	bottom: 5%;
 /* 	left: 5%; */
 	font-style: italic;
 	text-align: center;
 	left: 0px;
 	right: 0px;
+}
+
+#status .surfice > span.surfice_dings {
+	bottom: 5%;
+}
+
+#status .surfice > span.surfice_status {
+	top: 5%;
 }
 
 #status .surfice > a.surfice-hover {
@@ -683,11 +690,11 @@ float: right;
 }
 
 #status .surfice > *:not(a) {
-    -webkit-transition: opacity 200ms linear, text-shadow 200ms linear, color 100ms linear; /* For Safari 3.1 to 6.0 */
-    -moz-transition: opacity 200ms linear, text-shadow 200ms linear, color 100ms linear;
-    -o-transition: opacity 200ms linear, text-shadow 200ms linear, color 100ms linear;
-    -ms-transition: opacity 200ms linear, text-shadow 200ms linear, color 100ms linear;
-    transition: opacity 200ms linear, text-shadow 200ms linear, color 100ms linear;
+    -webkit-transition: opacity 200ms linear, text-shadow 200ms linear, color 50ms linear; /* For Safari 3.1 to 6.0 */
+    -moz-transition: opacity 200ms linear, text-shadow 200ms linear, color 50ms linear;
+    -o-transition: opacity 200ms linear, text-shadow 200ms linear, color 50ms linear;
+    -ms-transition: opacity 200ms linear, text-shadow 200ms linear, color 50ms linear;
+    transition: opacity 200ms linear, text-shadow 200ms linear, color 50ms linear;
 }
 
 #status .surfice:hover > *:not(a) {

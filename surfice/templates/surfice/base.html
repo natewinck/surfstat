@@ -9,13 +9,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="description" content="Status of Asbury University's online services.">
     <meta name="author" content="Asbury University">
+    {% block meta %}{% endblock %}
     <link rel="shortcut icon" href="{% static 'surfice/images/favicon.ico' %}" type="image/x-icon">
 
     <title>{% block title %}REPLACE TITLE WITH CODE{% endblock %}</title>
     
     
     <!-- Bootstrap core CSS -->
-    <link href="{% static 'surfice/css/bootstrap.min.css' %}" rel="stylesheet">
+    <link href="{% static 'surfice/bootstrap/css/bootstrap.min.css' %}" rel="stylesheet">
     <link href="{% static 'surfice/css/jasny-bootstrap.min.css' %}" rel="stylesheet">
     <link href="{% static 'surfice/css/bootstrap-notify.css' %}" rel="stylesheet">
     <link href="{% static 'surfice/css/bootstrap-multiselect.css' %}" rel="stylesheet">
@@ -48,7 +49,7 @@
             		<span class="icon-bar"></span>
             		<span class="icon-bar"></span>
           		</button>
-          		<a class="navbar-brand" href="#" onclick="return false;">Asbury University Status <em><span style="color: #3369e8">(</span><span style="color: #d50f25">b</span><span style="color: #eeb211">e</span><span style="color: #3369e8">t</span><span style="color: #009925">a</span><span style="color: #d50f25">)</span></em></a>
+          		<a class="navbar-brand" href="#" onclick="return false;">Asbury University Status <em style="font-size: 12px;"><span style="color: #3369e8">(</span><span style="color: #d50f25">b</span><span style="color: #eeb211">e</span><span style="color: #3369e8">t</span><span style="color: #009925">a</span><span style="color: #d50f25">)</span></em></a>
         	</div>
         	
         	
@@ -128,7 +129,7 @@
     <!-- Placed at the end of the document so the pages load faster -->
     <script src="{% static 'surfice/js/jquery-1.11.1.min.js' %}"></script>
 	
-    <script src="{% static 'surfice/js/bootstrap.min.js' %}"></script>
+    <script src="{% static 'surfice/bootstrap/js/bootstrap.min.js' %}"></script>
     <script src="{% static 'surfice/js/jasny-bootstrap.min.js' %}"></script>
     
     <script src="{% static 'surfice/js/bootstrap-switch.min.js' %}"></script>
