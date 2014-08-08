@@ -569,9 +569,40 @@ float: right;
     width: 100%
 }
 
-.anchorToggle {
-	display: none;
+.nextSection span.glyphicon {
+	/* Firefox */
+	-moz-transition: all 0.5s ease;
+	/* WebKit */
+	-webkit-transition: all 0.5s ease;
+	/* Opera */
+	-o-transition: all 0.5s ease;
+	/* Standard */
+	transition: all 0.5s ease;
 }
+
+.nextSection.toggleSection span.glyphicon {
+	opacity: 1;
+	/* Firefox */
+	-moz-transform: rotate(180deg);
+	/* WebKit */
+	-webkit-transform: rotate(180deg);
+	/* Opera */
+	-o-transform: rotate(180deg);
+	/* Standard */
+	transform: rotate(180deg);
+	
+	z-index: 1000;
+	
+	/* Firefox */
+	-moz-transition: all 0.5s ease;
+	/* WebKit */
+	-webkit-transition: all 0.5s ease;
+	/* Opera */
+	-o-transition: all 0.5s ease;
+	/* Standard */
+	transition: all 0.5s ease;
+}
+
 
 
 /* RESPONSIVE CSS
@@ -716,52 +747,6 @@ float: right;
 #status {
     width: 100%
 }
-
-
-.anchorToggle {
-	display: block;
-	position: fixed;
-	bottom: 5%;
-	right: 3%;
-	font-size: 18px;
-	
-	width: 220px;
-}
-
-.nextSection span.glyphicon {
-	/* Firefox */
-	-moz-transition: all 0.5s ease;
-	/* WebKit */
-	-webkit-transition: all 0.5s ease;
-	/* Opera */
-	-o-transition: all 0.5s ease;
-	/* Standard */
-	transition: all 0.5s ease;
-}
-
-.nextSection.toggleSection span.glyphicon {
-	opacity: 1;
-	/* Firefox */
-	-moz-transform: rotate(180deg);
-	/* WebKit */
-	-webkit-transform: rotate(180deg);
-	/* Opera */
-	-o-transform: rotate(180deg);
-	/* Standard */
-	transform: rotate(180deg);
-	
-	z-index: 1000;
-	
-	/* Firefox */
-	-moz-transition: all 0.5s ease;
-	/* WebKit */
-	-webkit-transition: all 0.5s ease;
-	/* Opera */
-	-o-transition: all 0.5s ease;
-	/* Standard */
-	transition: all 0.5s ease;
-}
-
 
     
   /* Remove the edge padding needed for mobile */

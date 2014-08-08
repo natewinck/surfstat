@@ -236,7 +236,7 @@ $(function() {
 	
 	$(window).on('scroll', function() {
 		var isAtBottom = (window.innerHeight + window.scrollY) >= document.body.offsetHeight;
-		//console.log($(window).scrollTop() + " - " + anchor_offset);
+		console.log($(window).scrollTop() + " - " + nextSectionOffset);
 		// If above the anchor, show the scroll down button
 		if ( $(window).scrollTop() < nextSectionOffset && !isAboveAnchor ) {
 			console.log('above');
