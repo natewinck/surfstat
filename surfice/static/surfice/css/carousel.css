@@ -178,7 +178,7 @@ body.admin {
     margin-bottom: 20px;
 }
 
-.events > .row:after {
+.events .row:after {
     border-bottom: solid 1px #eee;
     width: 95%;
     margin: 0px auto 8px auto;
@@ -604,17 +604,17 @@ float: right;
 }
 
 
-.eventSurfice .well {
+.events .pull-right.well {
 	width: 20px;
 	margin: 0 0 0 8px;
 }
 
-
-.events > .row.visible-xs-block .well {
+.events .pull-left.well {
+	width: 20px;
 	margin: 0 8px 0 0;
 }
 
-.events > .row.visible-xs-block .description {
+.events .row.visible-xs-block .description, .events .row.visible-modal .description {
 	margin-left: 30px;
 }
 
@@ -624,7 +624,7 @@ float: right;
 @media (min-width: 768px) {
 
 
-.events > .row:after {
+.events .row:after {
     border-bottom: solid 1px #eee;
     width: 75%;
     margin: 0px auto 8px auto;

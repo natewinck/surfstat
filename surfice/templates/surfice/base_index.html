@@ -90,6 +90,92 @@
 									<!-- /end description -->
 							
 								</form>
+								
+								<hr>
+								
+								{% if surfice.events|length == 0 %}
+								<h4>No updates for {{ surfice.name }} in the past week</h4>
+								
+								{% else %}
+								<h4>Latest Update{% if surfice.events_length > 1 %}s{% endif %} for {{ surfice.name }}</h4>
+								<div class="events text-left">
+									
+									<!-- desktop -->
+									<div class="hidden-xs">
+										{# Future events for surfice for desktop #}
+										{% for event in surfice.events_future %}
+										<div class="row text-danger hidden-xs">
+											<div class="col-xs-4"><div class="well well-sm pull-left" style="background-color: {{ event.status.data.color }};"></div><strong>{{ event.timestamp|naturaltime }}{# event.timestamp|date:'M n' #}</strong></div>
+											<div class="col-xs-8">
+												<strong>
+												{% if event.description != "" %}
+													{{ event.description }}
+												{% else %}
+													{# If the description is not set, output something generic #}
+													{{ event.surfice.name|capfirst }}'s status will change to {{ event.status }}.
+												{% endif %}
+												</strong>
+											</div>
+										</div>
+										{% endfor %}
+			
+										{# Past events for surfice for desktop #}
+										{% for event in surfice.events_past|slice:":1" %}
+										<div class="row hidden-xs">
+											<div class="col-xs-4"><div class="well well-sm pull-left" style="background-color: {{ event.status.data.color }};"></div>{{ event.timestamp|naturaltime }}{# event.timestamp|date:'M n' #}</div>
+											<div class="col-xs-5">
+											{% if event.description != "" %}
+												{{ event.description }}
+											{% else %}
+												{# If the description is not set, output something generic #}
+												{{ event.surfice.name|capfirst }}'s status was changed to {{ event.status }}.
+											{% endif %}
+											</div>
+										</div>
+										{% endfor %}
+									</div>
+		
+									<!-- mobile -->
+									<div class="visible-xs-block">
+										{# Future events for surfice for mobile #}
+										{% for event in surfice.events_future %}
+										<div class="row text-danger visible-xs-block">
+											<div class="col-xs-12">
+												<div class="well well-sm pull-left" style="background-color: {{ event.status.data.color }};"></div>
+												<em class="text-danger">{{ event.timestamp|naturaltime }}{# event.timestamp|date:'M n' #}</em>
+												<div class="description">
+												{% if event.description != "" %}
+													{{ event.description }}
+												{% else %}
+													{# If the description is not set, output something generic #}
+													{{ event.surfice.name|capfirst }}'s status will change to {{ event.status }}.
+												{% endif %}
+												</div>
+											</div>
+										</div>
+										{% endfor %}
+			
+										{# Past events for surfice for mobile #}
+										{% for event in surfice.events_past|slice:":1" %}
+										<div class="row visible-xs-block">
+											<div class="col-xs-12">
+												<div class="well well-sm pull-left" style="background-color: {{ event.status.data.color }};"></div>
+												<em class="text-muted">{{ event.timestamp|naturaltime }}{# event.timestamp|date:'M n' #}</em>
+												<div class="description">
+												{% if event.description != "" %}
+													{{ event.description }}
+												{% else %}
+													{# If the description is not set, output something generic #}
+													{{ event.surfice.name|capfirst }}'s status was changed to {{ event.status }}.
+												{% endif %}
+												</div>
+											</div>
+										</div>
+										{% endfor %}
+									</div>
+		
+								</div>
+								{% endif %}
 						  
 							</div>
 							<div class="modal-footer">
@@ -119,64 +205,31 @@
 		<a name="whatshappening"></a>
 		<h2 class="featurette-heading text-center">What's happening lately?</h2>
 		
-		{# Future events #}
-		{% for event in events_future %}
 		<!-- desktop -->
-		<div class="row text-danger hidden-xs">
-			<div class="col-xs-3"><strong>{{ event.timestamp|naturaltime }}{# event.timestamp|date:'M n' #}</strong></div>
-			<div class="col-xs-5">
-				<strong>
-				{% if event.description != "" %}
-					{{ event.description }}
-				{% else %}
-					{# If the description is not set, output something generic #}
-					{{ event.surfice.name|capfirst }}'s status will change to {{ event.status }}.
-				{% endif %}
-				</strong>
-			</div>
-			<div class="col-xs-4 eventSurfice text-right">{{ event.surfice.name }}<div class="well well-sm pull-right" style="background-color: {{ event.status.data.color }};"></div></div>
-		</div>
-		
-		<!-- mobile -->
-		<div class="row text-danger visible-xs-block">
-			<div class="col-xs-12">
-				<div class="well well-sm pull-left" style="background-color: {{ event.status.data.color }};"></div>
-				<em class="text-danger">{{ event.timestamp|naturaltime }}{# event.timestamp|date:'M n' #} - {{ event.surfice.name }}</em>
-				<div class="description">
-				{% if event.description != "" %}
-					{{ event.description }}
-				{% else %}
-					{# If the description is not set, output something generic #}
-					{{ event.surfice.name|capfirst }}'s status will change to {{ event.status }}.
-				{% endif %}
+		<div class="hidden-xs">
+			{# Future events for desktop #}
+			{% for event in events_future %}
+			<div class="row text-danger hidden-xs">
+				<div class="col-xs-3"><strong>{{ event.timestamp|naturaltime }}{# event.timestamp|date:'M n' #}</strong></div>
+				<div class="col-xs-5">
+					<strong>
+					{% if event.description != "" %}
+						{{ event.description }}
+					{% else %}
+						{# If the description is not set, output something generic #}
+						{{ event.surfice.name|capfirst }}'s status will change to {{ event.status }}.
+					{% endif %}
+					</strong>
 				</div>
+				<div class="col-xs-4 eventSurfice text-right">{{ event.surfice.name }}<div class="well well-sm pull-right" style="background-color: {{ event.status.data.color }};"></div></div>
 			</div>
-		</div>
-		{% endfor %}
-		
-		
-		{# Past events #}
-		{% for event in events_past %}
-		<!-- desktop -->
-		<div class="row hidden-xs">
-			<div class="col-xs-3">{{ event.timestamp|naturaltime }}{# event.timestamp|date:'M n' #}</div>
-			<div class="col-xs-5">
-			{% if event.description != "" %}
-				{{ event.description }}
-			{% else %}
-				{# If the description is not set, output something generic #}
-				{{ event.surfice.name|capfirst }}'s status was changed to {{ event.status }}.
-			{% endif %}
-			</div>
-			<div class="col-xs-4 eventSurfice text-right">{{ event.surfice.name }}<div class="well well-sm pull-right" style="background-color: {{ event.status.data.color }};"></div></div>
-		</div>
-		
-		<!-- mobile -->
-		<div class="row visible-xs-block">
-			<div class="col-xs-12">
-				<div class="well well-sm pull-left" style="background-color: {{ event.status.data.color }};"></div>
-				<em class="text-muted">{{ event.timestamp|naturaltime }}{# event.timestamp|date:'M n' #} - {{ event.surfice.name }}</em>
-				<div class="description">
+			{% endfor %}
+			
+			{# Past events for desktop #}
+			{% for event in events_past %}
+			<div class="row hidden-xs">
+				<div class="col-xs-3">{{ event.timestamp|naturaltime }}{# event.timestamp|date:'M n' #}</div>
+				<div class="col-xs-5">
 				{% if event.description != "" %}
 					{{ event.description }}
 				{% else %}
@@ -184,10 +237,49 @@
 					{{ event.surfice.name|capfirst }}'s status was changed to {{ event.status }}.
 				{% endif %}
 				</div>
+				<div class="col-xs-4 eventSurfice text-right">{{ event.surfice.name }}<div class="well well-sm pull-right" style="background-color: {{ event.status.data.color }};"></div></div>
 			</div>
+			{% endfor %}
 		</div>
 		
-		{% endfor %}
+		<!-- mobile -->
+		<div class="visible-xs-block">
+			{# Future events for mobile #}
+			{% for event in events_future %}
+			<div class="row text-danger visible-xs-block">
+				<div class="col-xs-12">
+					<div class="well well-sm pull-left" style="background-color: {{ event.status.data.color }};"></div>
+					<em class="text-danger">{{ event.timestamp|naturaltime }}{# event.timestamp|date:'M n' #} - {{ event.surfice.name }}</em>
+					<div class="description">
+					{% if event.description != "" %}
+						{{ event.description }}
+					{% else %}
+						{# If the description is not set, output something generic #}
+						{{ event.surfice.name|capfirst }}'s status will change to {{ event.status }}.
+					{% endif %}
+					</div>
+				</div>
+			</div>
+			{% endfor %}
+			
+			{# Past events for mobile #}
+			{% for event in events_past %}
+			<div class="row visible-xs-block">
+				<div class="col-xs-12">
+					<div class="well well-sm pull-left" style="background-color: {{ event.status.data.color }};"></div>
+					<em class="text-muted">{{ event.timestamp|naturaltime }}{# event.timestamp|date:'M n' #} - {{ event.surfice.name }}</em>
+					<div class="description">
+					{% if event.description != "" %}
+						{{ event.description }}
+					{% else %}
+						{# If the description is not set, output something generic #}
+						{{ event.surfice.name|capfirst }}'s status was changed to {{ event.status }}.
+					{% endif %}
+					</div>
+				</div>
+			</div>
+			{% endfor %}
+		</div>
 		
 		{% if events|length == 0 %}
 		<div class="row">
@@ -272,9 +364,6 @@ $(function() {
 	// Get the offset....when the link is halfway up the page
 	var nextSectionOffset = $(".nextSection").offset().top - ( window.innerHeight / 2 );
 	var isAboveAnchor = true;
-	$(window).on("resize", function() {
-		console.log(window.innerWidth);
-	});
 	
 	$(window).on('scroll', function() {
 		var isAtBottom = (window.innerHeight + window.scrollY) >= document.body.offsetHeight;

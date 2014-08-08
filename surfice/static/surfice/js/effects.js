@@ -709,9 +709,10 @@ $("table").on('click', 'tr[data-href]', function(e) {
 *  click
 *  
 ------------------------------ */
-$(".surfices > div.surfice").click(function() {
+$(".surfices > div.surfice").click(function(e) {
 	//console.log('click');
 	//console.log(this);
+	if ($(e.target).is("a")) return;
 	console.log('haha');
 	console.log($(this).find("a").attr("data-target"));
 	$( $(this).find("a").attr("data-target") ).modal("show");
