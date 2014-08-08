@@ -579,16 +579,6 @@ float: right;
 
 @media (min-width: 768px) {
 
-	/* NAVBAR
-	------------------------------- */
-	.navbar .navbar-nav {
-		display: inline-block;
-		float: none;
-	}
-
-	.navbar .navbar-collapse {
-	  text-align: center;
-	}
 
 .heading h1 {
     font-size: 63px;
@@ -738,7 +728,7 @@ float: right;
 	width: 220px;
 }
 
-.anchorToggle.anchorToggleDown span.glyphicon {
+.nextSection span.glyphicon {
 	/* Firefox */
 	-moz-transition: all 0.5s ease;
 	/* WebKit */
@@ -749,7 +739,7 @@ float: right;
 	transition: all 0.5s ease;
 }
 
-.anchorToggle.anchorToggleUp span.glyphicon {
+.nextSection.toggleSection span.glyphicon {
 	opacity: 1;
 	/* Firefox */
 	-moz-transform: rotate(180deg);
@@ -840,51 +830,31 @@ float: right;
   .center-all {
     top: 50%;
   }
-    
+
+@media (min-width: 726px) {
+	/* NAVBAR CENTER
+	------------------------------- */
+	/* 
+.navbar {
+		height: 50px;
+	}
+ */
+	/* 
+.navbar .navbar-nav {
+		display: inline-block;
+		float: none;
+	}
+
+	.navbar .navbar-collapse {
+	  text-align: center;
+	}
+ */
+}
 
 
 
     
 }
-
-/* OVERRIDE NAVBAR BREAKPOINT */
-@media (max-width:915px){
-    .navbar-header {
-        float: none;
-    }
-    .navbar-left,.navbar-right {
-        float: none !important;
-    }
-    .navbar-toggle {
-        display: block;
-    }
-    .navbar-collapse {
-        border-top: 1px solid transparent;
-        box-shadow: inset 0 1px 0 rgba(255,255,255,0.1);
-    }
-    .navbar-fixed-top {
-          top: 0;
-          border-width: 0 0 1px;
-     }
-    .navbar-collapse.collapse {
-        display: none!important;
-    }
-    .navbar-nav {
-        float: none!important;
-          margin-top: 7.5px;
-     }
-     .navbar-nav>li {
-        float: none;
-    }
-    .navbar-nav>li>a {
-        padding-top: 10px;
-        padding-bottom: 10px;
-    }
-    .collapse.in{
-          display:block !important;
-     } 
-}
-
 
 
 /* BOOTSTRAP EXTENSIONS
