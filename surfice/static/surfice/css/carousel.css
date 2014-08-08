@@ -2,7 +2,12 @@
 -------------------------------------------------- */
 /* Padding below the footer and lighter body text */
 body {
+	padding-top: 60px;
 	padding-bottom: 40px;
+}
+
+body.admin {
+	padding-top: 0px;
 }
 
 
@@ -28,6 +33,10 @@ body {
 .navbar-wrapper .navbar {
   padding-right: 15px;
   padding-left: 15px;
+}
+
+.navbar.navbar-fixed-top {
+	background-color: rgba(248, 248, 248, 0.9);
 }
 
 
@@ -104,6 +113,24 @@ body {
   font-weight: 300;
   line-height: 1;
   letter-spacing: -1px;
+}
+
+/* Next Section ---------------------- */
+.nextSection a {
+	display: block;
+	position: relative;
+	top: -90px;
+	width: 120px;
+	margin: 0px auto;
+	
+	text-align: center;
+	font-size: 24px;
+	color: #999;
+	background: white;
+}
+
+.nextSection a:hover {
+	color: #666;
 }
 
 /* Status--------------------------------------- */
@@ -534,23 +561,6 @@ float: right;
 	margin-left: 12px;
  */
 }
-
-#status .surfice > .surfice-hover {
-    -webkit-transition: none; /* For Safari 3.1 to 6.0 */
-    transition: none;
-}
-
-#status .surfice:hover > *:not(a) {
-    opacity: 1;
-    text-shadow: 0px 0px 0px black;
-    color: transparent;
-}
-
-#status .surfice:hover > a.surfice-hover  {
-    display: none;
-    opacity: 0;
-}
-
 #status .surfice a.surfice-hover {
     font-size: 16px;
 }
@@ -672,6 +682,14 @@ float: right;
     transition: opacity 200ms linear;
 }
 
+#status .surfice > *:not(a) {
+    -webkit-transition: opacity 200ms linear, text-shadow 200ms linear, color 100ms linear; /* For Safari 3.1 to 6.0 */
+    -moz-transition: opacity 200ms linear, text-shadow 200ms linear, color 100ms linear;
+    -o-transition: opacity 200ms linear, text-shadow 200ms linear, color 100ms linear;
+    -ms-transition: opacity 200ms linear, text-shadow 200ms linear, color 100ms linear;
+    transition: opacity 200ms linear, text-shadow 200ms linear, color 100ms linear;
+}
+
 #status .surfice:hover > *:not(a) {
     opacity: 0.5;
     text-shadow: 0px 0px 5px black;
@@ -763,7 +781,7 @@ float: right;
   }
   
   .nav.navbar-nav > li a {
-  	font-weight: bold;
+  	font-weight: normal;
   	color: #666;
   	padding-left: 10px;
   	padding-right: 10px;

@@ -174,9 +174,11 @@ $("a[href^=#]:not([href=#])").click(function(e) {
     if (location.pathname.replace(/^\//,'') == this.pathname.replace(/^\//,'') && location.hostname == this.hostname) {
         var target = $(this.hash);
         target = target.length ? target : $('[name=' + this.hash.slice(1) +']');
+        var fixedOffset = parseInt($("body").css("padding-top"));
+        console.log(fixedOffset);
         if (target.length) {
             $('html,body').stop().animate({
-            scrollTop: target.offset().top
+            scrollTop: target.offset().top - fixedOffset // Match CSS offset for fixed top
         }, 500);
         //console.log("You clicked a hashtag!");
         //window.location.hash = this.hash.slice(1);
