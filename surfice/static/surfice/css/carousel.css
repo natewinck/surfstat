@@ -614,7 +614,10 @@ float: right;
 	margin: 0 8px 0 0;
 }
 
-.events .row.visible-xs-block .description, .events .row.visible-modal .description {
+.events .row.visible-xs-block .description,
+.events .row.visible-modal .description,
+.events .row.visible-xs-block .shortDescription,
+.events .row.visible-modal .shortDescription {
 	margin-left: 30px;
 }
 

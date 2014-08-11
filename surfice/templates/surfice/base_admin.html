@@ -286,7 +286,7 @@
 			<div class="row text-danger visible-xs-block">
 				<div class="col-xs-12">
 					<div class="well well-sm pull-left" title="{{ event.status.name }}" style="background-color: {{ event.status.data.color }};"></div>
-					<em class="text-danger">{{ event.timestamp|naturaltime }}{# event.timestamp|date:'M n' #} - {{ event.surfice.name }}</em>
+					<div class="shortDescription"><em class="text-danger">{{ event.timestamp|naturaltime }}{# event.timestamp|date:'M n' #} - {{ event.surfice.name }}</em></div>
 					<div class="description">
 					{% if event.description != "" %}
 						{{ event.description }}
@@ -304,7 +304,7 @@
 			<div class="row visible-xs-block">
 				<div class="col-xs-12">
 					<div class="well well-sm pull-left" title="{{ event.status.name }}" style="background-color: {{ event.status.data.color }};"></div>
-					<em class="text-muted">{{ event.timestamp|naturaltime }}{# event.timestamp|date:'M n' #} - {{ event.surfice.name }}</em>
+					<div class="shortDescription"><em class="text-muted">{{ event.timestamp|naturaltime }}{# event.timestamp|date:'M n' #} - {{ event.surfice.name }}</em></div>
 					<div class="description">
 					{% if event.description != "" %}
 						{{ event.description }}
