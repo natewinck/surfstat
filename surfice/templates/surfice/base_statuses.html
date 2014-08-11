@@ -166,7 +166,7 @@
 								<p>Are you sure you want to delete the status, <span data-ajax-update="status-name-{{ status.id }}">{{ status.name }}</span>?
 								All surfices assigned with this status will be re-assigned to the below status once this status is deleted.</p>
 								<p>All events associated with this status will NOT be re-assigned. They will be deleted.</p>
-								<div class="form-group">
+								<div class="form-group clearfix">
 									<label class="col-sm-4 control-label" for="new-status-{{ status.id }}">Reassign Surfices to...</label>
 									<div class="col-sm-6">
 										<select name="new_status" class="form-control" id="new-status-{{ status.id }}">

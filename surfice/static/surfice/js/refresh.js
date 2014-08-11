@@ -673,11 +673,11 @@ function refreshEventRow($elements, data) {
 				>' + event.status.name + '</a>\
 			</td>\
 			<td>\
-				<a class="delete" href="#"\
+				<a class="btn btn-danger delete" href="#"\
 					data-toggle="modal"\
 					data-target="#confirm-delete-event"\
 					data-event-id="' + event.id + '"\
-				><span class="glyphicon glyphicon-remove text-danger"></span></a>\
+				><span class="glyphicon glyphicon-remove"></span></a>\
 			</td>\
 		</tr>');
 	
@@ -717,8 +717,7 @@ function refreshEventRow($elements, data) {
 function refreshDingRow($elements, data) {
 	var ding = data;
 	
-	
-	var $tr = $('<tr id="tr-ding-' + ding.id + '" style="display:none;">\
+	var $tr = $('<tr id="tr-ding-' + ding.id + '" data-href="' + ding.url + '" data-ajax-update="delete-ding-' + ding.id + '" style="display:none;">\
 			<td>' + moment(ding.timestamp, moment.ISO_8601).format("MMM D, YYYY h:mm a") + '</td>\
 			<td>\
 				<a href="' + ding.surfice.url + '"\
@@ -732,16 +731,16 @@ function refreshDingRow($elements, data) {
 			<td>\
 				<a href="mailto:' + ding.email + '">' + ding.email + '</a>\
 			</td>\
-			<td>\
-				<a class="delete" href="#"\
-					data-toggle="modal"\
-					data-target="#confirm-delete-ding"\
-					data-ding-id="' + ding.id + '"\
-				><span class="glyphicon glyphicon-remove text-danger"></span></a>\
-			</td>\
-			\
-			<td>\
-				<a href="' + ding.url + '"><span class="glyphicon glyphicon-eye-open"></span></a>\
+			<td colspan="2">\
+				<div class="btn-group-vertical">\
+					<a class="btn btn-default" role="button" href="' + ding.url + '" title="View Ding"><span class="glyphicon glyphicon-eye-open"></span></a>\
+					\
+					<a class="btn btn-danger delete" href="#"\
+						data-toggle="modal"\
+						data-target="#confirm-delete-ding"\
+						data-ding-id="' + ding.id + '"\
+					><span class="glyphicon glyphicon-remove"></span></a>\
+				</div>\
 			</td>\
 		</tr>');
 	
