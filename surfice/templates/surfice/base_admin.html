@@ -258,7 +258,7 @@
 					{% endif %}
 					</strong>
 				</div>
-				<div class="col-xs-4 eventSurfice text-right"><div class="well well-sm pull-right" style="background-color: {{ event.status.data.color }};"></div>{{ event.surfice.name }}</div>
+				<div class="col-xs-4 eventSurfice text-right"><div class="well well-sm pull-right" title="{{ event.status.name }}" style="background-color: {{ event.status.data.color }};"></div>{{ event.surfice.name }}</div>
 			</div>
 			{% endfor %}
 			
@@ -274,7 +274,7 @@
 					{{ event.surfice.name|capfirst }}'s status was changed to {{ event.status }}.
 				{% endif %}
 				</div>
-				<div class="col-xs-4 eventSurfice text-right"><div class="well well-sm pull-right" style="background-color: {{ event.status.data.color }};"></div>{{ event.surfice.name }}</div>
+				<div class="col-xs-4 eventSurfice text-right"><div class="well well-sm pull-right" title="{{ event.status.name }}" style="background-color: {{ event.status.data.color }};"></div>{{ event.surfice.name }}</div>
 			</div>
 			{% endfor %}
 		</div>
@@ -285,7 +285,7 @@
 			{% for event in events_future %}
 			<div class="row text-danger visible-xs-block">
 				<div class="col-xs-12">
-					<div class="well well-sm pull-left" style="background-color: {{ event.status.data.color }};"></div>
+					<div class="well well-sm pull-left" title="{{ event.status.name }}" style="background-color: {{ event.status.data.color }};"></div>
 					<em class="text-danger">{{ event.timestamp|naturaltime }}{# event.timestamp|date:'M n' #} - {{ event.surfice.name }}</em>
 					<div class="description">
 					{% if event.description != "" %}
@@ -303,7 +303,7 @@
 			{% for event in events_past %}
 			<div class="row visible-xs-block">
 				<div class="col-xs-12">
-					<div class="well well-sm pull-left" style="background-color: {{ event.status.data.color }};"></div>
+					<div class="well well-sm pull-left" title="{{ event.status.name }}" style="background-color: {{ event.status.data.color }};"></div>
 					<em class="text-muted">{{ event.timestamp|naturaltime }}{# event.timestamp|date:'M n' #} - {{ event.surfice.name }}</em>
 					<div class="description">
 					{% if event.description != "" %}
