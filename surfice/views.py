@@ -296,6 +296,9 @@ def admin(request):
 	status_list = Status.get_statuses()
 	context_dict['statuses'] = status_list
 	
+	# Get the total number of dings for the navbar
+	context_dict['dings_length'] = len(Ding.get_dings())
+	
 	# print request.META['HTTP_USER_AGENT']
 # 	ua_string = request.META['HTTP_USER_AGENT']
 # 	user_agent = parse(ua_string)
@@ -378,6 +381,9 @@ def surfs(request):
 	# Query all the Statuses and add them to context_dict
 	status_list = Status.get_statuses()
 	context_dict['statuses'] = status_list
+	
+	# Get the total number of dings for the navbar
+	context_dict['dings_length'] = len(Ding.get_dings())
 	
 	return render(request, 'surfice/base_surfs.html', context_dict)
 
@@ -463,6 +469,8 @@ def surfices(request):
 	status_list = Status.get_statuses()
 	context_dict['statuses'] = status_list
 	
+	# Get the total number of dings for the navbar
+	context_dict['dings_length'] = len(Ding.get_dings())
 	
 	return render(request, 'surfice/base_surfices.html', context_dict)
 
@@ -569,6 +577,9 @@ def events(request, page, order_by=''):
 		# Add the '-' in front of the ordering to reverse it
 		context_dict['order_by_reverse'] = '-' + order_by
 	
+	# Get the total number of dings for the navbar
+	context_dict['dings_length'] = len(Ding.get_dings())
+	
 	return render(request, 'surfice/base_events.html', context_dict)
 
 @permission_required('is_superuser')
@@ -590,6 +601,9 @@ def dings(request, page='', order_by=''):
 	except EmptyPage:
 		# If page is out of range (e.g. 9999), deliver the last page of dings
 		context_dict['dings'] = paginator.page(paginator.num_pages)
+	
+	# Get the total number of dings for the navbar
+	context_dict['dings_length'] = len(Ding.get_dings())
 	
 	# Query all the Surfices and add them to context_dict
 	surfice_list = Surfice.get_surfices()
@@ -684,6 +698,9 @@ def statuses(request):
 	status_list = Status.get_statuses()
 	context_dict['statuses'] = status_list
 	
+	# Get the total number of dings for the navbar
+	context_dict['dings_length'] = len(Ding.get_dings())
+	
 	return render(request, 'surfice/base_statuses.html', context_dict)
 
 @permission_required('is_superuser')
@@ -723,6 +740,9 @@ def ding(request, ding=''):
 	# Equivalent in SQL to SELECT ... WHERE timestamp >= start
 	surfice_dings = surfice_dings.filter(timestamp__gte=start)
 	context_dict['surfice_dings'] = surfice_dings.count()
+	
+	# Get the total number of dings for the navbar
+	context_dict['dings_length'] = len(Ding.get_dings())
 	
 	# Query all the Statuses and add them to context_dict
 	status_list = Status.get_statuses()

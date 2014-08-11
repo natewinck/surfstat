@@ -18,7 +18,7 @@
 				<li {% if nav.surfices %} class="active"{% endif %}><a href="{% url 'surfices' %}">Surfices</a></li>
 				<li {% if nav.statuses %} class="active"{% endif %}><a href="{% url 'statuses' %}">Statuses</a></li>
 				<li {% if nav.events %} class="active"{% endif %}><a href="{% url 'events' %}">Events</a></li>
-				<li {% if nav.dings %} class="active"{% endif %}><a href="{% url 'dings' %}">Dings</a></li>
+				<li {% if nav.dings %} class="active"{% endif %}><a href="{% url 'dings' %}">Dings <span class="badge">{% if dings_length > 0 %}{{ dings_length }}{% endif %}</span></a></li>
 				<!--<li><a href="/admin/settings">Settings</a></li>-->
 			</ul>
 			{% if user.is_authenticated %}
