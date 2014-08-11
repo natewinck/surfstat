@@ -199,13 +199,33 @@ def index(request):
 	# will be passed to the template engine
 	context_dict = {'surfices': surfice_list}
 	
+	# Split surfices into priority and regular surfices
+	surfices_priority = []
+	surfices_regular = []
+	for surfice in surfice_list:
+		# If the priority attribute isn't set, it's a regular surfice
+		if not surfice.data['priority']:
+			surfices_regular.append(surfice)
+		
+		# If it is set, and it's set to 1, add it to the priority list
+		elif int(surfice.data['priority']) == 1:
+			surfices_priority.append(surfice)
+			
+		# If it's not 1, add it to the regular list
+		else:
+			surfices_regular.append(surfice)
+	
+	print surfices_regular
+	context_dict['surfices_priority'] = surfices_priority
+	context_dict['surfices_regular'] = surfices_regular
+	
 	# Get dings within past 24 hours for each surfice
 	days = 1
 	start = date.today() - timedelta(days)
 	for i, surfice in enumerate(context_dict['surfices']):
 		context_dict['surfices'][i].dings = surfice_list[i].ding_set.filter(timestamp__gte=start)
-		context_dict['surfices'][i].events_future = surfice_list[i].event_set.filter(timestamp__gt=timezone.now())[:10]
-		context_dict['surfices'][i].events_past = surfice_list[i].event_set.filter(timestamp__lte=timezone.now())[:1]
+		context_dict['surfices'][i].events_future = surfice_list[i].event_set.filter(timestamp__gt=timezone.now()).order_by('-timestamp')[:10]
+		context_dict['surfices'][i].events_past = surfice_list[i].get_events(days=7).filter(timestamp__lte=timezone.now())[:1]
 		
 		context_dict['surfices'][i].events = surfice_list[i].get_events(days=7)[:10]
 		context_dict['surfices'][i].events_length = len(context_dict['surfices'][i].events_past) + len(context_dict['surfices'][i].events_future)
@@ -262,6 +282,15 @@ def admin(request):
 	# Query for Events and add them to context_dict
 	event_list = Event.get_events()
 	context_dict['events'] = event_list
+	
+	# Query the database for a list of all the events
+	# Place them in context_dict
+	event_list = Event.get_events()
+	context_dict['events'] = event_list[:20]
+	
+	# Split events into future and past events
+	context_dict['events_future'] = event_list.filter(timestamp__gt=timezone.now())[:20]
+	context_dict['events_past'] = event_list.filter(timestamp__lte=timezone.now())[:20]
 	
 	# Query for Statuses and add them to context_dict
 	status_list = Status.get_statuses()

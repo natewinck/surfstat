@@ -20,7 +20,20 @@ $("form").submit(function(e) { //listen for submit event
 		// The only exception is for color which needs to be stored with the #
 		if ($(this).attr("data-name") == "color") {
 			data[$(this).attr("data-name")] = "#" + $(this).val();
-		} else {
+		}
+		
+		// For radio buttons, make sure only the checked one of a specific
+		// name/id is stored
+		else if ($(this).prop("type") == "radio") {
+			// Check to see if this is the checked radio or not. If it's not,
+			// don't store it.
+			if ( $(this).prop("checked") ) {
+				data[$(this).attr("data-name")] = $(this).val();
+			}
+		}
+		
+		// If nothing special needs to happen, add it to the associative array
+		else {
 			data[$(this).attr("data-name")] = $(this).val();
 		}
 	});

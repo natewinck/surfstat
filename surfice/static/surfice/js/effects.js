@@ -744,6 +744,12 @@ $("#create-event-toggle label").click(function() {
 	}
 });
 
+$('.btn-group label.btn:has(input[type="radio"])').click(function() {
+	// Set the currently checked radio input to unchecked
+	$(this).closest(".btn-group").find('input[type="radio"]:checked').prop("checked", false);
+	$(this).find("input").prop("checked", true);
+});
+
 });
 
 /* AJAX PROCESSES DISPLAY

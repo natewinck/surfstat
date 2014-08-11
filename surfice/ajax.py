@@ -434,6 +434,7 @@ def update_surfice(request):
 		if 'data' in request.POST:
 			# Get the JSON data from POST
 			data = json.loads(request.POST['data'])
+			print data
 			
 			# Set the general data by passing in data as keyword arguments
 			surfice.set(**data)
@@ -821,7 +822,7 @@ def submit_ding(request):
 				Status.get_status(pk=request.POST['status']),
 				request.POST['email'],
 				request.POST.get('description', ''),
-				data=data
+				**data
 			)
 			
 		except ValidationError:

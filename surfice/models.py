@@ -64,6 +64,7 @@ class Surf(models.Model):
 			surf.description = description
 			
 			# Set any generic data that might've been passed
+			surf.data = {}
 			for key in kwargs:
 				surf.data[key] = kwargs[key]
 			
@@ -208,6 +209,7 @@ class Surf(models.Model):
 			self.set_description(description)
 		
 		# Go through the generic data and put it in their respective fields
+		if not self.data: self.data = {}
 		for key in kwargs:
 			self.data[key] = kwargs[key]
 		
@@ -404,6 +406,7 @@ class Surfice(models.Model):
 			surfice.status = status
 			
 			# Add generic data
+			surfice.data = {}
 			for key in kwargs:
 				surfice.data[key] = kwargs[key]
 			
@@ -558,6 +561,7 @@ class Surfice(models.Model):
 			self.set_description(description)
 		
 		# Go through the generic data and put it in their respective fields
+		if not self.data: self.data = {}
 		for key in kwargs:
 			self.data[key] = kwargs[key]
 		
@@ -820,6 +824,7 @@ class Status(models.Model):
 			status.data = {'color': '#ffffff'}
 			
 			# Loop through the kwargs and add them to the generic data field jdata
+			status.data = {}
 			for key in kwargs:
 				status.data[key] = kwargs[key]
 			
@@ -925,6 +930,7 @@ class Status(models.Model):
 			self.set_description(description)
 		
 		# Go through the generic data and put it in their respective fields
+		if not self.data: self.data = {}
 		for key in kwargs:
 			self.data[key] = kwargs[key]
 		
@@ -1047,7 +1053,7 @@ class Ding(models.Model):
 		return self.status.name
 	
 	@staticmethod
-	def create(surfice, status, email, description='', data={}, **kwargs):
+	def create(surfice, status, email, description='', **kwargs):
 		""" Create a ding and save it in the database
 			
 			INPUT
@@ -1069,7 +1075,7 @@ class Ding(models.Model):
 		ding.description = description
 		
 		# Go through kwargs and assign to generic data field
-		ding.data = data
+		ding.data = {}
 		for key in kwargs:
 			ding.data[key] = kwargs[key]
 		
@@ -1273,6 +1279,7 @@ class Event(models.Model):
 		event.description = description
 		
 		# Loop through kwargs and store as generic data in the database
+		event.data = {}
 		for key in kwargs:
 			event.data[key] = kwargs[key]
 		
@@ -1457,6 +1464,7 @@ class Event(models.Model):
 			self.timestamp = timestamp
 		
 		# Go through the generic data and put it in their respective fields
+		if not self.data: self.data = {}
 		for key in kwargs:
 			self.data[key] = kwargs[key]
 		

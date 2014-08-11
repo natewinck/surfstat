@@ -184,7 +184,7 @@
 					</div>
 				</form>
 				<!-- /end update surfice status -->
-			
+				
 				<hr class="divider-accordian">
 				
 				<!-- edit surfice -->
@@ -214,6 +214,18 @@
 									<option value="{{ surf.id }}" {% if surf in surfice.surfs.all %}selected="selected"{% endif %}>{{ surf.name }}</option>
 									{% endfor %}
 								</select>
+							</div>
+							
+							<div class="form-group">
+								<label class="control-label">Priority</label>
+								<div class="btn-group btn-group-justified" data-toggle="buttons">
+									<label class="btn btn-default {% if surfice.data.priority == '1' %}active{% endif %}">
+										<input data-name="priority" value="1" type="radio" {% if surfice.data.priority == '1' %}checked{% endif %}> Yes
+									</label>
+									<label class="btn btn-default {% if surfice.data.priority != '1' %}active{% endif %}">
+										<input data-name="priority" value="0" type="radio" {% if surfice.data.priority != '1' %}checked{% endif %}> No
+									</label>
+								</div>
 							</div>
 						</div>
 						<div class="col-sm-6">

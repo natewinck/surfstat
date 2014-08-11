@@ -22,10 +22,27 @@
 		<div class="col-xs-12">
 			<div class="surfices {% if surfices|length > 6 %}small{% endif %}">
 				
-				<!-- start surfices -->
+				{% if surfices_priority|length > 0 %}
+				<!-- start priority surfices -->
 				{# Example of using the general data field #}
 				{# If color is set in data, set the color #}
-				{% for surfice in surfices %}
+				{% for surfice in surfices_priority %}
+				<div class="surfice dynamic-color" {% if surfice.status.data.color %}style="background-color:{{ surfice.status.data.color }}"{% endif %}>
+					<a class="btn btn-info surfice-mobile" role="button" data-toggle="modal" data-target="#ding-{{ surfice.id }}"><span class="glyphicon glyphicon-flag"></span></a>
+					<h2 class="featurette-heading-grid surfice-active">{{ surfice.name }}</h2>
+					<a class="btn {% if surfices|length > 6 %}btn-small{% else %}btn-lg{% endif %} btn-info center-all-button featurette-heading-grid surfice-hover" role="button" data-toggle="modal" data-target="#ding-{{ surfice.id }}">Report an Issue</a>
+					<span class="surfice_dings"><span>{{ surfice.status.name }}</span><br class="hidden-xs"><span class="visible-xs-inline"> - </span><span data-ajax-update="surfice-dings-length-{{ surfice.id }}">{{ surfice.dings|length }} report{% if surfice.dings|length != 1 %}s{% endif %}</span> today</span>
+				</div>
+				{% endfor %}
+				<!-- /end surfices -->
+				
+				<hr>
+				{% endif %}
+				
+				<!-- start regular surfices -->
+				{# Example of using the general data field #}
+				{# If color is set in data, set the color #}
+				{% for surfice in surfices_regular %}
 				<div class="surfice dynamic-color" {% if surfice.status.data.color %}style="background-color:{{ surfice.status.data.color }}"{% endif %}>
 					<a class="btn btn-info surfice-mobile" role="button" data-toggle="modal" data-target="#ding-{{ surfice.id }}"><span class="glyphicon glyphicon-flag"></span></a>
 					<h2 class="featurette-heading-grid surfice-active">{{ surfice.name }}</h2>
@@ -221,7 +238,7 @@
 					{% endif %}
 					</strong>
 				</div>
-				<div class="col-xs-4 eventSurfice text-right">{{ event.surfice.name }}<div class="well well-sm pull-right" style="background-color: {{ event.status.data.color }};"></div></div>
+				<div class="col-xs-4 eventSurfice text-right"><div class="well well-sm pull-right" style="background-color: {{ event.status.data.color }};"></div>{{ event.surfice.name }}</div>
 			</div>
 			{% endfor %}
 			
@@ -237,7 +254,7 @@
 					{{ event.surfice.name|capfirst }}'s status was changed to {{ event.status }}.
 				{% endif %}
 				</div>
-				<div class="col-xs-4 eventSurfice text-right">{{ event.surfice.name }}<div class="well well-sm pull-right" style="background-color: {{ event.status.data.color }};"></div></div>
+				<div class="col-xs-4 eventSurfice text-right"><div class="well well-sm pull-right" style="background-color: {{ event.status.data.color }};"></div>{{ event.surfice.name }}</div>
 			</div>
 			{% endfor %}
 		</div>
