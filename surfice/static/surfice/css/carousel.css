@@ -514,15 +514,6 @@ tr[data-href] {
     width: auto;
     font-size: 18px;
     
-
-
-    
-    /* 
--webkit-hypthens: auto;
-    -moz-hyphens: auto;
-    -ms-hyphens: auto;
-    hyphens: auto;
- */
     margin: 2px 64px 2px 0px;
 	
 	-webkit-word-wrap: break-word;

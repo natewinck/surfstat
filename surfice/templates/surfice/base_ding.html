@@ -1,6 +1,6 @@
 {% extends "surfice/base.html" %}
 
-{% block title %}AU Status | Admin | Ding from {{ ding.email }}{% endblock %}
+{% block title %}AU Status | Admin | Ding from {% if fullname != '' %}{{ fullname }}{% else %}{{ ding.email }}{% endif %}{% endblock %}
 
 {% load static %}
 {% load humanize %}
