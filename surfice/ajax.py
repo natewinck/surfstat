@@ -825,6 +825,9 @@ def submit_ding(request):
 				**data
 			)
 			
+			# Now that we've created the ding, push the information to a syslog
+			#2.190 standard 514 udp
+			
 		except ValidationError:
 			# The user entered an invalid email address
 			errors.append("Hey, that's not a valid email address")
