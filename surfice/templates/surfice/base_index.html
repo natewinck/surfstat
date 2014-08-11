@@ -382,6 +382,10 @@ $(function() {
 	var nextSectionOffset = $(".nextSection").offset().top - ( window.innerHeight / 2 );
 	var isAboveAnchor = true;
 	
+	$(window).on("resize", function() {
+		nextSectionOffset = $(".nextSection").offset().top - ( window.innerHeight / 2 );
+	});
+	
 	$(window).on('scroll', function() {
 		var isAtBottom = (window.innerHeight + window.scrollY) >= document.body.offsetHeight;
 		//console.log($(window).scrollTop() + " - " + nextSectionOffset);
