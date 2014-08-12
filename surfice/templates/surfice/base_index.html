@@ -69,7 +69,7 @@
 									data-ajax-fail="Could not submit issue :("
 									data-ajax-update-target="surfice-dings-length-{{ surfice.id }}"
 									data-ajax-action="ajax/get-surfice-dings-length"
-									data-ajax-get='{"days": "1", "surfice": "{{ surfice.id }}"}'
+									data-ajax-get='{"today": "1", "surfice": "{{ surfice.id }}"}'
 								>
 									{# To prevent cross-site forgery, include the following required tag #}
 									{% csrf_token %}

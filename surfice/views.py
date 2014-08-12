@@ -223,7 +223,7 @@ def index(request):
 	days = 1
 	start = date.today() - timedelta(days)
 	for i, surfice in enumerate(context_dict['surfices']):
-		context_dict['surfices'][i].dings = surfice_list[i].ding_set.filter(timestamp__gte=start)
+		context_dict['surfices'][i].dings = surfice_list[i].ding_set.filter(timestamp__gte=date.today())
 		context_dict['surfices'][i].events_future = surfice_list[i].event_set.filter(timestamp__gt=timezone.now()).order_by('-timestamp')[:10]
 		context_dict['surfices'][i].events_past = surfice_list[i].get_events(days=7).filter(timestamp__lte=timezone.now())[:1]
 		

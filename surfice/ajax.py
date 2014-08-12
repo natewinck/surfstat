@@ -778,8 +778,8 @@ def submit_ding(request):
 				# Get the JSON data from POST
 				data = json.loads(request.POST['data'])
 			
-			print "DATA:"
-			print data
+			#print "DATA:"
+			#print data
 			#data = json.JSONDecoder()
 			
 			# Add in user agent data
@@ -1590,13 +1590,14 @@ def get_surfice_dings_length(request):
 	elif 'end' in request.GET:
 		dings = Ding.get_dings(end=request.GET['end'], order_by=order_by).filter(surfice=surfice)
 	
-	# If surfice is set, get all dings associated with this surfice
-	elif 'surfice' in request.GET:
-		dings = Ding.get_dings(surfice=request.GET['surfice'], order_by=order_by).filter(surfice=surfice)
-	
 	# If status is set, get all dings that have a certain status
 	elif 'status' in request.GET:
 		dings = Ding.get_dings(status=request.GET['status'], order_by=order_by).filter(surfice=surfice)
+	
+	# If today is set, get all the dings that have happened on this calendar day
+	elif 'today' in request.GET:
+		from datetime import date
+		dings = Ding.get_dings(start=date.today(), order_by=order_by).filter(surfice=surfice)
 	
 	# If nothing is set, get all dings
 	else:
