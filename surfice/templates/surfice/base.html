@@ -115,7 +115,7 @@
 	{% block footer %}
 	<!-- FOOTER -->
 	<footer>
-		<p class="pull-right"><a href="#top">Back to top</a></p>
+		<!-- <p class="pull-right"><a href="#top">Back to top</a></p> -->
 		<p>&copy; {% now "Y" %} Asbury University
 		{% if user.is_authenticated %} &middot; <a href="{% url 'logout' %}">Log out</a> {% endif %}</p>
 	</footer>

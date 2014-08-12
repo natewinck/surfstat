@@ -738,7 +738,7 @@ def ding(request, ding=''):
 	x = 1 # Number of days
 	start = date.today() - timedelta(x)
 	# Equivalent in SQL to SELECT ... WHERE timestamp >= start
-	surfice_dings = surfice_dings.filter(timestamp__gte=start)
+	surfice_dings = surfice_dings.filter(timestamp__gte=date.today())
 	context_dict['surfice_dings'] = surfice_dings.count()
 	
 	# Get the total number of dings for the navbar

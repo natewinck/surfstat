@@ -597,6 +597,18 @@ float: right;
 	transition: all 0.5s ease;
 }
 
+a.nextSection {
+	position: fixed;
+	right: 1.5em;
+	bottom: 1.5em;
+	color: #999;
+	font-size: 1.7em;
+}
+
+a.nextSection:hover {
+	color: #666;
+}
+
 
 .events .pull-right.well {
 	width: 20px;

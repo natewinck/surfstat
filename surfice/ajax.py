@@ -772,6 +772,9 @@ def submit_ding(request):
 			# If no surfice exists, raise an exception
 			if type(surfice) is not Surfice: raise Exception()
 			
+			# Get the reported status
+			status = Status.get_status(pk=request.POST['status'])
+			
 			# If data is in request, parse the data
 			data = {}
 			if 'data' in request.POST:
@@ -819,14 +822,42 @@ def submit_ding(request):
 			# Create the ding
 			ding = Ding.create(
 				surfice,
-				Status.get_status(pk=request.POST['status']),
+				status,
 				request.POST['email'],
 				request.POST.get('description', ''),
 				**data
 			)
 			
 			# Now that we've created the ding, push the information to a syslog
-			#2.190 standard 514 udp
+			#172.20.2.190 standard 514 udp
+			# import the logging library
+			import logging
+			from logging.handlers import SysLogHandler
+
+			# Get an instance of a logger
+			logger = logging.getLogger('ding')
+			
+			# Create the message
+			message = ( request.POST['email'] + ' - ' +
+						surfice.name + ' - ' +
+						status.name + ' - ' +
+						data['ip'] + ' - ' +
+						data['device']['family'] + ' ' + data['os']['family'] + ' ' + data['os']['version_string'] + ' - ' +
+						data['browser']['family'] + ' ' + data['browser']['version_string']
+					  )
+			
+			message_comma = (
+								request.POST['email'] + ', ' +
+								surfice.name + ', ' +
+								status.name + ', ' +
+								data['ip'] + ', ' +
+								data['device']['family'] + ' ' + data['os']['family'] + ' ' + data['os']['version_string'] + ', ' +
+								data['browser']['family'] + ' ' + data['browser']['version_string']
+							
+							)
+			
+			# Print to the logger
+			logger.info(message_comma)			
 			
 		except ValidationError:
 			# The user entered an invalid email address
