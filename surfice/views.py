@@ -243,6 +243,7 @@ def index(request):
 	# Get a list of available statuses for reporting dings
 	# Place them in context_dict
 	status_list = Status.get_statuses()
+	status_list = sorted(status_list, key=lambda status: int( status.data.get('val', 9999) ))
 	context_dict['statuses'] = status_list
 	
 	# Query for surfs = add the list to our context dictionary.
@@ -294,6 +295,7 @@ def admin(request):
 	
 	# Query for Statuses and add them to context_dict
 	status_list = Status.get_statuses()
+	status_list = sorted(status_list, key=lambda status: int( status.data.get('val', 9999) ))
 	context_dict['statuses'] = status_list
 	
 	# Get the total number of dings for the navbar
@@ -380,6 +382,7 @@ def surfs(request):
 	
 	# Query all the Statuses and add them to context_dict
 	status_list = Status.get_statuses()
+	status_list = sorted(status_list, key=lambda status: int( status.data.get('val', 9999) ))
 	context_dict['statuses'] = status_list
 	
 	# Get the total number of dings for the navbar
@@ -467,6 +470,7 @@ def surfices(request):
 	
 	# Query all the Statuses and add them to context_dict
 	status_list = Status.get_statuses()
+	status_list = sorted(status_list, key=lambda status: int( status.data.get('val', 9999) ))
 	context_dict['statuses'] = status_list
 	
 	# Get the total number of dings for the navbar
@@ -562,6 +566,7 @@ def events(request, page, order_by=''):
 	
 	# Query all the Statuses and add them to context_dict
 	status_list = Status.get_statuses()
+	status_list = sorted(status_list, key=lambda status: int( status.data.get('val', 9999) ))
 	context_dict['statuses'] = status_list
 	
 	# Add order_by and its reverse to context_dict as well
@@ -611,6 +616,7 @@ def dings(request, page='', order_by=''):
 	
 	# Query all the Statuses and add them to context_dict
 	status_list = Status.get_statuses()
+	status_list = sorted(status_list, key=lambda status: int( status.data.get('val', 9999) ))
 	context_dict['statuses'] = status_list
 	
 	# Add order_by and its reverse to context_dict as well
@@ -696,6 +702,7 @@ def statuses(request):
 	
 	# Query all the Statuses and add them to context_dict
 	status_list = Status.get_statuses()
+	status_list = sorted(status_list, key=lambda status: int( status.data.get('val', 9999) ))
 	context_dict['statuses'] = status_list
 	
 	# Get the total number of dings for the navbar
@@ -746,6 +753,7 @@ def ding(request, ding=''):
 	
 	# Query all the Statuses and add them to context_dict
 	status_list = Status.get_statuses()
+	status_list = sorted(status_list, key=lambda status: int( status.data.get('val', 9999) ))
 	context_dict['statuses'] = status_list
 	
 	# Get the user's potential first name and last name based on

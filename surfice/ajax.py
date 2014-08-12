@@ -843,7 +843,8 @@ def submit_ding(request):
 						status.name + ' - ' +
 						data['ip'] + ' - ' +
 						data['device']['family'] + ' ' + data['os']['family'] + ' ' + data['os']['version_string'] + ' - ' +
-						data['browser']['family'] + ' ' + data['browser']['version_string']
+						data['browser']['family'] + ' ' + data['browser']['version_string'] + ' - ' +
+						request.POST.get('description', '')
 					  )
 			
 			message_comma = (
@@ -857,7 +858,10 @@ def submit_ding(request):
 							)
 			
 			# Print to the logger
-			logger.info(message_comma)			
+			#logger.info(message)
+			print 'STATUS VAL'
+			print status.data.get('val', 0)
+			logger.log(int(status.data.get('val', 0)) * 10, message)	
 			
 		except ValidationError:
 			# The user entered an invalid email address
