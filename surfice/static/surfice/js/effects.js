@@ -763,7 +763,7 @@ $('.btn-group label.btn:has(input[type="radio"])').click(function() {
 *
 ------------------------------- */
 function ajaxProcessingDisplay($form) {
-	var $button = $form.find('[type="submit"]');
+	var $button = ($form.closest(".modal").length == 0) ? $form.find('[type="submit"]') : $form.closest(".modal").find('[type="submit"]');
 	
     // Disable the button and add a flash animation (in css)
     $button.addClass("disabled");
@@ -782,7 +782,7 @@ function ajaxSuccessDisplay($form) {
 	// If the form was inside a modal, hide the modal
 	$form.closest(".modal").modal("hide");
 	
-	var $button = $form.find('[type="submit"]');
+	var $button = ($form.closest(".modal").length == 0) ? $form.find('[type="submit"]') : $form.closest(".modal").find('[type="submit"]');
 	
 	if ($button.attr("data-value-success")) {
 		$button.text($button.attr("data-value-success"));
@@ -806,7 +806,7 @@ function ajaxSuccessDisplay($form) {
 }
 
 function ajaxFailDisplay($form) {
-	var $button = $form.find('[type="submit"]');
+	var $button = ($form.closest(".modal").length == 0) ? $form.find('[type="submit"]') : $form.closest(".modal").find('[type="submit"]');
 	
 	if ($button.attr("data-value-fail")) {
 		$button.text($button.attr("data-value-fail"));

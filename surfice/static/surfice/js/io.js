@@ -81,6 +81,14 @@ $("body").on("submit", "form[type='ajax']", function(e) {
     // For convenience...
     var $form = $(this);
     
+    // If submit button is already disabled, disable submitting
+    if (
+    		$form.find('[type="submit"]').hasClass("disabled") ||
+    		$form.closest(".modal").find('[type="submit"]').hasClass("disabled")
+       ) {
+    	return false;
+    }
+    
     // Give some feedback to the user when submitting the ajax request
     ajaxProcessingDisplay($form);
     
