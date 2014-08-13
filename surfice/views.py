@@ -299,7 +299,7 @@ def admin(request):
 	context_dict['statuses'] = status_list
 	
 	# Get the total number of dings for the navbar
-	context_dict['dings_length'] = len(Ding.get_dings())
+	context_dict['dings_length'] = len( Ding.get_dings().filter(timestamp__gte=date.today()) )
 	
 	# print request.META['HTTP_USER_AGENT']
 # 	ua_string = request.META['HTTP_USER_AGENT']
@@ -386,7 +386,7 @@ def surfs(request):
 	context_dict['statuses'] = status_list
 	
 	# Get the total number of dings for the navbar
-	context_dict['dings_length'] = len(Ding.get_dings())
+	context_dict['dings_length'] = len( Ding.get_dings().filter(timestamp__gte=date.today()) )
 	
 	return render(request, 'surfice/base_surfs.html', context_dict)
 
@@ -474,7 +474,7 @@ def surfices(request):
 	context_dict['statuses'] = status_list
 	
 	# Get the total number of dings for the navbar
-	context_dict['dings_length'] = len(Ding.get_dings())
+	context_dict['dings_length'] = len( Ding.get_dings().filter(timestamp__gte=date.today()) )
 	
 	return render(request, 'surfice/base_surfices.html', context_dict)
 
@@ -583,7 +583,7 @@ def events(request, page, order_by=''):
 		context_dict['order_by_reverse'] = '-' + order_by
 	
 	# Get the total number of dings for the navbar
-	context_dict['dings_length'] = len(Ding.get_dings())
+	context_dict['dings_length'] = len( Ding.get_dings().filter(timestamp__gte=date.today()) )
 	
 	return render(request, 'surfice/base_events.html', context_dict)
 
@@ -608,7 +608,7 @@ def dings(request, page='', order_by=''):
 		context_dict['dings'] = paginator.page(paginator.num_pages)
 	
 	# Get the total number of dings for the navbar
-	context_dict['dings_length'] = len(Ding.get_dings())
+	context_dict['dings_length'] = len( Ding.get_dings().filter(timestamp__gte=date.today()) )
 	
 	# Query all the Surfices and add them to context_dict
 	surfice_list = Surfice.get_surfices()
@@ -706,7 +706,7 @@ def statuses(request):
 	context_dict['statuses'] = status_list
 	
 	# Get the total number of dings for the navbar
-	context_dict['dings_length'] = len(Ding.get_dings())
+	context_dict['dings_length'] = len( Ding.get_dings().filter(timestamp__gte=date.today()) )
 	
 	return render(request, 'surfice/base_statuses.html', context_dict)
 
@@ -749,7 +749,7 @@ def ding(request, ding=''):
 	context_dict['surfice_dings'] = surfice_dings.count()
 	
 	# Get the total number of dings for the navbar
-	context_dict['dings_length'] = len(Ding.get_dings())
+	context_dict['dings_length'] = len( Ding.get_dings().filter(timestamp__gte=date.today()) )
 	
 	# Query all the Statuses and add them to context_dict
 	status_list = Status.get_statuses()
