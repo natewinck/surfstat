@@ -204,13 +204,12 @@ def index(request):
 	surfices_regular = []
 	for surfice in surfice_list:
 		# If the priority attribute isn't set, it's a regular surfice
-		if not surfice.data['priority']:
-			surfices_regular.append(surfice)
+		priority = int(surfice.data.get('priority', 0))
 		
 		# If it is set, and it's set to 1, add it to the priority list
-		elif int(surfice.data['priority']) == 1:
+		if priority == 1:
 			surfices_priority.append(surfice)
-			
+		
 		# If it's not 1, add it to the regular list
 		else:
 			surfices_regular.append(surfice)

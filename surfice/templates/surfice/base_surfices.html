@@ -94,6 +94,21 @@
 						</div>
 					</div>
 					<div class="row">
+						<div class="col-xs-6">
+							<div class="form-group">
+								<label class="control-label">Priority</label>
+								<div class="btn-group btn-group-justified" data-toggle="buttons">
+									<label class="btn btn-default {% if surfice.data.priority == '1' %}active{% endif %}">
+										<input data-name="priority" value="1" type="radio" {% if surfice.data.priority == '1' %}checked{% endif %}> Yes
+									</label>
+									<label class="btn btn-default {% if surfice.data.priority != '1' %}active{% endif %}">
+										<input data-name="priority" value="0" type="radio" {% if surfice.data.priority != '1' %}checked{% endif %}> No
+									</label>
+								</div>
+							</div>
+						</div>
+					</div>
+					<div class="row">
 						<div class="col-xs-offset-10 col-xs-2 button-accordian">
 							<button type="submit" class="btn btn-success pull-right">Submit</button>
 						</div>
