@@ -578,7 +578,7 @@ function onModalShow(e) {
 function onModalHide(e) {
 	$modal = $(this);
 	$modal.off("keydown");
-	console.log(e);
+	//console.log(e);
 }
 
 function onModalShown(e) {
@@ -713,9 +713,12 @@ $(".surfices > div.surfice").click(function(e) {
 	//console.log('click');
 	//console.log(this);
 	if ($(e.target).is("a")) return;
-	console.log('haha');
-	console.log($(this).find("a").attr("data-target"));
+	//console.log('haha');
+	//console.log($(this).find("a").attr("data-target"));
 	$( $(this).find("a").attr("data-target") ).modal("show");
+	e.preventDefault();
+	e.stopPropagation();
+	return false;
 });
 
 $("#create-event-toggle label").click(function() {
