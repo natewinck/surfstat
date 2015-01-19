@@ -221,9 +221,9 @@ body.admin {
 
 .jumbotron.jumbotron-admin {
     background-image: url(../images/wave1.jpg);
-    background-position: bottom;
-    background-repeat: repeat-x;
-}
+    background-position: top;
+    background-size: cover;
+    }
 .surfices-list  {
     height: 250px;
     overflow: scroll;
