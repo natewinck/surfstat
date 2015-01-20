@@ -221,7 +221,7 @@ body.admin {
 
 .jumbotron.jumbotron-admin {
     background-image: url(../images/wave1.jpg);
-    background-position: top;
+    background-position: 0 85%;
     background-size: cover;
     }
 .surfices-list  {
